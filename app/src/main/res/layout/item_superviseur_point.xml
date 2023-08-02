@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginVertical="1dp"
+    app:cardElevation="0dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/listPointDateSuperviseurVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            tools:text="00/00/0000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/gray_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/ListlibelleTotalPointSuperviseurVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caisse:"
+            android:textSize="16sp"
+            android:textColor="@color/gray_color"
+            android:layout_marginHorizontal="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/listPointTotalSuperviseurVw"
+            app:layout_constraintEnd_toStartOf="@+id/listPointTotalSuperviseurVw"
+            app:layout_constraintTop_toTopOf="@+id/listPointTotalSuperviseurVw" />
+
+        <TextView
+            android:id="@+id/listPointTotalSuperviseurVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="000000"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginHorizontal="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

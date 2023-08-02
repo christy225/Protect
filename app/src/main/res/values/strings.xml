@@ -1,0 +1,79 @@
+<resources>
+    <string name="app_name">Protect Money</string>
+
+    <!-- HOME PAGE -->
+    <string name="home_page_text_loader">Vous n\'avez pas d\'enregistrement ce jour.</string>
+
+    <!-- SEARCH DATE PAGE -->
+    <string name="search_date_page_placeholder">Rechercher une date</string>
+    <string name="search_date_page_list_title">Liste Recherche</string>
+    <string name="search_date_page_linkTo_phone_search">Rechercher numéro</string>
+
+    <!-- SEARCH PHONE PAGE -->
+    <string name="search_date_phone_placeholder">Rechercher un numéro</string>
+    <string name="search_date_phone_list_title">Liste Recherche</string>
+    <string name="search_date_phone_linkTo_date_search">Rechercher date</string>
+
+    <!-- SETTINGS PAGE -->
+    <string name="settings_page_title">Paramètres</string>
+    <string name="settings_page_subtitle">Paramètres</string>
+    <string name="settings_page_name_title">Nom Complet</string>
+    <string name="settings_page_name_supervisor_title">Superviseur</string>
+    <string name="settings_page_title_suscribe">Abonnement</string>
+    <string name="settings_page_subtitle_suscribe">Abonnement</string>
+    <string name="settings_page_logout">Déconnexion</string>
+
+    <!-- NATIONAL ET INTERNATIONAL LIBELLE -->
+    <string name="national_orange">Orange Money</string>
+    <string name="national_mtn">MTN Money</string>
+    <string name="national_moov">Moov Money</string>
+    <string name="national_wave">WAVE</string>
+    <string name="national_tresor">Trésor Money</string>
+
+    <string name="international_western">Western Union</string>
+    <string name="international_moneygram">Moneygram</string>
+    <string name="international_ria">Ria Transfer</string>
+
+    <string name="national_advice">Vérifier les informations avant de procéder à l\'enregistrement</string>
+    <string name="national_form_title">Formulaire de Transactions"</string>
+    <string name="national_sub_advice">Merci de remplir tous les champs</string>
+
+    <!-- POINT DU JOUR -->
+    <string name="info_text_point">Vous avez déjà enregistré le point de ce jour</string>
+
+    <!-- POPUP MENU OPERATEUR POUR OPERATION -->
+    <string name="orange">orange</string>
+    <string name="mtn">mtn</string>
+    <string name="moov">moov</string>
+    <string name="wave">wave</string>
+    <string name="tresor">tresor</string>
+
+    <!-- DETAILS OPERATON PAGE -->
+    <string name="details_operation_page_libelle_miss_image">Aucune image n\'a été associée à cet enregistrement</string>
+
+    <!-- TYPE OPERATION NATIONAL-->
+    <string-array name="type_transaction_national">
+        <item>Dépôt</item>
+        <item>Retrait</item>
+    </string-array>
+
+    <!-- TYPE OPERATION INTERNATIONAL-->
+    <string-array name="type_transaction_international">
+        <item>Envoi</item>
+        <item>Retrait</item>
+    </string-array>
+
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+
+    <!-- LOGIN -->
+    <string name="login_button_default_text">Se connecter</string>
+
+    <!-- TEXT BUTTON OPERATION TRANSACTION -->
+    <string name="register_operation">enregistrer opération</string>
+    <!-- LOADING BUTTON -->
+    <string name="button_loading">Veuillez patienter…</string>
+
+    <string name="onFailureText">Une erreur s\'est produite. Merci de vérifier votre connexion internet et réessayer.</string>
+
+</resources>

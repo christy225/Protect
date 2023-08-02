@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeMenuSuperviseur"
+        android:title="Accueil"
+        android:icon="@drawable/baseline_home_24"/>
+    <item
+        android:id="@+id/capitalMenuSuperviseur"
+        android:icon="@drawable/baseline_assured_workload_24"
+        android:title="Capital"/>
+    <item
+        android:id="@+id/listAssistantMenuSuperviseur"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="Configuration"/>
+</menu>
