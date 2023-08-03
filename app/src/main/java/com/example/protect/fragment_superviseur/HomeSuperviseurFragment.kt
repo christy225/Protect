@@ -3,6 +3,7 @@ package com.example.protect.fragment_superviseur
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.protect.LoginActivity
 import com.example.protect.R
 import com.example.protect.SuperviseurActivity
 import com.example.protect.adapter.LePointAdapter
@@ -119,6 +121,14 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
                     {
                         libelleDelai.text = "Votre abonnement expire dans " + duree + " jour(s)"
                         card.visibility = View.VISIBLE
+                    }else if(duree < 0){
+                        val builder = AlertDialog.Builder(context)
+                        builder.setTitle("Fin Abonnement")
+                        builder.setMessage("Votre abonnement a expiré.")
+                        builder.show()
+                        auth.signOut()
+                        val intent = Intent(context, LoginActivity::class.java)
+                        startActivity(intent)
                     }
                 }
             }.addOnFailureListener {

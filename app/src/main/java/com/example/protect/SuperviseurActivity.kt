@@ -70,29 +70,13 @@ class SuperviseurActivity : AppCompatActivity() {
                             false
                         }
                     } else if (dureeAutorisee.toLong() < jourEcoules){
-                        val abonnementMap = hashMapOf(
-                            "id" to auth.currentUser?.uid,
-                            "duration" to "-1",
-                            "statut" to false,
-                            "creation" to dateFormatted
-                        )
-                        db.collection("abonnement")
-                            .document(auth.currentUser!!.uid)
-                            .set(abonnementMap)
-                            .addOnSuccessListener {
-                                val builder = AlertDialog.Builder(this)
-                                builder.setTitle("Infos")
-                                builder.setMessage("L'abonnement de ce compte a expiré.")
-                                builder.show()
-                                auth.signOut()
-                                val intent = Intent(this, LoginActivity::class.java)
-                                startActivity(intent)
-                            }.addOnFailureListener {
-                                val builder = AlertDialog.Builder(this)
-                                builder.setTitle("Infos")
-                                builder.setMessage(R.string.onFailureText)
-                                builder.show()
-                            }
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Fin Abonnement")
+                        builder.setMessage("Votre abonnement a expiré")
+                        builder.show()
+                        auth.signOut()
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
                     }
                 }
             }.addOnFailureListener {

@@ -84,26 +84,13 @@ class MainActivity : AppCompatActivity() {
                                         false
                                     }
                                 } else if (dureeAutorisee.toLong() < jourEcoules){
-                                    val abonnementMap = hashMapOf(
-                                        "id" to superviseurId,
-                                        "duration" to "-1",
-                                        "statut" to false,
-                                        "creation" to dateFormatted
-                                    )
-                                    db.collection("abonnement")
-                                        .document(superviseurId)
-                                        .set(abonnementMap)
-                                        .addOnSuccessListener {
-                                            val builder = AlertDialog.Builder(this)
-                                            builder.setTitle("Infos")
-                                            builder.setMessage("Votre abonnement a expiré.")
-                                            builder.show()
-                                            auth.signOut()
-                                            val intent = Intent(this, LoginActivity::class.java)
-                                            startActivity(intent)
-                                        }.addOnFailureListener {
-                                            Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
-                                        }
+                                    val builder = AlertDialog.Builder(this)
+                                    builder.setTitle("Fin Abonnement")
+                                    builder.setMessage("Votre abonnement a expiré")
+                                    builder.show()
+                                    auth.signOut()
+                                    val intent = Intent(this, LoginActivity::class.java)
+                                    startActivity(intent)
                                 }
                             }
                         }.addOnFailureListener {

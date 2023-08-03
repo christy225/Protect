@@ -1,6 +1,7 @@
 package com.example.protect.fragment_assistant
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
+import com.example.protect.LoginActivity
 import com.example.protect.MainActivity
 import com.example.protect.R
 import com.example.protect.fragment_assistant.checkInternet.checkForInternet
@@ -21,8 +23,10 @@ import com.example.protect.models.PointModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class PointFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -96,6 +100,46 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                 for (data in document)
                 {
                     superviseur = data!!.data["superviseur"].toString()
+                    // VERIFIER L'ETAT D'ABONNEMENT
+
+                    db.collection("abonnement")
+                        .whereEqualTo("id", superviseur)
+                        .get()
+                        .addOnSuccessListener {document->
+                            for (data in document)
+                            {
+                                val dureeAutorisee = data!!.data["duration"].toString()
+                                val creation = data!!.data["creation"].toString()
+
+                                // On formate la date de création réçue de la BDD
+                                val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
+                                val date0 = LocalDate.parse(creation, formatter)
+
+                                // On récupère la date du jour
+                                val current = LocalDateTime.now()
+                                val dateFormatted = current.format(formatter)
+                                val date1 = LocalDate.parse(dateFormatted, formatter)
+
+                                val jourEcoules = ChronoUnit.DAYS.between(date0, date1)
+                                val duree = dureeAutorisee.toLong() - jourEcoules
+
+                                // SI ON A ATTEINT LA DUREE AUTORISEE LE COMPTE EST VEROUILLE
+                                if (duree < 0)
+                                {
+                                    val builder = AlertDialog.Builder(context)
+                                    builder.setTitle("Fin Abonnement")
+                                    builder.setMessage("Votre abonnement a expiré. Merci de vous réabonner en contactant nos services.")
+                                    builder.show()
+                                    auth.signOut()
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    startActivity(intent)
+                                }
+                            }
+                        }.addOnFailureListener {
+                            Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
+                        }
+
+                    // VERIFIER L'ETAT D'ABONNEMENT DU SUPERVISEUR
                 }
             }
 
