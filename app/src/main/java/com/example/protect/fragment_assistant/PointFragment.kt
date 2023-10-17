@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
+import com.example.protect.AbonnementActivity
 import com.example.protect.LoginActivity
 import com.example.protect.MainActivity
 import com.example.protect.R
@@ -41,7 +42,8 @@ class PointFragment(private val context: MainActivity) : Fragment() {
     lateinit var pointArrayList: ArrayList<PointModel>
     lateinit var button: AppCompatButton
     lateinit var progressBar: ProgressBar
-    lateinit var superviseur: String
+    lateinit var superviseurId: String
+    lateinit var warning: TextView
     var waveTxt: Int = 0
     var tresorTxt: Int = 0
     var diversTxt: Int = 0
@@ -68,12 +70,14 @@ class PointFragment(private val context: MainActivity) : Fragment() {
         especes = view.findViewById(R.id.point_espece_edt)
         divers = view.findViewById(R.id.point_divers_edt)
         button = view.findViewById(R.id.btn_register_point)
+        warning = view.findViewById(R.id.info_avant_enregistrement)
         progressBar = view.findViewById(R.id.progressBarPoint)
         pointArrayList = arrayListOf()
 
         val info = view.findViewById<TextView>(R.id.info_text_point)
         info.visibility = View.INVISIBLE
         button.visibility = View.VISIBLE
+        warning.visibility = View.VISIBLE
 
 
         val backButton = view.findViewById<ImageView>(R.id.pointbackButton)
@@ -99,11 +103,11 @@ class PointFragment(private val context: MainActivity) : Fragment() {
             .addOnSuccessListener { document->
                 for (data in document)
                 {
-                    superviseur = data!!.data["superviseur"].toString()
+                    superviseurId = data!!.data["superviseur"].toString()
                     // VERIFIER L'ETAT D'ABONNEMENT
 
                     db.collection("abonnement")
-                        .whereEqualTo("id", superviseur)
+                        .whereEqualTo("id", superviseurId)
                         .get()
                         .addOnSuccessListener {document->
                             for (data in document)
@@ -126,13 +130,30 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                                 // SI ON A ATTEINT LA DUREE AUTORISEE LE COMPTE EST VEROUILLE
                                 if (duree < 0)
                                 {
-                                    val builder = AlertDialog.Builder(context)
-                                    builder.setTitle("Fin Abonnement")
-                                    builder.setMessage("Votre abonnement a expiré. Merci de vous réabonner en contactant nos services.")
-                                    builder.show()
-                                    auth.signOut()
-                                    val intent = Intent(context, LoginActivity::class.java)
-                                    startActivity(intent)
+                                    // APPLIQUER EXPIRATION DE L'ABONNEMENT
+
+                                    val abonnementMap = hashMapOf(
+                                        "creation" to creation,
+                                        "duration" to "30",
+                                        "id" to superviseurId,
+                                        "statut" to false
+                                    )
+                                    db.collection("abonnement")
+                                        .document(superviseurId!!)
+                                        .set(abonnementMap)
+                                        .addOnSuccessListener {
+                                            auth.signOut()
+                                            val intent = Intent(context, AbonnementActivity::class.java)
+                                            startActivity(intent)
+                                        }.addOnFailureListener {
+                                            val builder = AlertDialog.Builder(context)
+                                            builder.setTitle("Erreur")
+                                            builder.setMessage("Une erreur s'est produite.")
+                                            builder.show()
+                                        }
+
+                                    // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
+
                                 }
                             }
                         }.addOnFailureListener {
@@ -155,6 +176,7 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                     {
                         info.visibility = View.VISIBLE
                         button.visibility = View.INVISIBLE
+                        warning.visibility = View.INVISIBLE
                     }
                 }
             }
@@ -205,7 +227,7 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                     "divers" to diversTxt.toString(),
                     "especes" to especes.text.toString(),
                     "total" to sum.toString(),
-                    "superviseur" to superviseur,
+                    "superviseur" to superviseurId,
                     "date" to dateFormatted
                 )
                 db.collection("point").add(pointMap).addOnSuccessListener {

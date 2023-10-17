@@ -166,6 +166,7 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
                                             telInput.clear()
                                             progressBar.visibility = View.INVISIBLE
                                             buttonRegister.setText(R.string.register_operation)
+                                            previewImage.setImageResource(0)
                                             buttonRegister.isEnabled = true
                                             Toast.makeText(context, "Enregistré avec succès.", Toast.LENGTH_SHORT).show()
                                         }.addOnFailureListener {

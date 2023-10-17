@@ -184,6 +184,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                                             montantInput.clear()
                                             progressBar.visibility = View.INVISIBLE
                                             buttonRegister.setText(R.string.register_operation)
+                                            previewImage.setImageResource(0)
                                             buttonRegister.isEnabled = true
                                             Toast.makeText(context, "Enregistré avec succès.", Toast.LENGTH_SHORT).show()
                                         }.addOnFailureListener {

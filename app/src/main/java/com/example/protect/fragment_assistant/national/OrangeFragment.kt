@@ -184,6 +184,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                             montantInput.clear()
                                             progressBar.visibility = View.INVISIBLE
                                             buttonRegister.setText(R.string.register_operation)
+                                            previewImage.setImageResource(0)
                                             buttonRegister.isEnabled = true
                                             Toast.makeText(context, "Enregistré avec succès.", Toast.LENGTH_SHORT).show()
                                         }.addOnFailureListener {
@@ -197,7 +198,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                     }
                             }.addOnFailureListener{
                                 val builer = AlertDialog.Builder(context)
-                                builer.setMessage("Erreur pendant le téléchargement de l'image. Veuillez réessayer SVP.")
+                                builer.setMessage("$it")
                                 builer.show()
                             }
                     }else{

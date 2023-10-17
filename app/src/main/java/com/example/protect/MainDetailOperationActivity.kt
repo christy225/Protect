@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.ortiz.touchview.TouchImageView
 
 class MainDetailOperationActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
@@ -34,7 +35,7 @@ class MainDetailOperationActivity : AppCompatActivity() {
         val montantX = findViewById<TextView>(R.id.montantDetailTransactionVw)
         val dateX = findViewById<TextView>(R.id.dateDetailTransactionVw)
         val heureX = findViewById<TextView>(R.id.heureDetailTransactionVw)
-        val previewImage = findViewById<ImageView>(R.id.preview_details_operation)
+        val previewImage = findViewById<TouchImageView>(R.id.preview_details_operation)
         val info = findViewById<TextView>(R.id.text_info_details_operation)
 
         info.visibility = View.INVISIBLE

@@ -70,13 +70,29 @@ class SuperviseurActivity : AppCompatActivity() {
                             false
                         }
                     } else if (dureeAutorisee.toLong() < jourEcoules){
-                        val builder = AlertDialog.Builder(this)
-                        builder.setTitle("Fin Abonnement")
-                        builder.setMessage("Votre abonnement a expiré")
-                        builder.show()
-                        auth.signOut()
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
+                        // APPLIQUER EXPIRATION DE L'ABONNEMENT
+
+                        val abonnementMap = hashMapOf(
+                            "creation" to creation,
+                            "duration" to "30",
+                            "id" to auth.currentUser?.uid,
+                            "statut" to false
+                        )
+                        db.collection("abonnement")
+                            .document(auth.currentUser?.uid!!)
+                            .set(abonnementMap)
+                            .addOnSuccessListener {
+                                auth.signOut()
+                                val intent = Intent(this, AbonnementActivity::class.java)
+                                startActivity(intent)
+                            }.addOnFailureListener {
+                                val builder = AlertDialog.Builder(this)
+                                builder.setTitle("Erreur")
+                                builder.setMessage("Une erreur s'est produite.")
+                                builder.show()
+                            }
+
+                        // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
                     }
                 }
             }.addOnFailureListener {

@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +33,7 @@ class ListAssistantSuperviseurFragment(private val context: SuperviseurActivity)
     lateinit var recyclerView: RecyclerView
     private var assistantArrayList = ArrayList<AccountModel>()
     lateinit var progressBar: ProgressBar
-    lateinit var logout: AppCompatButton
+    lateinit var logout: Button
     @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(

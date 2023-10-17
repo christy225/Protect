@@ -11,26 +11,48 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.protect.fragment_assistant.HomeFragment
 import com.example.protect.fragment_assistant.SearchPhoneFragment
 import com.example.protect.fragment_assistant.checkInternet.checkForInternet
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.ktx.isFlexibleUpdateAllowed
+import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val updateType = AppUpdateType.FLEXIBLE
+
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
     lateinit var bottomNavigationView: BottomNavigationView
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
+        if (updateType == AppUpdateType.FLEXIBLE)
+        {
+            appUpdateManager.registerListener(installStateUpdatedListener)
+        }
+        checkForAppUpdate()
         setContentView(R.layout.activity_main)
 
         db = FirebaseFirestore.getInstance()
@@ -84,13 +106,30 @@ class MainActivity : AppCompatActivity() {
                                         false
                                     }
                                 } else if (dureeAutorisee.toLong() < jourEcoules){
-                                    val builder = AlertDialog.Builder(this)
-                                    builder.setTitle("Fin Abonnement")
-                                    builder.setMessage("Votre abonnement a expiré")
-                                    builder.show()
-                                    auth.signOut()
-                                    val intent = Intent(this, LoginActivity::class.java)
-                                    startActivity(intent)
+
+                                    // APPLIQUER EXPIRATION DE L'ABONNEMENT
+
+                                    val abonnementMap = hashMapOf(
+                                        "creation" to creation,
+                                        "duration" to "30",
+                                        "id" to superviseurId,
+                                        "statut" to false
+                                    )
+                                    db.collection("abonnement")
+                                        .document(superviseurId!!)
+                                        .set(abonnementMap)
+                                        .addOnSuccessListener {
+                                            auth.signOut()
+                                            val intent = Intent(this, AbonnementActivity::class.java)
+                                            startActivity(intent)
+                                        }.addOnFailureListener {
+                                            val builder = AlertDialog.Builder(this)
+                                            builder.setTitle("Erreur")
+                                            builder.setMessage("Une erreur s'est produite.")
+                                            builder.show()
+                                        }
+
+                                    // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
                                 }
                             }
                         }.addOnFailureListener {
@@ -111,6 +150,77 @@ class MainActivity : AppCompatActivity() {
         {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private val installStateUpdatedListener = InstallStateUpdatedListener { state->
+        if (state.installStatus() == InstallStatus.DOWNLOADED)
+        {
+            Toast.makeText(applicationContext,
+                "Mise à jour réussie. L'application va redemarrer dans 5 secondes",
+                Toast.LENGTH_SHORT)
+                .show()
+            lifecycleScope.launch {
+                delay(5.seconds)
+                appUpdateManager.completeUpdate()
+            }
+        }
+    }
+
+    private fun checkForAppUpdate(){
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info->
+            val isUpdateAvaible = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+            val isUpdateAllowed = when(updateType){
+                AppUpdateType.FLEXIBLE -> info.isFlexibleUpdateAllowed
+                AppUpdateType.IMMEDIATE -> info.isImmediateUpdateAllowed
+                else -> false
+            }
+            if (isUpdateAvaible && isUpdateAllowed)
+            {
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    updateType,
+                    this,
+                    123
+                )
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (updateType == AppUpdateType.IMMEDIATE)
+        {
+            appUpdateManager.appUpdateInfo.addOnSuccessListener { info->
+                if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
+                {
+                    appUpdateManager.startUpdateFlowForResult(
+                        info,
+                        updateType,
+                        this,
+                        123
+                    )
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 123)
+        {
+            if (resultCode != RESULT_OK)
+            {
+                Toast.makeText(this, "Une erreur s'est produite pendant la mise à jour", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (updateType == AppUpdateType.FLEXIBLE)
+        {
+            appUpdateManager.unregisterListener(installStateUpdatedListener)
         }
     }
 

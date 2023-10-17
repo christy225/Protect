@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.protect.AbonnementActivity
 import com.example.protect.LoginActivity
 import com.example.protect.MainActivity
 import com.example.protect.popup.MenuPopupAssistant
@@ -151,13 +152,30 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
                                     dayAbonnement.text = duree.toString()
                                     cardAbonnement.visibility = View.VISIBLE
                                 }else if(duree < 0){
-                                    val builder = AlertDialog.Builder(context)
-                                    builder.setTitle("Fin Abonnement")
-                                    builder.setMessage("Votre abonnement a expiré. Merci de vous réabonner en contactant nos services.")
-                                    builder.show()
-                                    auth.signOut()
-                                    val intent = Intent(context, LoginActivity::class.java)
-                                    startActivity(intent)
+
+                                    // APPLIQUER EXPIRATION DE L'ABONNEMENT
+
+                                    val abonnementMap = hashMapOf(
+                                        "creation" to creation,
+                                        "duration" to "30",
+                                        "id" to superviseurId,
+                                        "statut" to false
+                                    )
+                                    db.collection("abonnement")
+                                        .document(superviseurId!!)
+                                        .set(abonnementMap)
+                                        .addOnSuccessListener {
+                                            auth.signOut()
+                                            val intent = Intent(context, AbonnementActivity::class.java)
+                                            startActivity(intent)
+                                        }.addOnFailureListener {
+                                            val builder = AlertDialog.Builder(context)
+                                            builder.setTitle("Erreur")
+                                            builder.setMessage("Une erreur s'est produite.")
+                                            builder.show()
+                                        }
+
+                                    // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
                                 }
                             }
                         }.addOnFailureListener {

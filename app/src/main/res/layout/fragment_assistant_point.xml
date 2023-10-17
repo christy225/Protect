@@ -11,6 +11,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -37,12 +38,12 @@
 
                 <TextView
                     android:id="@+id/textView2"
+                    style="@style/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="30dp"
-                    android:text="Point du jour"
+                    android:text="Comptabilité"
                     android:textColor="@color/black"
-                    style="@style/TitleFont"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -50,18 +51,27 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(Point de la journée)"
+                    android:textColor="#8E8E8E"
+                    app:layout_constraintEnd_toEndOf="@+id/textView2"
+                    app:layout_constraintStart_toStartOf="@+id/textView2"
+                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/textView17"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:text="Opérateurs"
                 android:textColor="#A1A1A1"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
                 app:layout_constraintStart_toStartOf="@+id/cardView5"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
@@ -71,9 +81,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="0dp"
-                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView17">
@@ -82,8 +92,8 @@
                     android:id="@+id/section_form"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginBottom="20dp"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
                     <TextView
@@ -92,12 +102,13 @@
                         android:layout_marginTop="20dp"
                         android:text="Orange Money"
                         android:textStyle="bold" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="43dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardView11"
@@ -119,8 +130,8 @@
                             android:id="@+id/point_orange_edt"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
+                            android:background="@color/white"
                             android:hint="Montant"
                             android:inputType="number"
                             android:paddingStart="30dp"
@@ -136,12 +147,13 @@
                         android:layout_marginTop="10dp"
                         android:text="MTN Money"
                         android:textStyle="bold" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="43dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardView1100"
@@ -163,8 +175,8 @@
                             android:id="@+id/point_mtn_edt"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
+                            android:background="@color/white"
                             android:hint="Montant"
                             android:inputType="number"
                             android:paddingStart="30dp"
@@ -180,12 +192,13 @@
                         android:layout_marginTop="10dp"
                         android:text="MOOV Money"
                         android:textStyle="bold" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="43dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardView112"
@@ -207,8 +220,8 @@
                             android:id="@+id/point_moov_edt"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
+                            android:background="@color/white"
                             android:hint="Montant"
                             android:inputType="number"
                             android:paddingStart="30dp"
@@ -224,12 +237,13 @@
                         android:layout_marginTop="10dp"
                         android:text="WAVE"
                         android:textStyle="bold" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="43dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardView1133"
@@ -251,8 +265,8 @@
                             android:id="@+id/point_wave_edt"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
+                            android:background="@color/white"
                             android:hint="Montant"
                             android:inputType="number"
                             android:paddingStart="30dp"
@@ -268,12 +282,13 @@
                         android:layout_marginTop="10dp"
                         android:text="Trésor Money"
                         android:textStyle="bold" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="43dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardView110"
@@ -295,8 +310,8 @@
                             android:id="@+id/point_tresor_edt"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
+                            android:background="@color/white"
                             android:hint="Montant"
                             android:inputType="number"
                             android:paddingStart="30dp"
@@ -334,11 +349,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView18">
 
                 <LinearLayout
-                    android:padding="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -346,12 +361,13 @@
                         android:layout_marginTop="20dp"
                         android:text="Espèces"
                         android:textStyle="bold" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="43dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardView1144"
@@ -366,19 +382,19 @@
                             <ImageView
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
-                                android:scaleType="centerCrop"
                                 android:background="@color/background_color"
-                                app:tint="@color/black"
                                 android:padding="5dp"
-                                android:src="@drawable/baseline_money_24" />
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/baseline_money_24"
+                                app:tint="@color/black" />
                         </androidx.cardview.widget.CardView>
 
                         <EditText
                             android:id="@+id/point_espece_edt"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
+                            android:background="@color/white"
                             android:hint="Montant"
                             android:inputType="number"
                             android:paddingStart="30dp"
@@ -394,12 +410,13 @@
                         android:layout_marginTop="10dp"
                         android:text="Divers"
                         android:textStyle="bold" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="43dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardView11440"
@@ -414,19 +431,19 @@
                             <ImageView
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
-                                android:scaleType="centerCrop"
                                 android:background="@color/background_color"
-                                app:tint="@color/black"
                                 android:padding="5dp"
-                                android:src="@drawable/baseline_move_up_24" />
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/baseline_move_up_24"
+                                app:tint="@color/black" />
                         </androidx.cardview.widget.CardView>
 
                         <EditText
                             android:id="@+id/point_divers_edt"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
+                            android:background="@color/white"
                             android:hint="Montant"
                             android:inputType="number"
                             android:paddingStart="30dp"
@@ -438,6 +455,16 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/info_avant_enregistrement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="30dp"
+                android:text="@string/info_avant_enregistrement"
+                app:layout_constraintEnd_toEndOf="@+id/cardView9"
+                app:layout_constraintStart_toStartOf="@+id/cardView9"
+                app:layout_constraintTop_toBottomOf="@+id/progressBarPoint" />
 
             <ProgressBar
                 android:id="@+id/progressBarPoint"
@@ -454,13 +481,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginTop="15dp"
+                android:layout_marginBottom="25dp"
                 android:background="@drawable/backgroundgradientbluebutton"
                 android:text="@string/register_operation"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:layout_marginBottom="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/progressBarPoint"
+                app:layout_constraintTop_toBottomOf="@+id/info_avant_enregistrement"
                 tools:layout_editor_absoluteX="15dp" />
 
             <TextView
@@ -470,13 +497,20 @@
                 android:background="@color/white"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="10dp"
+                android:text="@string/info_text_point"
                 android:textColor="@color/color_item_amount"
                 android:textStyle="bold"
-                android:text="@string/info_text_point"
                 app:layout_constraintBottom_toBottomOf="@+id/btn_register_point"
                 app:layout_constraintEnd_toEndOf="@+id/btn_register_point"
                 app:layout_constraintStart_toStartOf="@+id/btn_register_point"
                 app:layout_constraintTop_toTopOf="@+id/btn_register_point" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="20dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 

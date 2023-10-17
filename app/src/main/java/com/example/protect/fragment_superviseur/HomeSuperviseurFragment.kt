@@ -20,6 +20,7 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.protect.AbonnementActivity
 import com.example.protect.LoginActivity
 import com.example.protect.R
 import com.example.protect.SuperviseurActivity
@@ -40,8 +41,6 @@ import java.util.Locale
 class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var capital: TextView
-    lateinit var solde: TextView
     lateinit var resultat: TextView
     lateinit var button: Button
 
@@ -70,8 +69,6 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
-        capital = view.findViewById(R.id.superviseur_point_capital_Vw)
-        solde = view.findViewById(R.id.superviseur_point_solde_Vw)
         resultat = view.findViewById(R.id.superviseur_point_resultat_Vw)
         button = view.findViewById(R.id.superviseur_point_btn_upload)
 
@@ -122,13 +119,29 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
                         libelleDelai.text = "Votre abonnement expire dans " + duree + " jour(s)"
                         card.visibility = View.VISIBLE
                     }else if(duree < 0){
-                        val builder = AlertDialog.Builder(context)
-                        builder.setTitle("Fin Abonnement")
-                        builder.setMessage("Votre abonnement a expiré.")
-                        builder.show()
-                        auth.signOut()
-                        val intent = Intent(context, LoginActivity::class.java)
-                        startActivity(intent)
+                        // APPLIQUER EXPIRATION DE L'ABONNEMENT
+
+                        val abonnementMap = hashMapOf(
+                            "creation" to creation,
+                            "duration" to "30",
+                            "id" to auth.currentUser?.uid,
+                            "statut" to false
+                        )
+                        db.collection("abonnement")
+                            .document(auth.currentUser?.uid!!)
+                            .set(abonnementMap)
+                            .addOnSuccessListener {
+                                auth.signOut()
+                                val intent = Intent(context, AbonnementActivity::class.java)
+                                startActivity(intent)
+                            }.addOnFailureListener {
+                                val builder = AlertDialog.Builder(context)
+                                builder.setTitle("Erreur")
+                                builder.setMessage("Une erreur s'est produite.")
+                                builder.show()
+                            }
+
+                        // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
                     }
                 }
             }.addOnFailureListener {
@@ -276,9 +289,6 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         val verdict = view?.findViewById<TextView>(R.id.superviseur_point_verdict)
 
         val totalCaisse = sum1 - sum
-
-        capital.text = sum1.toString()
-        solde.text = sum.toString()
 
         if (totalCaisse > 0)
         {
