@@ -11,7 +11,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         app:cardElevation="0dp">
 
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="TRANSACTIONS NATIONALES"
+            android:text="TRANSACTIONS \n NATIONALES"
             android:textSize="18sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>

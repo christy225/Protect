@@ -47,6 +47,7 @@
                     android:layout_marginHorizontal="30dp"
                     android:layout_marginTop="30dp"
                     app:boxBackgroundColor="@color/white"
+                    app:startIconDrawable="@drawable/baseline_phone_24"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -64,6 +65,7 @@
                     app:boxBackgroundColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/baseline_lock_24"
                     app:passwordToggleEnabled="true">
 
                     <EditText

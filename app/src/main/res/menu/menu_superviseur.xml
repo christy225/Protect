@@ -5,10 +5,6 @@
         android:title="Accueil"
         android:icon="@drawable/baseline_home_24"/>
     <item
-        android:id="@+id/capitalMenuSuperviseur"
-        android:icon="@drawable/baseline_assured_workload_24"
-        android:title="Capital"/>
-    <item
         android:id="@+id/listAssistantMenuSuperviseur"
         android:icon="@drawable/baseline_settings_24"
         android:title="Configuration"/>

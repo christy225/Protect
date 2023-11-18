@@ -16,141 +16,144 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@drawable/backgroundgradientsuperviseur"
+                android:layout_height="150dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <ImageView
+                    android:id="@+id/backToHomeSuperviseur"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/baseline_keyboard_backspace_24"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/affiche_delai"
-                    app:cardElevation="20dp"
-                    app:cardCornerRadius="20dp"
-                    android:layout_marginTop="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    android:layout_marginEnd="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:id="@+id/libelle_delai"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp"
-                        android:textStyle="bold"
                         android:layout_marginHorizontal="20dp"
-                        android:textColor="@color/color_item_amount" />
+                        android:layout_marginVertical="5dp"
+                        android:textColor="@color/color_item_amount"
+                        android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/linkToCapital"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Capital"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#108BED"
+                app:layout_constraintBottom_toBottomOf="@+id/nom_assistant"
+                app:layout_constraintEnd_toEndOf="@+id/cardView7"
+                app:layout_constraintTop_toTopOf="@+id/nom_assistant" />
+
+            <TextView
+                android:id="@+id/nom_assistant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                style="@style/TitleFont"
+                android:layout_marginTop="65dp"
+                app:layout_constraintStart_toStartOf="@+id/cardView7"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="nom assistant" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
+                android:layout_marginHorizontal="15dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
-                android:layout_marginTop="70dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/nom_assistant">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <Button
+                        android:id="@+id/superviseur_point_btn_upload"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:padding="20dp">
+                        android:layout_marginEnd="15dp"
+                        android:backgroundTint="#FF9800"
+                        android:paddingHorizontal="15dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="Point du jour"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardView0001"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardCornerRadius="50dp"
-                            app:cardElevation="20dp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                    <TextView
+                        android:id="@+id/superviseur_point_resultat_Vw"
+                        style="@style/TitleFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="15dp"
+                        android:text="-"
+                        android:textColor="#FF9800"
+                        android:textSize="27sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                            <ImageView
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:layout_margin="5dp"
-                                android:src="@drawable/baseline_person_24" />
-                        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/superviseur_point_verdict"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:text="Résultat"
+                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        app:layout_constraintBottom_toTopOf="@+id/textView25"
+                        app:layout_constraintStart_toStartOf="@+id/superviseur_point_resultat_Vw"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <Button
-                            android:id="@+id/superviseur_point_btn_upload"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginHorizontal="15dp"
-                            android:layout_marginTop="20dp"
-                            android:backgroundTint="#FF9800"
-                            android:paddingHorizontal="15dp"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:text="Afficher Point du jour"
-                            android:textAllCaps="false"
-                            android:textColor="@color/white"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/cardView0001" />
+                    <TextView
+                        android:id="@+id/textView25"
+                        style="@style/TitleFont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FCFA"
+                        android:textColor="#FF9800"
+                        android:textSize="27sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/superviseur_point_resultat_Vw"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                        <LinearLayout
-                            android:id="@+id/linearLayout4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginTop="15dp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/superviseur_point_btn_upload">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:id="@+id/superviseur_point_resultat_Vw"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:text="Résultat"
-                                    android:textColor="#FF9800"
-                                    android:textSize="21sp"
-                                    android:textStyle="bold"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-                                <TextView
-                                    android:id="@+id/superviseur_point_verdict"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="5dp"
-                                    android:text="Résultat"
-                                    android:textStyle="bold"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@+id/superviseur_point_resultat_Vw" />
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-                        </LinearLayout>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView

@@ -2,8 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
         android:allowBackup="true"
@@ -16,23 +22,37 @@
         android:theme="@style/Theme.Protect"
         tools:targetApi="31">
         <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
+            android:name=".UpdatePasswordActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
             android:name=".AbonnementActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_abonnement"
             android:theme="@style/Theme.Protect" />
         <activity
             android:name=".SuperviseurDetailPointActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Protect" />
         <activity
             android:name=".MainDetailOperationActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Protect" />
         <activity
             android:name=".SuperviseurActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
+
         <activity
-            android:name=".LoginActivity"
+            android:name=".LoaderLoginActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,8 +60,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
     </application>
 

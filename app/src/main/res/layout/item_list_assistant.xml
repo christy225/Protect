@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:layout_marginVertical="5dp"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/textView15"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nom Complet" />

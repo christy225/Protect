@@ -18,7 +18,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -28,44 +28,47 @@
                     android:id="@+id/cardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
                     app:cardCornerRadius="50dp"
                     app:cardElevation="0dp"
-                    android:layout_marginHorizontal="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView2"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView2">
+                    app:layout_constraintTop_toTopOf="@+id/btnCancelOperationMoneygram">
 
                     <ImageView
                         android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_height="56dp"
                         android:src="@drawable/moneygram" />
                 </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/btnCancelOperationMoneygram"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Annuler"
+                    android:textStyle="bold"
+                    android:textColor="#038DF6"
+                    app:layout_constraintStart_toStartOf="@+id/textView2"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView2"
                     style="@style/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/international_moneygram"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_marginVertical="25dp"
+                    android:layout_marginVertical="10dp"
+                    android:text="@string/international_moneygram"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="40dp"
-                    android:text="@string/national_advice"
-                    android:textSize="13sp"
-                    app:layout_constraintStart_toStartOf="@+id/textView2"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                    app:layout_constraintTop_toBottomOf="@+id/btnCancelOperationMoneygram" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginTop="120dp"
+                android:layout_marginTop="100dp"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -187,6 +190,95 @@
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginTop="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <CheckBox
+                            android:id="@+id/checkBoxMoneygram"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ajouter une image"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/checkBoxMoneygram"
+                            app:layout_constraintStart_toEndOf="@+id/checkBoxMoneygram"
+                            app:layout_constraintTop_toTopOf="@+id/checkBoxMoneygram" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/section_upload_input_moneygram"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        app:cardElevation="0dp"
+                        tools:layout_editor_absoluteX="15dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <Button
+                                    android:id="@+id/uploadPhotoMoneyGram"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Prendre un photo"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/card_transac"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="28dp"
+                                    android:layout_marginBottom="20dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="10dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/uploadPhotoMoneyGram">
+
+                                    <ImageView
+                                        android:id="@+id/image_preview_moneygram"
+                                        android:layout_width="250dp"
+                                        android:layout_height="150dp"
+                                        android:layout_gravity="center"
+                                        android:background="@drawable/background_square"
+                                        android:scaleType="centerCrop" />
+                                </androidx.cardview.widget.CardView>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_register_input_moneygram"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:paddingHorizontal="15dp"
+                        android:background="@drawable/backgroundgradientinternationalbutton"
+                        android:text="@string/register_operation"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
                     <ProgressBar
                         android:id="@+id/progressBar_input_moneygram"
                         android:layout_width="30dp"
@@ -197,143 +289,53 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <CheckBox
-                android:id="@+id/checkBoxMoneygram"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@+id/cardView5"
-                app:layout_constraintTop_toBottomOf="@+id/cardView5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ajouter une image"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:layout_marginTop="14dp"
-                app:layout_constraintStart_toEndOf="@+id/checkBoxMoneygram"
-                app:layout_constraintTop_toBottomOf="@+id/cardView5" />
+        <LinearLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_register_input_moneygram">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/section_upload_input_moneygram"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                app:cardElevation="0dp"
-                app:layout_constraintTop_toBottomOf="@+id/checkBoxMoneygram"
-                tools:layout_editor_absoluteX="15dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/button_upload_image_moneygram_transaction"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:layout_marginBottom="15dp"
-                            android:background="@drawable/background_circular"
-                            android:drawableLeft="@drawable/baseline_camera_alt_24"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:text="Prendre une photo"
-                            android:textAllCaps="false"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/card_transac" />
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/card_transac"
-                            android:layout_margin="10dp"
-                            app:cardCornerRadius="10dp"
-                            app:cardElevation="10dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                            <ImageView
-                                android:id="@+id/image_preview_moneygram"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center"
-                                android:background="@drawable/background_square"
-                                android:scaleType="centerCrop" />
-                        </androidx.cardview.widget.CardView>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_register_input_moneygram"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:paddingHorizontal="15dp"
-                android:background="@drawable/backgroundgradientinternationalbutton"
-                android:text="@string/register_operation"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/section_upload_input_moneygram"/>
-
-            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_register_input_moneygram">
+                android:layout_margin="15dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="10dp">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="10dp">
+                <ImageView
+                    android:id="@+id/assistant_link1_moneygram"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/western" />
+            </androidx.cardview.widget.CardView>
 
-                    <ImageView
-                        android:id="@+id/assistant_link1_moneygram"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/western" />
-                </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="10dp">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="10dp">
+                <ImageView
+                    android:id="@+id/assistant_link2_moneygram"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ria" />
+            </androidx.cardview.widget.CardView>
 
-                    <ImageView
-                        android:id="@+id/assistant_link2_moneygram"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ria" />
-                </androidx.cardview.widget.CardView>
-
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
 </ScrollView>
+

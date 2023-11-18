@@ -19,27 +19,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="@string/search_date_phone_list_title"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/date_page_link"
         app:layout_constraintStart_toStartOf="@+id/searchView"
-        app:layout_constraintTop_toTopOf="@+id/date_page_link" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/date_page_link"
-        android:layout_width="wrap_content"
-        android:layout_height="25dp"
-        android:textStyle="bold"
-        android:text="@string/search_date_phone_linkTo_date_search"
-        android:textAllCaps="false"
-        android:textSize="12sp"
-        android:textColor="#0167FF"
-        android:paddingHorizontal="15dp"
-        android:background="@drawable/backgroundallwhite"
-        android:layout_marginTop="15dp"
-        app:layout_constraintEnd_toEndOf="@+id/searchView"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -47,10 +33,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/gray_color_border"
+        android:layout_marginTop="10dp"
         android:padding="10dp"
-        android:layout_marginTop="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_page_link" />
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
