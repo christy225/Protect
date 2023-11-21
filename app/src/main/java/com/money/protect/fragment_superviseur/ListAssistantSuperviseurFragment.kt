@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.UpdatePasswordActivity
+import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 
 class ListAssistantSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -44,6 +45,11 @@ class ListAssistantSuperviseurFragment(private val context: SuperviseurActivity)
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_superviseur_list_assistant, container, false)
+
+        if (!checkForInternet(context)) {
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
+
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 

@@ -24,7 +24,7 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n", "ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_superviseur_detail_point)
 
         db = FirebaseFirestore.getInstance()
@@ -92,12 +92,12 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
                     }else if(res > 0) {
                         resultat.text = "Perte : $res"
                     }else{
-                        resultat.text = "Point OK"
+                        resultat.text = "COMPTE OK"
                     }
                 }
             }.addOnFailureListener {
                 val builder = AlertDialog.Builder(this)
-                builder.setMessage("Une erreur s'est produite. Rééssayez plus tard")
+                builder.setMessage("Une erreur s'est produite")
                 builder.show()
             }
 

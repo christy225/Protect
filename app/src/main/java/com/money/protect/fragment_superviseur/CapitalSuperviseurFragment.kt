@@ -2,6 +2,7 @@ package com.money.protect.fragment_superviseur
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.money.protect.R
@@ -21,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 
 class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -30,6 +33,7 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
     lateinit var montant: EditText
     lateinit var button: AppCompatButton
     lateinit var progressBar: ProgressBar
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,16 +118,17 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
             }
 
         button.setOnClickListener {
-            if (montant.text.isEmpty())
-            {
+            if (checkForInternet(context)) {
+            if (montant.text.isEmpty()) {
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("Veuillez entrer le montant du capital SVP.")
                 builder.show()
-            }else{
+            } else {
 
                 // ON RECUPERE LA NOUVELLE VALEUR DU CAPITAL AVANT L'ENVOI EN BASE DE DONNEES
 
-                val nouvelleValeurCapital = montant.text.toString().toInt() + valeurAcuelleCapital.text.toString().toInt()
+                val nouvelleValeurCapital =
+                    montant.text.toString().toInt() + valeurAcuelleCapital.text.toString().toInt()
 
                 button.isEnabled = false
                 progressBar.visibility = View.VISIBLE
@@ -147,6 +152,9 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
                         progressBar.visibility = View.INVISIBLE
                         button.isEnabled = true
                     }
+            }
+        }else{
+                Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
             }
         }
         return view

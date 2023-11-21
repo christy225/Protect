@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageButton
@@ -44,7 +43,7 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_search_date, container, false)
         if (!checkForInternet(context)) {
-            Toast.makeText(context, "Impossible de se connecter à internet", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
         }
 
         db = FirebaseFirestore.getInstance()

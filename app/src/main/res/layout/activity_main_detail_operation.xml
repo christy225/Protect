@@ -262,7 +262,7 @@
                         android:layout_height="wrap_content">
 
                         <Button
-                            android:id="@+id/affiche_image"
+                            android:id="@+id/affiche_image_DetailTransactionVw"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -272,12 +272,12 @@
                             android:textStyle="bold"
                             android:backgroundTint="@color/white"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/text_info_details_operation"
-                            app:layout_constraintStart_toStartOf="@+id/text_info_details_operation"
+                            app:layout_constraintEnd_toEndOf="@+id/text_info_DetailTransactionVw"
+                            app:layout_constraintStart_toStartOf="@+id/text_info_DetailTransactionVw"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:id="@+id/text_info_details_operation"
+                            android:id="@+id/text_info_DetailTransactionVw"
                             android:layout_width="229dp"
                             android:layout_height="49dp"
                             android:layout_gravity="center"

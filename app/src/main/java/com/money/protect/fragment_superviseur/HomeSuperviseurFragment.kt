@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -66,6 +67,10 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_superviseur_home, container, false)
+
+        if (!checkForInternet(context)) {
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
 
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()

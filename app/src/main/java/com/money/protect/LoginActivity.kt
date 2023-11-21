@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
-import com.money.protect.repository.AssistantRepository.singleton.query
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -21,10 +20,11 @@ import com.google.firebase.ktx.Firebase
 class LoginActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
@@ -59,7 +59,6 @@ class LoginActivity : AppCompatActivity() {
                                             button.setText(R.string.login_button_default_text)
                                         }else{
                                             val builder = AlertDialog.Builder(this)
-                                            builder.setTitle("Infos")
                                             builder.setMessage("Votre abonnement a expiré.")
                                             builder.show()
                                             button.isEnabled = true
@@ -74,7 +73,6 @@ class LoginActivity : AppCompatActivity() {
                                             button.setText(R.string.login_button_default_text)
                                         }else{
                                             val builder = AlertDialog.Builder(this)
-                                            builder.setTitle("Infos")
                                             builder.setMessage("Votre compte a été désactivé par votre superviseur.")
                                             builder.show()
                                             button.isEnabled = true
@@ -83,27 +81,27 @@ class LoginActivity : AppCompatActivity() {
                                     }
                                 }
                             }.addOnFailureListener {
-                                Toast.makeText(this, "Veuilez vérifier votre connexion internet.", Toast.LENGTH_SHORT).show()
+                                val builder = AlertDialog.Builder(this)
+                                builder.setMessage("Une erreur s'est produite")
+                                builder.show()
                                 button.isEnabled = true
                                 button.setText(R.string.login_button_default_text)
                             }
                     }.addOnFailureListener {
                         val builder = AlertDialog.Builder(this)
-                        builder.setTitle("Erreur")
-                        builder.setMessage("Mauvais identifiants. Veuillez réessayer")
+                        builder.setMessage("Identifiants incorrects")
                         builder.show()
                         button.isEnabled = true
                         button.setText(R.string.login_button_default_text)
                     }
                 }else{
                     val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Alerte")
                     builder.setMessage("Veuillez saisir tous les champs SVP")
                     builder.show()
                     button.isEnabled = true
                 }
             }else{
-                Toast.makeText(this, "Impossible de se connecter à internet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
             }
         }
 

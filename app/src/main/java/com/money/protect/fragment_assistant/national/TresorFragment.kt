@@ -39,8 +39,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.money.protect.fragment_assistant.HomeFragment
+import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class TresorFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -54,6 +56,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
     lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
     lateinit var sectionUpload: CardView
+
+    private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
     lateinit var uri: Uri
@@ -84,6 +88,24 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister = view.findViewById(R.id.btn_register_input_tresor)
         progressBar = view.findViewById(R.id.progressBar_input_tresor)
+
+        // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
+        textWatcher = object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                //
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                //
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                this@TresorFragment.formatEditext(s)
+            }
+
+        }
+
+        textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_tresor)
         val link2 = view.findViewById<ImageView>(R.id.assistant_link2_tresor)
@@ -173,7 +195,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                 // Après que le texte a changé
 
                 // Vérifier si la longueur du texte est supérieure à la limite
-                val maxLength = 8
+                val maxLength = 10
                 if (editable.length > maxLength) {
                     // Supprimer les caractères excédentaires
                     editable.delete(maxLength, editable.length)
@@ -246,6 +268,11 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                     val builder = AlertDialog.Builder(context)
                     builder.setTitle("Alerte")
                     builder.setMessage("Veuillez saisir tous les champs SVP.")
+                    builder.show()
+
+                }else if(textTelephone.text.length < 10){
+                    val builder = AlertDialog.Builder(context)
+                    builder.setMessage("Ce numéro ne comporte pas les 10 chiffres requis")
                     builder.show()
 
                 }else{
@@ -375,10 +402,28 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
 
                 }
             }else{
-                Toast.makeText(context, "Impossible de se connecter à internet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
             }
         }
         return view
+    }
+
+    // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
+    private fun formatEditext(s: Editable?) {
+        if (!s.isNullOrBlank())
+        {
+            val originalText = s.toString().replace(",","")
+            val number = originalText.toBigDecimalOrNull()
+
+            if (number != null)
+            {
+                val formattedText = NumberFormat.getNumberInstance(Locale.US).format(number)
+                textMontant.removeTextChangedListener(textWatcher)
+                textMontant.setText(formattedText)
+                textMontant.setSelection(formattedText.length)
+                textMontant.addTextChangedListener(textWatcher)
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")

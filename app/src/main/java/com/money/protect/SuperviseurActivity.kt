@@ -30,7 +30,7 @@ class SuperviseurActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_superviseur)
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
@@ -90,7 +90,6 @@ class SuperviseurActivity : AppCompatActivity() {
                                 startActivity(intent)
                             }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(this)
-                                builder.setTitle("Erreur")
                                 builder.setMessage("Une erreur s'est produite.")
                                 builder.show()
                             }
@@ -99,7 +98,9 @@ class SuperviseurActivity : AppCompatActivity() {
                     }
                 }
             }.addOnFailureListener {
-                Toast.makeText(this, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Une erreur s'est produite.")
+                builder.show()
             }
 
         // VERIFIER L'ETAT D'ABONNEMENT DU SUPERVISEUR

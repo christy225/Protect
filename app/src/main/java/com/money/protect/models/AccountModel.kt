@@ -8,6 +8,7 @@ data class AccountModel(
     val telephone: String = "",
     val role: String = "",
     var statut: Boolean = false,
+    val module: String = "",
     val nomcommercial: String = "",
     val ville: String = "",
     val quartier: String = "",

@@ -18,10 +18,10 @@ class UpdatePasswordActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_update_password)
 
-        val buttonUpdate = findViewById<Button>(R.id.buttonUpdatePassword)
+        val buttonUpdate = findViewById<Button>(R.id.buttonUpdated)
 
         auth = FirebaseAuth.getInstance()
         buttonUpdate.isEnabled = true
@@ -57,13 +57,13 @@ class UpdatePasswordActivity : AppCompatActivity() {
                                     startActivity(intent)
                                 }else{
                                     val builder = AlertDialog.Builder(this)
-                                    builder.setMessage("Une erreur s'est produite. Veuillez rééssayer")
+                                    builder.setMessage("Une erreur s'est produite")
                                     builder.show()
                                 }
                             }
                     }else{
                         val builder = AlertDialog.Builder(this)
-                        builder.setMessage("Impossible de modifier le mot de passe. Rééssayez plus tard")
+                        builder.setMessage("Le mot de passe n'a pas pu être modifié. Rééssayez plus tard")
                         builder.show()
                     }
                 }

@@ -42,7 +42,7 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         if (!checkForInternet(context)) {
-            Toast.makeText(context, "Impossible de se connecter à internet", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
         }
 
         val dayAbonnement = view.findViewById<TextView>(R.id.assistant_settings_nbJours_abonnement)

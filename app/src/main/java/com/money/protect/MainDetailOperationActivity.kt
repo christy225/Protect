@@ -21,18 +21,18 @@ class MainDetailOperationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_main_detail_operation)
-
-        val buttonBack = findViewById<ImageView>(R.id.backButtonDetailtransactionVw)
         auth = FirebaseAuth.getInstance()
 
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+
+        val buttonBack = findViewById<ImageView>(R.id.backButtonDetailtransactionVw)
 
         buttonBack.setOnClickListener {
             finish()
         }
 
         intents = intent
-        val textAfficher = findViewById<TextView>(R.id.affiche_image)
+        val textAfficher = findViewById<TextView>(R.id.affiche_image_DetailTransactionVw)
 
         val operateurX = findViewById<TextView>(R.id.operateurDetailTransactionVw)
         val telX = findViewById<TextView>(R.id.phoneDetailTransactionVw)
@@ -40,8 +40,7 @@ class MainDetailOperationActivity : AppCompatActivity() {
         val montantX = findViewById<TextView>(R.id.montantDetailTransactionVw)
         val dateX = findViewById<TextView>(R.id.dateDetailTransactionVw)
         val heureX = findViewById<TextView>(R.id.heureDetailTransactionVw)
-        // val previewImage = findViewById<TouchImageView>(R.id.preview_details_operation)
-        val info = findViewById<TextView>(R.id.text_info_details_operation)
+        val info = findViewById<TextView>(R.id.text_info_DetailTransactionVw)
 
         info.visibility = View.INVISIBLE
 
@@ -59,8 +58,6 @@ class MainDetailOperationActivity : AppCompatActivity() {
         montantX.text = montant
         dateX.text = date
         heureX.text = heure
-
-        lienUrl()
 
         if (url == "null")
         {

@@ -53,7 +53,9 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
         appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
         if (updateType == AppUpdateType.FLEXIBLE)
         {
@@ -67,14 +69,13 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        // Vérifier si la permission est déjà accordée
+        // Vérifier si la permission appel est déjà accordée
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
             // La permission est déjà accordée, vous pouvez effectuer des appels ici
         } else {
             // La permission n'est pas accordée, demandez-la à l'utilisateur
             requestCallPermission()
         }
-
 
         // RECHERCHER LE COMPTE ASSISTANT POUR RECUPERER L'ID SUPERVISEUR
 
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     db.collection("abonnement")
                         .whereEqualTo("id", superviseurId)
                         .get()
-                        .addOnSuccessListener {document->
+                        .addOnSuccessListener { document->
                             for (data in document)
                             {
                                 val dureeAutorisee = data!!.data["duration"].toString()
@@ -136,11 +137,10 @@ class MainActivity : AppCompatActivity() {
                                         .set(abonnementMap)
                                         .addOnSuccessListener {
                                             auth.signOut()
-                                            val intent = Intent(this, com.money.protect.AbonnementActivity::class.java)
+                                            val intent = Intent(this, AbonnementActivity::class.java)
                                             startActivity(intent)
                                         }.addOnFailureListener {
                                             val builder = AlertDialog.Builder(this)
-                                            builder.setTitle("Erreur")
                                             builder.setMessage("Une erreur s'est produite.")
                                             builder.show()
                                         }
@@ -149,13 +149,17 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }.addOnFailureListener {
-                            Toast.makeText(this, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                            val builder = AlertDialog.Builder(this)
+                            builder.setMessage("Une erreur s'est produite.")
+                            builder.show()
                         }
 
                     // VERIFIER L'ETAT D'ABONNEMENT DU SUPERVISEUR
                 }
             }.addOnFailureListener {
-                Toast.makeText(this, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Une erreur s'est produite.")
+                builder.show()
             }
 
     }

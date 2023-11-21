@@ -2,6 +2,7 @@ package com.money.protect.fragment_assistant
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import com.money.protect.MainActivity
 import com.money.protect.R
 import com.money.protect.adapter.OperationAdapter
+import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.models.TransactionModel
 import java.util.ArrayList
 
@@ -27,6 +30,7 @@ class AmountFragment(private val context: MainActivity) : Fragment() {
     lateinit var adapter: OperationAdapter
     lateinit var recyclerView: RecyclerView
     lateinit var resultArrayList: ArrayList<TransactionModel>
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +38,10 @@ class AmountFragment(private val context: MainActivity) : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_search_amount, container, false)
+
+        if (!checkForInternet(context)) {
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
 
         db = FirebaseFirestore.getInstance()
         searchView = view.findViewById(R.id.searchAmount)

@@ -2,9 +2,7 @@ package com.money.protect.fragment_assistant
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -19,7 +17,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -56,6 +53,7 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
     lateinit var recyclerView: RecyclerView
     lateinit var progressBar: ProgressBar
     lateinit var infoFailedRetrieveData: TextView
+    
 
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -67,10 +65,12 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_assistant_home, container, false)
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
+
         if (!checkForInternet(context)) {
-            Toast.makeText(context, "Impossible de se connecter à internet", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
         }
 
+        var module = "null"
 
         nomCom = view.findViewById(R.id.assistant_home_nomCommercial)
         internationalLink = view.findViewById(R.id.assistant_home_internationLink)
@@ -90,7 +90,6 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
         transactionArrayList = arrayListOf()
 
         progressBar.visibility = View.VISIBLE
-
 
         // Appeler la fonction pour afficher le message après 10 secondes
 
@@ -115,23 +114,17 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
         internationalLink.setOnClickListener {
             MenuPopupAssistantInter(context).show()
         }
-        comptabiliteLink.setOnClickListener {
-            context.supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, PointFragment(context))
-                .addToBackStack(null)
-                .commit()
-        }
 
         // RECHERCHER LE SUPERVISEUR POUR L'ABONNEMENT
 
         db.collection("account")
             .whereEqualTo("id", auth.currentUser?.uid)
             .get()
-            .addOnSuccessListener {document->
+            .addOnSuccessListener { document->
                 for (data in document)
                 {
                     val superviseurId = data!!.data["superviseur"].toString()
+                    module = data!!.data["module"].toString()
 
                     // VERIFIER L'ETAT D'ABONNEMENT
 
@@ -205,6 +198,28 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
         val dateFormatted = current.format(formatter)
+
+        comptabiliteLink.setOnClickListener {
+            if (module == "N")
+            {
+                context.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, PointFragmentNational(context))
+                    .addToBackStack(null)
+                    .commit()
+            }
+            if (module == "NI"){
+                context.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, PointFragment(context))
+                    .addToBackStack(null)
+                    .commit()
+            }
+            if (module == "I"){
+                context.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, PointFragmentInternational(context))
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
 
        db.collection("operation")
            .orderBy("heure", Query.Direction.DESCENDING)

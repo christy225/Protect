@@ -12,21 +12,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.money.protect.repository.AssistantRepository
 
 class LoaderLoginActivity : AppCompatActivity() {
     lateinit var auth : FirebaseAuth
-    lateinit var loader: ProgressBar
+    private lateinit var loader: ProgressBar
     private var db = Firebase.firestore
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_loader_login)
         auth = FirebaseAuth.getInstance()
-        loader = findViewById(R.id.progressBar_loader_login)
-
         db = FirebaseFirestore.getInstance()
+        loader = findViewById(R.id.progressBar_loader_login)
 
     }
 
@@ -54,8 +52,7 @@ class LoaderLoginActivity : AppCompatActivity() {
                     }
                 }.addOnFailureListener {
                     val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Erreur")
-                    builder.setMessage("$it")
+                    builder.setMessage("Une erreur s'est produite")
                     builder.show()
                 }
         }else{

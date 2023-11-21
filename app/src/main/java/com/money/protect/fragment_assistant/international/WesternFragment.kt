@@ -155,6 +155,10 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
                     builder.setTitle("Alerte")
                     builder.setMessage("Veuillez saisir tous les champs SVP.")
                     builder.show()
+                }else if(textTelephone.text.length < 10){
+                    val builder = AlertDialog.Builder(context)
+                    builder.setMessage("Ce numéro ne comporte pas les 10 chiffres requis")
+                    builder.show()
                 }else{
                     progressBar.visibility = View.VISIBLE
                     buttonRegister.isEnabled = false
@@ -251,7 +255,7 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
 
                 }
             }else{
-                Toast.makeText(context, "Impossible de se connecter à internet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
             }
         }
         return view

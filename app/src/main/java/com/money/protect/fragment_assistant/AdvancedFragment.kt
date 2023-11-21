@@ -3,6 +3,7 @@ package com.money.protect.fragment_assistant
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,6 +22,7 @@ import com.google.firebase.ktx.Firebase
 import com.money.protect.MainActivity
 import com.money.protect.R
 import com.money.protect.adapter.OperationAdapter
+import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.models.TransactionModel
 import java.util.Calendar
 import java.util.Locale
@@ -33,6 +36,7 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
     lateinit var transactionArrayList: ArrayList<TransactionModel>
     lateinit var adapter: OperationAdapter
     lateinit var button: Button
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +44,10 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_advanced, container, false)
+
+        if (!checkForInternet(context)) {
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
 
         db = FirebaseFirestore.getInstance()
 

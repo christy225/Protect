@@ -21,6 +21,7 @@ import com.money.protect.AbonnementActivity
 import com.money.protect.R
 import com.money.protect.SuperviseurActivity
 import com.money.protect.adapter.AssistantListAdapterHome
+import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.models.AccountModel
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,6 +40,11 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_superviseur_list_assistant_home, container, false)
+
+        if (!checkForInternet(context)) {
+            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewListAssiatntHome)
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()

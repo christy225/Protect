@@ -1,12 +1,12 @@
 package com.money.protect.fragment_assistant
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,49 +17,42 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
+import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.money.protect.AbonnementActivity
 import com.money.protect.MainActivity
 import com.money.protect.R
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.models.PointModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-class PointFragment(private val context: MainActivity) : Fragment() {
+class PointFragmentInternational(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var orange: EditText
-    lateinit var mtn: EditText
-    lateinit var moov: EditText
-    lateinit var wave: EditText
-    lateinit var tresor: EditText
     lateinit var retraitInter: EditText
     lateinit var envoiInter: EditText
-    lateinit var especes: EditText
-    lateinit var divers: EditText
     lateinit var pointArrayList: ArrayList<PointModel>
     lateinit var button: AppCompatButton
     lateinit var progressBar: ProgressBar
     lateinit var superviseurId: String
     lateinit var warning: TextView
-    var moovTxt: Int = 0
-    var waveTxt: Int = 0
-    var tresorTxt: Int = 0
-    var diversTxt: Int = 0
-    var retraitTxt: Int = 0
+    lateinit var especes: EditText
+    lateinit var divers: EditText
     var envoiTxt: Int = 0
-
-    @RequiresApi(Build.VERSION_CODES.O)
+    var diversTxt: Int = 0
+    @SuppressLint("MissingInflatedId")
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_assistant_point, container, false)
+        val view = inflater.inflate(R.layout.fragment_assistant_point_international, container, false)
         auth = FirebaseAuth.getInstance()
 
         if (!checkForInternet(context)) {
@@ -67,21 +60,16 @@ class PointFragment(private val context: MainActivity) : Fragment() {
         }
 
         // Récupère les données émises par l'utilisateur
-        orange = view.findViewById(R.id.point_orange_edt)
-        mtn = view.findViewById(R.id.point_mtn_edt)
-        moov = view.findViewById(R.id.point_moov_edt)
-        wave = view.findViewById(R.id.point_wave_edt)
-        tresor = view.findViewById(R.id.point_tresor_edt)
-        especes = view.findViewById(R.id.point_espece_edt)
-        divers = view.findViewById(R.id.point_divers_edt)
         retraitInter = view.findViewById(R.id.point_retrait_international_edt)
         envoiInter = view.findViewById(R.id.point_envoi_international_edt)
-        button = view.findViewById(R.id.btn_register_point)
-        warning = view.findViewById(R.id.info_avant_enregistrement)
-        progressBar = view.findViewById(R.id.progressBarPoint)
+        especes = view.findViewById(R.id.point_inter_espece_edt)
+        divers = view.findViewById(R.id.point_inter_divers_edt)
+        button = view.findViewById(R.id.btn_register_point_international)
+        warning = view.findViewById(R.id.info_avant_enregistrement_international)
+        progressBar = view.findViewById(R.id.progressBarPoint_international)
         pointArrayList = arrayListOf()
 
-        val info = view.findViewById<TextView>(R.id.info_text_point)
+        val info = view.findViewById<TextView>(R.id.info_text_point_international)
 
         info.visibility = View.INVISIBLE
         button.visibility = View.VISIBLE
@@ -108,18 +96,13 @@ class PointFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
-        orange.addTextChangedListener(formatLimitation)
-        mtn.addTextChangedListener(formatLimitation)
-        moov.addTextChangedListener(formatLimitation)
-        wave.addTextChangedListener(formatLimitation)
-        tresor.addTextChangedListener(formatLimitation)
-        envoiInter.addTextChangedListener(formatLimitation)
         retraitInter.addTextChangedListener(formatLimitation)
+        envoiInter.addTextChangedListener(formatLimitation)
         especes.addTextChangedListener(formatLimitation)
         divers.addTextChangedListener(formatLimitation)
 
 
-        val backButton = view.findViewById<ImageView>(R.id.pointbackButton)
+        val backButton = view.findViewById<ImageView>(R.id.pointbackButtonInternational)
         backButton.setOnClickListener {
             context.supportFragmentManager
                 .beginTransaction()
@@ -183,7 +166,7 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                                         .set(abonnementMap)
                                         .addOnSuccessListener {
                                             auth.signOut()
-                                            val intent = Intent(context, com.money.protect.AbonnementActivity::class.java)
+                                            val intent = Intent(context, AbonnementActivity::class.java)
                                             startActivity(intent)
                                         }.addOnFailureListener {
                                             val builder = AlertDialog.Builder(context)
@@ -224,11 +207,11 @@ class PointFragment(private val context: MainActivity) : Fragment() {
         button.setOnClickListener {
 
             // SI IL N'YA PAS ENCORE EU DE POINT CE JOUR ALORS ON VERIFIE QUE TOUS LES CHAMPS OBLIGATOIRES SONT REMPLIS
-            if (orange.text.isEmpty() || mtn.text.isEmpty() || moov.text.isEmpty()|| especes.text.isEmpty())
+            if (retraitInter.text.isEmpty() || especes.text.isEmpty())
             {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Infos")
-                builder.setMessage("Les champs Orange Money, MTN Money, Moov Money et Espèces sont obligatoires.")
+                builder.setMessage("Les champs Retrait et Espèces sont obligatoires.")
                 builder.show()
             }else if(!checkForInternet(context)){
                 Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
@@ -238,80 +221,57 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                 progressBar.visibility = View.VISIBLE
 
                 // VARIABLE DE CONTOURNEMENT D'ERREURS
-                if (wave.text.isNotEmpty())
+                if (envoiInter.text.isNotEmpty())
                 {
-                    waveTxt = wave.text.toString().toInt()
-                }
-                if (moov.text.isNotEmpty())
-                {
-                    moovTxt = wave.text.toString().toInt()
-                }
-                if (tresor.text.isNotEmpty())
-                {
-                    tresorTxt = tresor.text.toString().toInt()
+                    envoiTxt = envoiInter.text.toString().toInt()
                 }
                 if (divers.text.isNotEmpty())
                 {
                     diversTxt = divers.text.toString().toInt()
                 }
-                if (retraitInter.text.isNotEmpty())
-                {
-                    retraitTxt = divers.text.toString().toInt()
-                }
-                if (envoiInter.text.isNotEmpty())
-                {
-                    envoiTxt = divers.text.toString().toInt()
-                }
 
                 // Calcul du total des données émises par l'utilisateur
-                val sum = orange.text.toString().toInt() +
-                        mtn.text.toString().toInt() +
-                        moov.text.toString().toInt() +
-                        moovTxt +
-                        waveTxt +
-                        tresorTxt +
+                val sum = retraitInter.text.toString().toInt() +
+                        envoiTxt +
                         especes.text.toString().toInt() +
                         diversTxt
                 val pointMap = hashMapOf(
                     "id" to auth.currentUser?.uid,
-                    "orange" to orange.text.toString(),
-                    "mtn" to mtn.text.toString(),
-                    "moov" to moov.text.toString(),
-                    "wave" to waveTxt.toString(),
-                    "tresor" to tresorTxt.toString(),
+                    "orange" to "0",
+                    "mtn" to "0",
+                    "moov" to "0",
+                    "wave" to "0",
+                    "tresor" to "0",
                     "divers" to diversTxt.toString(),
                     "especes" to especes.text.toString(),
-                    "retrait" to retraitTxt,
-                    "envoi" to envoiTxt,
+                    "retrait" to retraitInter.text.toString(),
+                    "envoi" to envoiTxt.toString(),
                     "total" to sum.toString(),
                     "superviseur" to superviseurId,
                     "date" to dateFormatted
                 )
                 db.collection("point").add(pointMap).addOnSuccessListener {
-                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                        progressBar.visibility = View.INVISIBLE
+                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.INVISIBLE
 
-                        orange.text.clear()
-                        mtn.text.clear()
-                        moov.text.clear()
-                        wave.text.clear()
-                        tresor.text.clear()
-                        especes.text.clear()
-                        divers.text.clear()
-                        button.isEnabled = true
-                        button.setText(R.string.register_operation)
-                        context.supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, HomeFragment(context))
-                            .addToBackStack(null)
-                            .commit()
+                    retraitInter.text.clear()
+                    envoiInter.text.clear()
+                    especes.text.clear()
+                    divers.text.clear()
+                    button.isEnabled = true
+                    button.setText(R.string.register_operation)
+                    context.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment(context))
+                        .addToBackStack(null)
+                        .commit()
 
-                    }.addOnFailureListener {
-                        Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-                        progressBar.visibility = View.INVISIBLE
-                    }
+                }.addOnFailureListener {
+                    Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.INVISIBLE
+                }
             }
         }
+
         return view
     }
-
 }
