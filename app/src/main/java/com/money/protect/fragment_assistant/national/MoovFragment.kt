@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,8 +26,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.money.protect.MainActivity
 import com.money.protect.R
@@ -48,21 +45,21 @@ import java.util.Locale
 class MoovFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var textTelephone: EditText
-    lateinit var textMontant: EditText
-    lateinit var typeOperation: Spinner
-    lateinit var checkBox: CheckBox
-    lateinit var previewImage: ImageView
+    private lateinit var textTelephone: EditText
+    private lateinit var textMontant: EditText
+    private lateinit var typeOperation: Spinner
+    private lateinit var checkBox: CheckBox
+    private lateinit var previewImage: ImageView
     lateinit var buttonRegister: AppCompatButton
-    lateinit var buttonUpload: Button
+    private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    lateinit var sectionUpload: CardView
+    private lateinit var sectionUpload: CardView
 
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
     lateinit var uri: Uri
-    var uploaded: Boolean = false
+    private var uploaded: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -72,8 +69,6 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_operation_moov, container, false)
-
-        context.blockScreenShot()
 
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()

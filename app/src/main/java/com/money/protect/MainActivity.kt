@@ -1,22 +1,16 @@
 package com.money.protect
 
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -59,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        blockScreenShot()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
         appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
@@ -91,9 +86,49 @@ class MainActivity : AppCompatActivity() {
                 for (data in document)
                 {
                     val superviseurId = data!!.data["superviseur"].toString()
-                    val modelX = data.data["model"].toString()
-                    val brandX = data.data["brand"].toString()
+
+                    var modelX = data.data["model"].toString()
+                    var brandX = data.data["brand"].toString()
+
+                    // On récupère ces données pour mettre à jour en infos en incluant les données du téléphone
+
+                    val creation = data.data["creation"].toString()
+                    val email = data.data["email"].toString()
+                    val nomcommercial = data.data["nomcommercial"].toString()
+                    val nomcomplet = data.data["nomcomplet"].toString()
+                    val quartier = data.data["quartier"].toString()
+                    val telephone = data.data["telephone"].toString()
+                    val ville = data.data["ville"].toString()
+
                     module = data.data["module"].toString()
+
+                    if (modelX == "null" || brandX == "null")
+                    {
+                        modelX = Build.MODEL
+                        brandX = Build.BRAND
+
+                        val accountMap = hashMapOf(
+                            "creation" to creation,
+                            "email" to email,
+                            "id" to auth.currentUser!!.uid,
+                            "nomcommercial" to nomcommercial,
+                            "nomcomplet" to nomcomplet,
+                            "quartier" to quartier,
+                            "module" to module,
+                            "role" to "assistant",
+                            "statut" to true,
+                            "superviseur" to superviseurId,
+                            "telephone" to telephone,
+                            "ville" to ville,
+                            "model" to modelX,
+                            "brand" to brandX
+                        )
+
+                        db.collection("account")
+                            .document(auth.currentUser!!.uid)
+                            .set(accountMap)
+                            .addOnSuccessListener {/* Ne rien faire */}
+                    }
 
                     // VERIFIER L'ETAT D'ABONNEMENT DE SON SUPERVISEUR
 
@@ -269,33 +304,6 @@ class MainActivity : AppCompatActivity() {
         {
             appUpdateManager.unregisterListener(installStateUpdatedListener)
         }
-    }
-
-    private fun showNotification(context: Context, title: String, message: String) {
-        // Créer un ID unique pour la notification
-        val notificationId = 1
-
-        // Récupérer le gestionnaire de notification
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        // Vérifier si le canal de notification existe (Nécessaire pour Android 8.0 et versions ultérieures)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = "channel_id"
-            val channelName = "Channel Name"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelId, channelName, importance)
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        // Créer une notification avec le Builder
-        val builder = NotificationCompat.Builder(context, "channel_id")
-            .setSmallIcon(R.drawable.icone)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        // Afficher la notification
-        notificationManager.notify(notificationId, builder.build())
     }
 
     fun blockScreenShot()

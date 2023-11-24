@@ -45,15 +45,15 @@ import java.util.Locale
 class OrangeFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var textTelephone: EditText
-    lateinit var textMontant: EditText
-    lateinit var typeOperation: Spinner
-    lateinit var checkBox: CheckBox
-    lateinit var previewImage: ImageView
-    lateinit var buttonRegister: AppCompatButton
-    lateinit var buttonUpload: Button
+    private lateinit var textTelephone: EditText
+    private lateinit var textMontant: EditText
+    private lateinit var typeOperation: Spinner
+    private lateinit var checkBox: CheckBox
+    private lateinit var previewImage: ImageView
+    private lateinit var buttonRegister: AppCompatButton
+    private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    lateinit var sectionUpload: CardView
+    private lateinit var sectionUpload: CardView
 
     private var textWatcher: TextWatcher? = null
 

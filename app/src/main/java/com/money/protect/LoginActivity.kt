@@ -16,10 +16,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class LoginActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
+    private var database = Firebase.firestore
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
+
         db = FirebaseFirestore.getInstance()
 
         val query = db.collection("account")
@@ -49,7 +53,14 @@ class LoginActivity : AppCompatActivity() {
                                 for (data in document)
                                 {
                                     val role = data.data!!["role"].toString()
-                                    val statut = data.data!!["statut"].toString().toBoolean()
+                                    val statut = data.data["statut"].toString().toBoolean()
+
+                                    val model = data.data["model"].toString()
+                                    val brand = data.data["brand"].toString()
+
+                                    val modelX = Build.MODEL
+                                    val brandX = Build.BRAND
+
                                     if (role == "superviseur") {
                                         if (statut)
                                         {
@@ -67,10 +78,42 @@ class LoginActivity : AppCompatActivity() {
                                     } else if (role == "assistant") {
                                         if (statut)
                                         {
-                                            val intent = Intent(this, MainActivity::class.java)
-                                            startActivity(intent)
-                                            button.isEnabled = true
-                                            button.setText(R.string.login_button_default_text)
+                                            if (model == modelX && brand == brandX)
+                                            {
+                                                // Historique de connexion
+
+                                                // Générer la date
+                                                val current = LocalDateTime.now()
+                                                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
+                                                val dateFormatted = current.format(formatterDate)
+
+                                                // Générer l'heure
+                                                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
+                                                val hourFormatted = current.format(formatterHour)
+
+                                                val connexionMap = hashMapOf(
+                                                    "id" to auth.currentUser!!.uid,
+                                                    "statut" to "connexion",
+                                                    "date" to dateFormatted,
+                                                    "heure" to hourFormatted
+                                                )
+
+                                                database.collection("connexion")
+                                                    .add(connexionMap)
+                                                    .addOnCompleteListener {
+                                                    // Ne rien faire
+                                                }
+
+
+                                                val intent = Intent(this, MainActivity::class.java)
+                                                startActivity(intent)
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
+                                            }else{
+                                                val builder = AlertDialog.Builder(this)
+                                                builder.setMessage("Vous n'êtes pas autorisé")
+                                                builder.show()
+                                            }
                                         }else{
                                             val builder = AlertDialog.Builder(this)
                                             builder.setMessage("Votre compte a été désactivé par votre superviseur.")

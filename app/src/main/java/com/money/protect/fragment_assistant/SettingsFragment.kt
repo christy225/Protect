@@ -31,6 +31,7 @@ import java.time.temporal.ChronoUnit
 class SettingsFragment(private val context: MainActivity) : Fragment() {
     var db = Firebase.firestore
     lateinit var auth : FirebaseAuth
+    private val database = Firebase.firestore
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -166,6 +167,31 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
         // RECHERCHER LE SUPERVISEUR
 
         btnLogout.setOnClickListener {
+
+            // Historique de connexion
+
+            // Générer la date
+            val current = LocalDateTime.now()
+            val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
+            val dateFormatted = current.format(formatterDate)
+
+            // Générer l'heure
+            val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
+            val hourFormatted = current.format(formatterHour)
+
+            val connexionMap = hashMapOf(
+                "id" to auth.currentUser!!.uid,
+                "statut" to "déconnexion",
+                "date" to dateFormatted,
+                "heure" to hourFormatted
+            )
+
+            database.collection("connexion")
+                .add(connexionMap)
+                .addOnCompleteListener {
+                    // Ne rien faire
+                }
+
             auth.signOut()
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)

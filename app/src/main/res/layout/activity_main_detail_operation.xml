@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content">
 
                         <TextView
-                            android:id="@+id/textView4"
+                            android:id="@+id/textViewCondition"
                             style="@style/TitleFont"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                             android:text="Phone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                            app:layout_constraintTop_toBottomOf="@+id/textViewCondition" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
