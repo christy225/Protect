@@ -78,9 +78,13 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         val data = arguments
         val id = data?.getString("id")
         val nom = data?.getString("nom")
+        val assignation = data?.getString("module")
 
         val nomAssistant = view.findViewById<TextView>(R.id.nom_assistant)
         nomAssistant.text = nom
+
+        val module = view.findViewById<TextView>(R.id.module_assistant)
+        module.text = assignation
 
         resultat = view.findViewById(R.id.superviseur_point_resultat_Vw)
         button = view.findViewById(R.id.superviseur_point_btn_upload)
@@ -108,6 +112,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
             val bundle = Bundle()
             bundle.putString("id", id)
             bundle.putString("nom", nom)
+            bundle.putString("module", assignation)
             capitalFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, capitalFragment)

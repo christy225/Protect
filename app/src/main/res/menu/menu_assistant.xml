@@ -7,6 +7,11 @@
         android:icon="@drawable/baseline_home_24"
         android:title="Accueil"/>
     <item
+        android:id="@+id/factures"
+        android:iconTint="@color/black"
+        android:icon="@drawable/baseline_facture_24"
+        android:title="Factures"/>
+    <item
         android:id="@+id/settings"
         android:iconTint="@color/black"
         android:icon="@drawable/baseline_settings_24"

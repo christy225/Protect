@@ -1,6 +1,8 @@
 package com.money.protect
 
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -14,6 +16,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.money.protect.fragment_assistant.FactureFragment
 import com.money.protect.fragment_assistant.HomeFragment
 import com.money.protect.fragment_assistant.SettingsFragment
 import kotlinx.coroutines.delay
@@ -43,6 +47,7 @@ import kotlin.time.Duration.Companion.seconds
 class MainActivity : AppCompatActivity() {
     companion object {
         const val REQUEST_CALL_PERMISSION = 456
+        var module = ""
     }
 
     private lateinit var appUpdateManager: AppUpdateManager
@@ -86,6 +91,9 @@ class MainActivity : AppCompatActivity() {
                 for (data in document)
                 {
                     val superviseurId = data!!.data["superviseur"].toString()
+                    val modelX = data.data["model"].toString()
+                    val brandX = data.data["brand"].toString()
+                    module = data.data["module"].toString()
 
                     // VERIFIER L'ETAT D'ABONNEMENT DE SON SUPERVISEUR
 
@@ -118,6 +126,7 @@ class MainActivity : AppCompatActivity() {
                                         when(it.itemId)
                                         {
                                             R.id.home -> loadFragment(HomeFragment(this))
+                                            R.id.factures -> loadFragment(FactureFragment(this))
                                             R.id.settings -> loadFragment(SettingsFragment(this))
                                         }
                                         false
@@ -260,6 +269,33 @@ class MainActivity : AppCompatActivity() {
         {
             appUpdateManager.unregisterListener(installStateUpdatedListener)
         }
+    }
+
+    private fun showNotification(context: Context, title: String, message: String) {
+        // Créer un ID unique pour la notification
+        val notificationId = 1
+
+        // Récupérer le gestionnaire de notification
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Vérifier si le canal de notification existe (Nécessaire pour Android 8.0 et versions ultérieures)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "channel_id"
+            val channelName = "Channel Name"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelId, channelName, importance)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // Créer une notification avec le Builder
+        val builder = NotificationCompat.Builder(context, "channel_id")
+            .setSmallIcon(R.drawable.icone)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        // Afficher la notification
+        notificationManager.notify(notificationId, builder.build())
     }
 
     fun blockScreenShot()

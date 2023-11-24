@@ -40,17 +40,18 @@ class PointFragmentNational(private val context: MainActivity) : Fragment() {
     lateinit var moov: EditText
     lateinit var wave: EditText
     lateinit var tresor: EditText
-    lateinit var especes: EditText
+    private lateinit var especes: EditText
     lateinit var divers: EditText
-    lateinit var pointArrayList: ArrayList<PointModel>
+    private lateinit var pointArrayList: ArrayList<PointModel>
     lateinit var button: AppCompatButton
     lateinit var progressBar: ProgressBar
-    lateinit var superviseurId: String
-    lateinit var warning: TextView
-    var moovTxt: Int = 0
-    var waveTxt: Int = 0
-    var tresorTxt: Int = 0
-    var diversTxt: Int = 0
+    private lateinit var superviseurId: String
+    private lateinit var warning: TextView
+    private var moovTxt: Int = 0
+    private var waveTxt: Int = 0
+    private var tresorTxt: Int = 0
+    private var diversTxt: Int = 0
+    private var module: String = ""
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -138,6 +139,7 @@ class PointFragmentNational(private val context: MainActivity) : Fragment() {
                 for (data in document)
                 {
                     superviseurId = data!!.data["superviseur"].toString()
+                    module = data.data["module"].toString()
 
                     // VERIFIER L'ETAT D'ABONNEMENT
 
@@ -206,8 +208,8 @@ class PointFragmentNational(private val context: MainActivity) : Fragment() {
             .addOnSuccessListener {docs->
                 for (datax in docs)
                 {
-                    val superviseurId = datax!!.data["superviseur"].toString()
-                    if (superviseurId.isNotEmpty())
+                    val assistantId = datax!!.data["id"].toString()
+                    if (assistantId == auth.currentUser?.uid.toString())
                     {
                         info.visibility = View.VISIBLE
                         button.visibility = View.INVISIBLE
@@ -223,7 +225,7 @@ class PointFragmentNational(private val context: MainActivity) : Fragment() {
             {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Infos")
-                builder.setMessage("Les champs Orange Money, MTN Money, Moov Money et Espèces sont obligatoires.")
+                builder.setMessage("Les champs Orange Money, MTN Money et Espèces sont obligatoires.")
                 builder.show()
             }else if(!checkForInternet(context)){
                 Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
@@ -239,7 +241,7 @@ class PointFragmentNational(private val context: MainActivity) : Fragment() {
                 }
                 if (moov.text.isNotEmpty())
                 {
-                    moovTxt = wave.text.toString().toInt()
+                    moovTxt = moov.text.toString().toInt()
                 }
                 if (tresor.text.isNotEmpty())
                 {
@@ -253,7 +255,6 @@ class PointFragmentNational(private val context: MainActivity) : Fragment() {
                 // Calcul du total des données émises par l'utilisateur
                 val sum = orange.text.toString().toInt() +
                         mtn.text.toString().toInt() +
-                        moov.text.toString().toInt() +
                         moovTxt +
                         waveTxt +
                         tresorTxt +
@@ -268,9 +269,12 @@ class PointFragmentNational(private val context: MainActivity) : Fragment() {
                     "tresor" to tresorTxt.toString(),
                     "divers" to diversTxt.toString(),
                     "especes" to especes.text.toString(),
+                    "retrait" to "0",
+                    "envoi" to "0",
+                    "module" to module,
                     "total" to sum.toString(),
-                    "superviseur" to superviseurId,
-                    "date" to dateFormatted
+                    "date" to dateFormatted,
+                    "superviseur" to superviseurId
                 )
                 db.collection("point").add(pointMap).addOnSuccessListener {
                     Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()

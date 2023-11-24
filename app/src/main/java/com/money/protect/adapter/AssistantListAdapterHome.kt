@@ -38,6 +38,7 @@ class AssistantListAdapterHome(
             val bundle = Bundle()
             bundle.putString("id", currentAssistant.id)
             bundle.putString("nom", currentAssistant.nomcomplet)
+            bundle.putString("module", currentAssistant.module)
             secondFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, secondFragment)

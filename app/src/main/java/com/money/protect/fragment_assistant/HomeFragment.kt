@@ -5,8 +5,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,21 +39,19 @@ import java.time.temporal.ChronoUnit
 class HomeFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var nomCom: TextView
+    private lateinit var nomCom: TextView
 
-    private val handler = Handler(Looper.getMainLooper())
-
-    lateinit var searchLink: ImageView
-    lateinit var internationalLink: ConstraintLayout
-    lateinit var nationalLink: ConstraintLayout
-    lateinit var comptabiliteLink: ConstraintLayout
-    lateinit var transactionArrayList: ArrayList<TransactionModel>
-    lateinit var recyclerView: RecyclerView
+    private lateinit var searchLink: ImageView
+    private lateinit var internationalLink: ConstraintLayout
+    private lateinit var nationalLink: ConstraintLayout
+    private lateinit var comptabiliteLink: ConstraintLayout
+    private lateinit var transactionArrayList: ArrayList<TransactionModel>
+    private lateinit var recyclerView: RecyclerView
     lateinit var progressBar: ProgressBar
-    lateinit var infoFailedRetrieveData: TextView
-    
+    private lateinit var infoFailedRetrieveData: TextView
+    private var module = "null"
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "HardwareIds")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,8 +65,6 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
         }
-
-        var module = "null"
 
         nomCom = view.findViewById(R.id.assistant_home_nomCommercial)
         internationalLink = view.findViewById(R.id.assistant_home_internationLink)
@@ -200,20 +194,20 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
         val dateFormatted = current.format(formatter)
 
         comptabiliteLink.setOnClickListener {
-            if (module == "N")
+            if (module == "National")
             {
                 context.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, PointFragmentNational(context))
                     .addToBackStack(null)
                     .commit()
             }
-            if (module == "NI"){
+            if (module == "National-International"){
                 context.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, PointFragment(context))
                     .addToBackStack(null)
                     .commit()
             }
-            if (module == "I"){
+            if (module == "International"){
                 context.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, PointFragmentInternational(context))
                     .addToBackStack(null)
@@ -255,4 +249,5 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
 
         return view
     }
+
 }

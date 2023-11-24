@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -31,7 +32,8 @@ import java.time.temporal.ChronoUnit
 class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
     lateinit var auth: FirebaseAuth
     lateinit var db : FirebaseFirestore
-    lateinit var assistantArrayList : ArrayList<AccountModel>
+    private lateinit var assistantArrayList : ArrayList<AccountModel>
+    private lateinit var progressBar: ProgressBar
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -46,6 +48,9 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
         }
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewListAssiatntHome)
+        progressBar = view.findViewById(R.id.progressBarListAssistant)
+        progressBar.visibility = View.VISIBLE
+
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
@@ -125,6 +130,7 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
                     val item = datas.toObject(AccountModel::class.java)
                     if (item != null)
                     {
+                        progressBar.visibility = View.INVISIBLE
                         assistantArrayList.add(item)
                     }
                     recyclerView.adapter = AssistantListAdapterHome(context, assistantArrayList)

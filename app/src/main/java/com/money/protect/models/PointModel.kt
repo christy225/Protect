@@ -7,8 +7,11 @@ data class PointModel(
     val moov: String = "",
     val wave: String = "",
     val tresor: String = "",
-    val especes: String = "",
     val divers: String = "",
+    val especes: String = "",
+    val retrait: String = "",
+    val envoi: String = "",
+    val module: String = "",
     val total: String = "",
     val date: String = "",
     val superviseur: String = ""

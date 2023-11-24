@@ -47,6 +47,7 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
         val data = arguments
         val id = data?.getString("id")
         val nom = data?.getString("nom")
+        val module = data?.getString("module")
 
         val nameX = view.findViewById<TextView>(R.id.nom_assistant_capital)
         nameX.text = nom
@@ -87,6 +88,7 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
             val bundle = Bundle()
             bundle.putString("id", id)
             bundle.putString("nom", nom)
+            bundle.putString("module", module)
             homeFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, homeFragment)

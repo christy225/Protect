@@ -59,6 +59,13 @@
         <item>Retrait</item>
     </string-array>
 
+    <!-- TYPE OPERATION INTERNATIONAL-->
+    <string-array name="type_paiement_facture">
+        <item>Sélectionner</item>
+        <item>MTN</item>
+        <item>MOOV</item>
+    </string-array>
+
     <string name="yes">Oui</string>
     <string name="no">Non</string>
 

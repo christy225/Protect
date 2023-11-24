@@ -43,8 +43,10 @@ class PointFragmentInternational(private val context: MainActivity) : Fragment()
     lateinit var warning: TextView
     lateinit var especes: EditText
     lateinit var divers: EditText
-    var envoiTxt: Int = 0
-    var diversTxt: Int = 0
+    private var envoiTxt: Int = 0
+    private var diversTxt: Int = 0
+    private var module: String = ""
+
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -126,6 +128,7 @@ class PointFragmentInternational(private val context: MainActivity) : Fragment()
                 for (data in document)
                 {
                     superviseurId = data!!.data["superviseur"].toString()
+                    module = data.data["module"].toString()
 
                     // VERIFIER L'ETAT D'ABONNEMENT
 
@@ -194,8 +197,8 @@ class PointFragmentInternational(private val context: MainActivity) : Fragment()
             .addOnSuccessListener {docs->
                 for (datax in docs)
                 {
-                    val superviseurId = datax!!.data["superviseur"].toString()
-                    if (superviseurId.isNotEmpty())
+                    val assistantId = datax!!.data["id"].toString()
+                    if (assistantId == auth.currentUser?.uid.toString())
                     {
                         info.visibility = View.VISIBLE
                         button.visibility = View.INVISIBLE
@@ -231,10 +234,8 @@ class PointFragmentInternational(private val context: MainActivity) : Fragment()
                 }
 
                 // Calcul du total des données émises par l'utilisateur
-                val sum = retraitInter.text.toString().toInt() +
-                        envoiTxt +
-                        especes.text.toString().toInt() +
-                        diversTxt
+                val sum = retraitInter.text.toString().toInt() + especes.text.toString().toInt() + diversTxt
+
                 val pointMap = hashMapOf(
                     "id" to auth.currentUser?.uid,
                     "orange" to "0",
@@ -246,6 +247,7 @@ class PointFragmentInternational(private val context: MainActivity) : Fragment()
                     "especes" to especes.text.toString(),
                     "retrait" to retraitInter.text.toString(),
                     "envoi" to envoiTxt.toString(),
+                    "module" to module,
                     "total" to sum.toString(),
                     "superviseur" to superviseurId,
                     "date" to dateFormatted

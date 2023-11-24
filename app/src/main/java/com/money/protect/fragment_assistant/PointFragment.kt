@@ -37,21 +37,22 @@ class PointFragment(private val context: MainActivity) : Fragment() {
     lateinit var moov: EditText
     lateinit var wave: EditText
     lateinit var tresor: EditText
-    lateinit var retraitInter: EditText
-    lateinit var envoiInter: EditText
-    lateinit var especes: EditText
+    private lateinit var retraitInter: EditText
+    private lateinit var envoiInter: EditText
+    private lateinit var especes: EditText
     lateinit var divers: EditText
-    lateinit var pointArrayList: ArrayList<PointModel>
+    private lateinit var pointArrayList: ArrayList<PointModel>
     lateinit var button: AppCompatButton
     lateinit var progressBar: ProgressBar
-    lateinit var superviseurId: String
-    lateinit var warning: TextView
-    var moovTxt: Int = 0
-    var waveTxt: Int = 0
-    var tresorTxt: Int = 0
-    var diversTxt: Int = 0
-    var retraitTxt: Int = 0
-    var envoiTxt: Int = 0
+    private lateinit var superviseurId: String
+    private lateinit var warning: TextView
+    private var moovTxt: Int = 0
+    private var waveTxt: Int = 0
+    private var tresorTxt: Int = 0
+    private var diversTxt: Int = 0
+    private var retraitTxt: Int = 0
+    private var envoiTxt: Int = 0
+    private var module: String = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -143,6 +144,7 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                 for (data in document)
                 {
                     superviseurId = data!!.data["superviseur"].toString()
+                    module = data.data["module"].toString()
 
                     // VERIFIER L'ETAT D'ABONNEMENT
 
@@ -205,14 +207,14 @@ class PointFragment(private val context: MainActivity) : Fragment() {
             }
 
         // VERIFIER QUE L'UTILISATEUR N'A PAS DEJA ENVOYE UN POINT
-        db.collection("point").
-        whereEqualTo("date", dateFormatted)
+        db.collection("point")
+            .whereEqualTo("date", dateFormatted)
             .get()
             .addOnSuccessListener {docs->
                 for (datax in docs)
                 {
-                    val superviseurId = datax!!.data["superviseur"].toString()
-                    if (superviseurId.isNotEmpty())
+                    val assistantId = datax!!.data["id"].toString()
+                    if (assistantId == auth.currentUser?.uid.toString())
                     {
                         info.visibility = View.VISIBLE
                         button.visibility = View.INVISIBLE
@@ -222,13 +224,12 @@ class PointFragment(private val context: MainActivity) : Fragment() {
             }
 
         button.setOnClickListener {
-
             // SI IL N'YA PAS ENCORE EU DE POINT CE JOUR ALORS ON VERIFIE QUE TOUS LES CHAMPS OBLIGATOIRES SONT REMPLIS
-            if (orange.text.isEmpty() || mtn.text.isEmpty() || moov.text.isEmpty()|| especes.text.isEmpty())
+            if (orange.text.isEmpty() || mtn.text.isEmpty() || especes.text.isEmpty())
             {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Infos")
-                builder.setMessage("Les champs Orange Money, MTN Money, Moov Money et Espèces sont obligatoires.")
+                builder.setMessage("Les champs Orange Money, MTN Money et Espèces sont obligatoires.")
                 builder.show()
             }else if(!checkForInternet(context)){
                 Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
@@ -244,7 +245,7 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                 }
                 if (moov.text.isNotEmpty())
                 {
-                    moovTxt = wave.text.toString().toInt()
+                    moovTxt = moov.text.toString().toInt()
                 }
                 if (tresor.text.isNotEmpty())
                 {
@@ -256,22 +257,23 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                 }
                 if (retraitInter.text.isNotEmpty())
                 {
-                    retraitTxt = divers.text.toString().toInt()
+                    retraitTxt = retraitInter.text.toString().toInt()
                 }
                 if (envoiInter.text.isNotEmpty())
                 {
-                    envoiTxt = divers.text.toString().toInt()
+                    envoiTxt = envoiInter.text.toString().toInt()
                 }
 
                 // Calcul du total des données émises par l'utilisateur
                 val sum = orange.text.toString().toInt() +
                         mtn.text.toString().toInt() +
-                        moov.text.toString().toInt() +
                         moovTxt +
                         waveTxt +
                         tresorTxt +
+                        retraitTxt +
                         especes.text.toString().toInt() +
                         diversTxt
+
                 val pointMap = hashMapOf(
                     "id" to auth.currentUser?.uid,
                     "orange" to orange.text.toString(),
@@ -281,34 +283,35 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                     "tresor" to tresorTxt.toString(),
                     "divers" to diversTxt.toString(),
                     "especes" to especes.text.toString(),
-                    "retrait" to retraitTxt,
-                    "envoi" to envoiTxt,
+                    "retrait" to retraitInter.text.toString(),
+                    "envoi" to envoiTxt.toString(),
+                    "module" to module,
                     "total" to sum.toString(),
-                    "superviseur" to superviseurId,
-                    "date" to dateFormatted
+                    "date" to dateFormatted,
+                    "superviseur" to superviseurId
                 )
                 db.collection("point").add(pointMap).addOnSuccessListener {
-                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                        progressBar.visibility = View.INVISIBLE
+                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.INVISIBLE
 
-                        orange.text.clear()
-                        mtn.text.clear()
-                        moov.text.clear()
-                        wave.text.clear()
-                        tresor.text.clear()
-                        especes.text.clear()
-                        divers.text.clear()
-                        button.isEnabled = true
-                        button.setText(R.string.register_operation)
-                        context.supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, HomeFragment(context))
-                            .addToBackStack(null)
-                            .commit()
-
-                    }.addOnFailureListener {
-                        Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-                        progressBar.visibility = View.INVISIBLE
-                    }
+                    orange.text.clear()
+                    mtn.text.clear()
+                    moov.text.clear()
+                    wave.text.clear()
+                    tresor.text.clear()
+                    especes.text.clear()
+                    retraitInter.text.clear()
+                    envoiInter.text.clear()
+                    divers.text.clear()
+                    button.isEnabled = true
+                    button.setText(R.string.register_operation)
+                    context.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, HomeFragment(context))
+                        .addToBackStack(null)
+                        .commit()
+                }.addOnFailureListener {
+                    Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.INVISIBLE }
             }
         }
         return view

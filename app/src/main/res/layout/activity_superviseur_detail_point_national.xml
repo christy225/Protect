@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".SuperviseurDetailPointActivity"
+    tools:context=".SuperviseurDetailPointNational"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,16 +18,16 @@
             app:layout_constraintStart_toStartOf="@+id/cardView6">
 
             <ImageView
-                android:id="@+id/superviseur_detail_point_btnBack_all"
+                android:id="@+id/superviseur_detail_point_btnBack_national"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:src="@drawable/baseline_arrow_back_24"
-                app:layout_constraintBottom_toBottomOf="@+id/superviseur_detail_point_date_all"
+                app:layout_constraintBottom_toBottomOf="@+id/superviseur_detail_point_date_national"
                 app:layout_constraintStart_toStartOf="@+id/cardView6"
-                app:layout_constraintTop_toTopOf="@+id/superviseur_detail_point_date_all" />
+                app:layout_constraintTop_toTopOf="@+id/superviseur_detail_point_date_national" />
 
             <TextView
-                android:id="@+id/superviseur_detail_point_date_all"
+                android:id="@+id/superviseur_detail_point_date_national"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
@@ -86,7 +86,7 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_montant_orange_all"
+                        android:id="@+id/superviseur_detail_point_montant_orange_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
@@ -112,7 +112,7 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_montant_mtn_all"
+                        android:id="@+id/superviseur_detail_point_montant_mtn_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
@@ -138,7 +138,7 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_montant_moov_all"
+                        android:id="@+id/superviseur_detail_point_montant_moov_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
@@ -164,7 +164,7 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_montant_wave_all"
+                        android:id="@+id/superviseur_detail_point_montant_wave_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
@@ -190,67 +190,7 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_montant_tresor_all"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:padding="10dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/background_circular"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/textView27"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Transfert International"
-                android:textColor="#9B9C9C"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="@+id/cardView6"
-                app:layout_constraintTop_toBottomOf="@+id/cardView6" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView223"
-                android:layout_marginHorizontal="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="20dp"
-                app:cardCornerRadius="10dp"
-                android:layout_marginTop="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView27">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="15dp"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:text="Solde Retrait International"/>
-                    <TextView
-                        android:id="@+id/superviseur_detail_point_montant_retrait_inter_all"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:padding="10dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/background_circular"/>
-
-                    <TextView
-                        android:layout_marginTop="15dp"
-                        android:textStyle="bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Solde Envoi Inernational"/>
-                    <TextView
-                        android:id="@+id/superviseur_detail_point_montant_envoi_inter_all"
+                        android:id="@+id/superviseur_detail_point_montant_tresor_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
@@ -269,8 +209,8 @@
                 android:textColor="#9B9C9C"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/cardView223"
-                app:layout_constraintTop_toBottomOf="@+id/cardView223" />
+                app:layout_constraintStart_toStartOf="@+id/cardView6"
+                app:layout_constraintTop_toBottomOf="@+id/cardView6" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView12"
@@ -297,7 +237,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_montant_especes_all"
+                        android:id="@+id/superviseur_detail_point_montant_especes_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -313,7 +253,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_montant_divers_all"
+                        android:id="@+id/superviseur_detail_point_montant_divers_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -342,7 +282,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/superviseur_detail_point_resultat_all"
+                        android:id="@+id/superviseur_detail_point_resultat_national"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -356,12 +296,12 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ProgressBar
-                        android:id="@+id/progressBar_superviseur_point_all"
+                        android:id="@+id/progressBar_superviseur_point_national"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginStart="5dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/superviseur_detail_point_resultat_all"
+                        app:layout_constraintStart_toEndOf="@+id/superviseur_detail_point_resultat_national"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>

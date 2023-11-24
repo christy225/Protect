@@ -4,61 +4,49 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class SuperviseurDetailPointActivity : AppCompatActivity() {
+class SuperviseurDetailPointInterActivity : AppCompatActivity() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
     private lateinit var resultat: TextView
     private lateinit var backButton: ImageView
-    @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("SetTextI18n", "ResourceAsColor", "MissingInflatedId")
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        setContentView(R.layout.activity_superviseur_detail_point)
+        setContentView(R.layout.activity_superviseur_detail_point_inter)
 
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
-        backButton = findViewById(R.id.superviseur_detail_point_btnBack_all)
+        backButton = findViewById(R.id.superviseur_detail_point_btnBack_inter)
         backButton.setOnClickListener {
             finish()
         }
 
-        resultat = findViewById(R.id.superviseur_detail_point_resultat_all)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar_superviseur_point_all)
+        resultat = findViewById(R.id.superviseur_detail_point_resultat_inter)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar_superviseur_point_inter)
         progressBar.visibility = View.VISIBLE
 
         val intent: Intent = getIntent()
 
-        val dateX = findViewById<TextView>(R.id.superviseur_detail_point_date_all)
-        val orangeX = findViewById<TextView>(R.id.superviseur_detail_point_montant_orange_all)
-        val mtnX = findViewById<TextView>(R.id.superviseur_detail_point_montant_mtn_all)
-        val moovX = findViewById<TextView>(R.id.superviseur_detail_point_montant_moov_all)
-        val waveX = findViewById<TextView>(R.id.superviseur_detail_point_montant_wave_all)
-        val tresorX = findViewById<TextView>(R.id.superviseur_detail_point_montant_tresor_all)
-        val retraitX = findViewById<TextView>(R.id.superviseur_detail_point_montant_retrait_inter_all)
-        val envoiX = findViewById<TextView>(R.id.superviseur_detail_point_montant_envoi_inter_all)
-        val especesX = findViewById<TextView>(R.id.superviseur_detail_point_montant_especes_all)
-        val diversX = findViewById<TextView>(R.id.superviseur_detail_point_montant_divers_all)
+        val dateX = findViewById<TextView>(R.id.superviseur_detail_point_date_inter)
+
+        val retraitX = findViewById<TextView>(R.id.superviseur_detail_point_montant_retrait_inter)
+        val envoiX = findViewById<TextView>(R.id.superviseur_detail_point_montant_envoi_inter)
+        val especesX = findViewById<TextView>(R.id.superviseur_detail_point_montant_especes_inter)
+        val diversX = findViewById<TextView>(R.id.superviseur_detail_point_montant_divers_inter)
 
         val date = intent.getStringExtra("date")
-        val orange = intent.getStringExtra("orange")
-        val mtn = intent.getStringExtra("mtn")
-        val moov = intent.getStringExtra("moov")
-        val wave = intent.getStringExtra("wave")
-        val tresor = intent.getStringExtra("tresor")
         val retrait = intent.getStringExtra("retrait")
         val envoi = intent.getStringExtra("envoi")
         val especes = intent.getStringExtra("especes")
@@ -67,11 +55,6 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
         val id = intent.getStringExtra("id")
 
         dateX.text = date
-        orangeX.text = orange
-        mtnX.text = mtn
-        moovX.text = moov
-        waveX.text = wave
-        tresorX.text = tresor
         retraitX.text = retrait
         envoiX.text = envoi
         especesX.text = especes
@@ -79,12 +62,7 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
 
         // Montant du point à la date sélectionné
 
-        val pointValeur = orange.toString().toInt() + mtn.toString().toInt() + moov.toString().toInt() +
-                wave.toString().toInt() +
-                tresor.toString().toInt() +
-                retrait.toString().toInt() +
-                especes.toString().toInt() +
-                divers.toString().toInt()
+        val pointValeur = retrait.toString().toInt() + especes.toString().toInt() + divers.toString().toInt()
 
         // ON RECUPERE LE CAPITAL POUR LA COMPARAISON
 
@@ -112,15 +90,5 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
                 builder.setMessage("Une erreur s'est produite")
                 builder.show()
             }
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (auth.currentUser == null)
-        {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
     }
 }
