@@ -70,8 +70,6 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_operation_orange, container, false)
 
-        context.blockScreenShot()
-
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
 
@@ -102,7 +100,6 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
             }
 
         }
-
         textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_orange)
@@ -250,7 +247,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister.text = "effectuer la transaction"
 
-        // EVENEMENT SUR LE SPINNER
+        // EVENEMENT SUR LE SPINNER (Avec les retrait, il n'y a pas de syntaxe à faire)
 
         val items = arrayOf("Sélectionner", "Dépôt", "Retrait")
 
@@ -290,7 +287,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                             context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
 
                         } catch (e: ActivityNotFoundException) {
-                            // Gérez le cas où L'Application WAVE Agent n'est pas installé ou ne permet pas d'ouvrir cette activité
+                            // Gérez le cas où L'Application Agent n'est pas installé ou ne permet pas d'ouvrir cette activité
                             val intent = AlertDialog.Builder(context)
                             intent.setTitle("Infos")
                             intent.setMessage("veuillez installer l'application Point de Vente Orange Money")
@@ -327,8 +324,8 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
                                                 "operateur" to "orange",
-                                                "telephone" to telInput.toString().trim(),
-                                                "montant" to montantInput.toString().trim(),
+                                                "telephone" to telInput.toString(),
+                                                "montant" to montantInput.toString(),
                                                 "typeoperation" to typeSpinner,
                                                 "url" to it.toString()
                                             )
@@ -370,8 +367,8 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "orange",
-                                "telephone" to telInput.toString().trim(),
-                                "montant" to montantInput.toString().trim(),
+                                "telephone" to telInput.toString(),
+                                "montant" to montantInput.toString(),
                                 "typeoperation" to typeSpinner,
                                 "url" to "null"
                             )

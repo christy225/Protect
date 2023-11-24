@@ -100,7 +100,6 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             }
 
         }
-
         textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_moov)
@@ -108,6 +107,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         val link3 = view.findViewById<ImageView>(R.id.assistant_link3_moov)
         val link4 = view.findViewById<ImageView>(R.id.assistant_link4_moov)
 
+        // Empêcher l'utilisateur de quitter la fenêtre s'il a oublié d'enregistrer une transaction
         link1.setOnClickListener {
             if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
             {
@@ -199,6 +199,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             }
         })
 
+        // Effacer tout le contenu
         val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMoov)
         btnCancel.setOnClickListener {
             textTelephone.text.clear()
@@ -214,6 +215,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             context.bottomNavUnlock()
         }
 
+        // L'historique des transferts
         val btnHistory = view.findViewById<TextView>(R.id.historiqueMoov)
         btnHistory.setOnClickListener {
             val syntaxe = "*155*6" + Uri.encode("#")
@@ -259,7 +261,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister.text = "effectuer la transaction"
 
-        // EVENEMENT SUR LE SPINNER
+        // EVENEMENT SUR LE SPINNER (Avec les retrait, il n'y a pas de syntaxe à faire)
 
         val items = arrayOf("Sélectionner", "Dépôt", "Retrait")
 
@@ -423,8 +425,8 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                 "date" to dateFormatted,
                 "heure" to hourFormatted,
                 "operateur" to "moov",
-                "telephone" to telInput.toString().trim(),
-                "montant" to montantInput.toString().trim(),
+                "telephone" to telInput.toString(),
+                "montant" to montantInput.toString(),
                 "typeoperation" to typeSpinner,
                 "url" to "null"
             )

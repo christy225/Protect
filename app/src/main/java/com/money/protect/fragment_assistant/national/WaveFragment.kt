@@ -103,7 +103,6 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
             }
 
         }
-
         textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_wave)
@@ -177,7 +176,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
-// BLOQUER LE NOMBRE DE CARACTERES DE SAISIE
+        // BLOQUER LE NOMBRE DE CARACTERES DE SAISIE
         textTelephone.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
                 // Avant que le texte change
@@ -328,8 +327,8 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
                                                 "operateur" to "wave",
-                                                "telephone" to telInput.toString().trim(),
-                                                "montant" to montantInput.toString().trim(),
+                                                "telephone" to telInput.toString(),
+                                                "montant" to montantInput.toString(),
                                                 "typeoperation" to typeSpinner,
                                                 "url" to it.toString()
                                             )
@@ -371,8 +370,8 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "wave",
-                                "telephone" to telInput.toString().trim(),
-                                "montant" to montantInput.toString().trim(),
+                                "telephone" to telInput.toString(),
+                                "montant" to montantInput.toString(),
                                 "typeoperation" to typeSpinner,
                                 "url" to "null"
                             )

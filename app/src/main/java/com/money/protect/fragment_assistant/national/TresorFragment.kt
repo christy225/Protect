@@ -72,8 +72,6 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_operation_tresor, container, false)
 
-        context.blockScreenShot()
-
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
 
@@ -104,7 +102,6 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
             }
 
         }
-
         textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_tresor)
@@ -252,7 +249,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister.text = "effectuer la transaction"
 
-        // EVENEMENT SUR LE SPINNER
+        // EVENEMENT SUR LE SPINNER (Avec les retrait, il n'y a pas de syntaxe à faire)
 
         val items = arrayOf("Sélectionner", "Dépôt", "Retrait")
 
@@ -329,8 +326,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
                                                 "operateur" to "tresor money",
-                                                "telephone" to telInput.toString().trim(),
-                                                "montant" to montantInput.toString().trim(),
+                                                "telephone" to telInput.toString(),
+                                                "montant" to montantInput.toString(),
                                                 "typeoperation" to typeSpinner,
                                                 "url" to it.toString()
                                             )
@@ -372,8 +369,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "tresor money",
-                                "telephone" to telInput.toString().trim(),
-                                "montant" to montantInput.toString().trim(),
+                                "telephone" to telInput.toString(),
+                                "montant" to montantInput.toString(),
                                 "typeoperation" to typeSpinner,
                                 "url" to "null"
                             )

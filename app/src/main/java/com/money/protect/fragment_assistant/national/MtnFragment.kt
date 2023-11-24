@@ -72,8 +72,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_operation_mtn, container, false)
 
-        context.blockScreenShot()
-
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
 
@@ -104,7 +102,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
 
         }
-
         textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_mtn)
@@ -265,6 +262,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister.text = "effectuer la transaction"
 
+        // EVENEMENT SUR LE SPINNER (Avec les retrait, il n'y a pas de syntaxe à faire)
+
         val items = arrayOf("Sélectionner", "Dépôt", "Retrait")
 
         val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
@@ -296,7 +295,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                     builder.setTitle("Alerte")
                     builder.setMessage("Veuillez saisir tous les champs SVP.")
                     builder.show()
-
                 }else if(textTelephone.text.length < 10){
                     val builder = AlertDialog.Builder(context)
                     builder.setMessage("Ce numéro ne comporte pas les 10 chiffres requis")
@@ -360,8 +358,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
                                                 "operateur" to "mtn",
-                                                "telephone" to telInput.toString().trim(),
-                                                "montant" to montantInput.toString().trim(),
+                                                "telephone" to telInput.toString(),
+                                                "montant" to montantInput.toString(),
                                                 "typeoperation" to typeSpinner,
                                                 "url" to it.toString()
                                             )
@@ -404,8 +402,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "mtn",
-                                "telephone" to telInput.toString().trim(),
-                                "montant" to montantInput.toString().trim(),
+                                "telephone" to telInput.toString(),
+                                "montant" to montantInput.toString(),
                                 "typeoperation" to typeSpinner,
                                 "url" to "null"
                             )
