@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         blockScreenShot()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
         if (updateType == AppUpdateType.FLEXIBLE)
@@ -208,15 +208,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (auth.currentUser == null)
-        {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
     private fun requestCallPermission() {
         ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CALL_PHONE), REQUEST_CALL_PERMISSION)
     }
@@ -335,6 +326,7 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId)
             {
                 R.id.home -> loadFragment(HomeFragment(this))
+                R.id.factures -> loadFragment(FactureFragment(this))
                 R.id.settings -> loadFragment(SettingsFragment(this))
             }
             false

@@ -7,6 +7,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,6 +77,28 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister = view.findViewById(R.id.btn_register_input_western)
         progressBar = view.findViewById(R.id.progressBar_input_western)
+
+        // BLOQUER LE NOMBRE DE CARACTERES DE SAISIE
+        textTelephone.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
+                // Avant que le texte change
+            }
+
+            override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
+                // Pendant que le texte change
+            }
+
+            override fun afterTextChanged(editable: Editable) {
+                // Après que le texte a changé
+
+                // Vérifier si la longueur du texte est supérieure à la limite
+                val maxLength = 10
+                if (editable.length > maxLength) {
+                    // Supprimer les caractères excédentaires
+                    editable.delete(maxLength, editable.length)
+                }
+            }
+        })
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_western)
         val link2 = view.findViewById<ImageView>(R.id.assistant_link2_western)
@@ -162,7 +186,6 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
                 }else{
                     progressBar.visibility = View.VISIBLE
                     buttonRegister.isEnabled = false
-                    buttonRegister.setText(R.string.button_loading)
 
                     // Générer la date
                     val current = LocalDateTime.now()
@@ -195,16 +218,16 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
                                             "url" to it.toString()
                                         )
 
-                                        val tel = textTelephone.text
-
-                                        tel.clear()
-                                        progressBar.visibility = View.INVISIBLE
-                                        buttonRegister.text = "effectuer la transaction"
-                                        previewImage.setImageResource(0)
-                                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
                                         db.collection("operation").add(operationMap).addOnCompleteListener {
-                                            // Ne rien faire ici
+                                            val tel = textTelephone.text
+
+                                            tel.clear()
+                                            progressBar.visibility = View.INVISIBLE
+                                            buttonRegister.isEnabled = true
+                                            previewImage.setImageResource(0)
+                                            typeOperation.setSelection(0)
+                                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+
                                         }.addOnFailureListener {
                                             val builder = AlertDialog.Builder(context)
                                             builder.setTitle("Alerte")
@@ -235,16 +258,16 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
                             "url" to "null"
                         )
 
-                        val tel = textTelephone.text
-
-                        tel.clear()
-                        progressBar.visibility = View.INVISIBLE
-                        buttonRegister.text = "effectuer la transaction"
-                        previewImage.setImageResource(0)
-                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
                         db.collection("operation").add(operationMap).addOnCompleteListener {
-                            // Ne rien faire ici
+                            val tel = textTelephone.text
+
+                            tel.clear()
+                            progressBar.visibility = View.INVISIBLE
+                            buttonRegister.isEnabled = true
+                            previewImage.setImageResource(0)
+                            typeOperation.setSelection(0)
+                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+
                         }.addOnFailureListener {
                             val builder = AlertDialog.Builder(context)
                             builder.setTitle("Alerte")

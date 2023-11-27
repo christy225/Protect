@@ -2,39 +2,51 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@drawable/backgroundgradientsuperviseur"
+        android:layout_height="200dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+
         <androidx.cardview.widget.CardView
-            android:id="@+id/affiche_delai_home"
-            app:cardElevation="20dp"
-            app:cardCornerRadius="20dp"
-            android:layout_marginTop="15dp"
+            android:id="@+id/cardView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/libelle_delai_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                android:textStyle="bold"
-                android:layout_marginHorizontal="20dp"
-                android:textColor="@color/color_item_amount" />
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="7dp"
+                android:src="@drawable/icone" />
         </androidx.cardview.widget.CardView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/nomComSuperviseur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Nom Commercial"
+            android:layout_marginTop="12dp"
+            style="@style/inputFont"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/cardView4"
+            app:layout_constraintStart_toStartOf="@+id/cardView4"
+            app:layout_constraintTop_toBottomOf="@+id/cardView4" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView7"
@@ -43,7 +55,7 @@
         android:layout_marginHorizontal="20dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="0dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="160dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -93,6 +105,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/libelle_delai_home"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="10dp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="20dp"
+                        android:textColor="@color/color_item_amount" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

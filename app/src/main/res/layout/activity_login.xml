@@ -86,6 +86,7 @@
                 android:text="@string/login_button_default_text"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

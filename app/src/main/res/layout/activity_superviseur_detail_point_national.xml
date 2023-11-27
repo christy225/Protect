@@ -89,8 +89,9 @@
                         android:id="@+id/superviseur_detail_point_montant_orange_national"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:padding="10dp"
+                        style="@style/inputFont"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"/>
 
@@ -117,6 +118,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:padding="10dp"
+                        style="@style/inputFont"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"/>
 
@@ -143,6 +145,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:padding="10dp"
+                        style="@style/inputFont"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"/>
 
@@ -169,6 +172,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:padding="10dp"
+                        style="@style/inputFont"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"/>
 
@@ -195,6 +199,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:padding="10dp"
+                        style="@style/inputFont"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"/>
                 </LinearLayout>
@@ -243,6 +248,7 @@
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"
                         android:padding="10dp"
+                        style="@style/inputFont"
                         android:textSize="18sp" />
 
                     <TextView
@@ -257,6 +263,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        style="@style/inputFont"
                         android:layout_marginBottom="20dp"
                         android:background="@drawable/background_circular"
                         android:padding="10dp"
@@ -290,6 +297,7 @@
                         android:text="Resultat"
                         android:textSize="20sp"
                         android:textStyle="bold"
+                        style="@style/inputFont"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

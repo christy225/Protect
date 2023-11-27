@@ -198,4 +198,5 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
         }
         return view
     }
+
 }

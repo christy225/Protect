@@ -107,6 +107,28 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
+        // BLOQUER LE NOMBRE DE CARACTERES DE SAISIE
+        textTelephone.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
+                // Avant que le texte change
+            }
+
+            override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
+                // Pendant que le texte change
+            }
+
+            override fun afterTextChanged(editable: Editable) {
+                // Après que le texte a changé
+
+                // Vérifier si la longueur du texte est supérieure à la limite
+                val maxLength = 10
+                if (editable.length > maxLength) {
+                    // Supprimer les caractères excédentaires
+                    editable.delete(maxLength, editable.length)
+                }
+            }
+        })
+
         val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMoneygram)
         btnCancel.setOnClickListener {
             textTelephone.text.clear()
@@ -163,7 +185,6 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
                 }else{
                     progressBar.visibility = View.VISIBLE
                     buttonRegister.isEnabled = false
-                    buttonRegister.setText(R.string.button_loading)
 
                     // Générer la date
                     val current = LocalDateTime.now()
@@ -196,16 +217,17 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
                                             "url" to it.toString()
                                         )
 
-                                        val tel = textTelephone.text
-
-                                        tel.clear()
-                                        progressBar.visibility = View.INVISIBLE
-                                        buttonRegister.text = "effectuer la transaction"
-                                        previewImage.setImageResource(0)
-                                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                                         db.collection("operation").add(operationMap).addOnCompleteListener {
-                                            // Ne rien faire ici
+                                            val tel = textTelephone.text
+
+                                            tel.clear()
+                                            progressBar.visibility = View.INVISIBLE
+                                            previewImage.setImageResource(0)
+                                            buttonRegister.isEnabled = true
+                                            typeOperation.setSelection(0)
+                                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+
                                         }.addOnFailureListener {
                                             val builder = AlertDialog.Builder(context)
                                             builder.setTitle("Alerte")
@@ -236,16 +258,16 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
                             "url" to "null"
                         )
 
-                        val tel = textTelephone.text
-
-                        tel.clear()
-                        progressBar.visibility = View.INVISIBLE
-                        buttonRegister.text = "effectuer la transaction"
-                        previewImage.setImageResource(0)
-                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
                         db.collection("operation").add(operationMap).addOnCompleteListener {
-                            // Ne rien faire ici
+                            val tel = textTelephone.text
+
+                            tel.clear()
+                            progressBar.visibility = View.INVISIBLE
+                            previewImage.setImageResource(0)
+                            typeOperation.setSelection(0)
+                            buttonRegister.isEnabled = true
+                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+
                         }.addOnFailureListener {
                             val builder = AlertDialog.Builder(context)
                             builder.setTitle("Alerte")

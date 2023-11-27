@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
@@ -27,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
@@ -109,10 +110,41 @@ class LoginActivity : AppCompatActivity() {
                                                 startActivity(intent)
                                                 button.isEnabled = true
                                                 button.setText(R.string.login_button_default_text)
+                                            }else if(brand == "null" && model == "null"){
+                                                // Historique de connexion
+
+                                                // Générer la date
+                                                val current = LocalDateTime.now()
+                                                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
+                                                val dateFormatted = current.format(formatterDate)
+
+                                                // Générer l'heure
+                                                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
+                                                val hourFormatted = current.format(formatterHour)
+
+                                                val connexionMap = hashMapOf(
+                                                    "id" to auth.currentUser!!.uid,
+                                                    "statut" to "connexion",
+                                                    "date" to dateFormatted,
+                                                    "heure" to hourFormatted
+                                                )
+
+                                                database.collection("connexion")
+                                                    .add(connexionMap)
+                                                    .addOnCompleteListener {
+                                                        // Ne rien faire
+                                                    }
+
+                                                val intent = Intent(this, MainActivity::class.java)
+                                                startActivity(intent)
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
                                             }else{
                                                 val builder = AlertDialog.Builder(this)
                                                 builder.setMessage("Vous n'êtes pas autorisé")
                                                 builder.show()
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
                                             }
                                         }else{
                                             val builder = AlertDialog.Builder(this)
@@ -148,6 +180,30 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                auth.signOut()
+                // Redirection vers une autre Activity
+                val intent = Intent(this@LoginActivity, LoginActivity::class.java)
+                startActivity(intent)
+                finish() // Facultatif : fermez l'activité actuelle si vous ne voulez pas y retourner
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser != null)
+        {
+            db.collection("account").whereEqualTo("brand", Build.BRAND)
+                .get()
+                .addOnSuccessListener {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+        }
+    }
 }

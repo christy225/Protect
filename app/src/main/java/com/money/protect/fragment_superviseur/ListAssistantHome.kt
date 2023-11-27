@@ -34,6 +34,7 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
     lateinit var db : FirebaseFirestore
     private lateinit var assistantArrayList : ArrayList<AccountModel>
     private lateinit var progressBar: ProgressBar
+    private lateinit var nomCom: TextView
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -49,6 +50,7 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewListAssiatntHome)
         progressBar = view.findViewById(R.id.progressBarListAssistant)
+        nomCom = view.findViewById(R.id.nomComSuperviseur)
         progressBar.visibility = View.VISIBLE
 
         auth = FirebaseAuth.getInstance()
@@ -57,9 +59,8 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
         assistantArrayList = arrayListOf()
 
         val libelleDelai = view.findViewById<TextView>(R.id.libelle_delai_home)
-        val card = view.findViewById<CardView>(R.id.affiche_delai_home)
 
-        card.visibility = View.INVISIBLE
+        libelleDelai.visibility = View.INVISIBLE
 
         // VERIFIER L'ETAT D'ABONNEMENT
 
@@ -88,7 +89,7 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
                     if (duree >= 0 && duree <= 3)
                     {
                         libelleDelai.text = "Votre abonnement expire dans " + duree + " jour(s)"
-                        card.visibility = View.VISIBLE
+                        libelleDelai.visibility = View.VISIBLE
                     }else if(duree < 0){
                         // APPLIQUER EXPIRATION DE L'ABONNEMENT
 
@@ -127,6 +128,7 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
             .get().addOnSuccessListener{ documents->
                 for (datas in documents)
                 {
+                    nomCom.text = datas.data["nomcommercial"].toString()
                     val item = datas.toObject(AccountModel::class.java)
                     if (item != null)
                     {

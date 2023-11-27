@@ -41,18 +41,18 @@ import java.util.Locale
 class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var resultat: TextView
+    private lateinit var resultat: TextView
     lateinit var button: Button
 
     lateinit var adapter: LePointAdapter
 
-    lateinit var capitalArrayList: ArrayList<String>
-    lateinit var retrieveArrayList: ArrayList<String>
+    private lateinit var capitalArrayList: ArrayList<String>
+    private lateinit var retrieveArrayList: ArrayList<String>
 
-    lateinit var datePicker: EditText
-    lateinit var buttonSearchDate: AppCompatImageButton
-    lateinit var recyclerView: RecyclerView
-    lateinit var pointArrayList: ArrayList<PointModel>
+    private lateinit var datePicker: EditText
+    private lateinit var buttonSearchDate: AppCompatImageButton
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var pointArrayList: ArrayList<PointModel>
 
     lateinit var progressBar: ProgressBar
 
@@ -213,13 +213,11 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
             }.addOnFailureListener {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Erreur")
-                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                builder.setMessage(R.string.onFailureText)
                 builder.show()
             }
 
         // Récupérer le Capital
-
-
 
         db.collection("capital")
             .whereEqualTo("id", id)
@@ -286,8 +284,10 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
                 progressBar.visibility = View.INVISIBLE
                 for (data in documents){
                     val donnee = data.toObject(PointModel::class.java)
-                    if (donnee != null) {
+                    if (donnee != null)
+                    {
                         pointArrayList.add(donnee)
+                        pointArrayList.sortByDescending { it.date }
                     }
                     recyclerView.adapter = adapter
                     recyclerView.layoutManager = LinearLayoutManager(context)

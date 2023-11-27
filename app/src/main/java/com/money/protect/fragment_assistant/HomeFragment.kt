@@ -40,7 +40,6 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
     private lateinit var nomCom: TextView
-
     private lateinit var searchLink: ImageView
     private lateinit var internationalLink: ConstraintLayout
     private lateinit var nationalLink: ConstraintLayout
@@ -87,7 +86,6 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
 
         // Appeler la fonction pour afficher le message après 10 secondes
 
-
         // RECUPERER LE NOM COMMERCIAL
         db.collection("account")
             .whereEqualTo("id", auth.currentUser?.uid)
@@ -96,6 +94,7 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
                 for (data in document)
                 {
                     nomCom.text = data!!.data["nomcommercial"].toString()
+                    module = data!!.data["module"].toString()
                 }
             }
 
@@ -103,10 +102,26 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
             SearchPopup(context).show()
         }
         nationalLink.setOnClickListener {
-            MenuPopupAssistant(context).show()
+            if (module == "International")
+            {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Vous n'êtes pas autorisé")
+                builder.setMessage("Votre compte est configuré pour effectuer uniquement les transferts internationaux")
+                builder.show()
+            }else{
+                MenuPopupAssistant(context).show()
+            }
         }
         internationalLink.setOnClickListener {
-            MenuPopupAssistantInter(context).show()
+            if (module == "National")
+            {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Vous n'êtes pas autorisé")
+                builder.setMessage("Votre compte est configuré pour effectuer uniquement les transferts nationaux")
+                builder.show()
+            }else{
+                MenuPopupAssistantInter(context).show()
+            }
         }
 
         // RECHERCHER LE SUPERVISEUR POUR L'ABONNEMENT
@@ -185,13 +200,7 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
                 Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
             }
 
-        // RECHERCHER LE SUPERVISEUR POUR L'ABOONEMENT
-        
-        // Afficher la liste des transactions du jour
-
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
-        val dateFormatted = current.format(formatter)
+        // FIN RECHERCHER LE SUPERVISEUR POUR L'ABOONEMENT
 
         comptabiliteLink.setOnClickListener {
             if (module == "National")
@@ -214,6 +223,12 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
                     .commit()
             }
         }
+
+        // Afficher la liste des transactions du jour
+
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
+        val dateFormatted = current.format(formatter)
 
        db.collection("operation")
            .orderBy("heure", Query.Direction.DESCENDING)
@@ -245,8 +260,7 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
         }.addOnFailureListener {
                Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
         }
-
-
+        
         return view
     }
 

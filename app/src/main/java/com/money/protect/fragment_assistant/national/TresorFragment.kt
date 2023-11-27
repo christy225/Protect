@@ -200,22 +200,6 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
             }
         })
 
-        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationTresor)
-        btnCancel.setOnClickListener {
-            textTelephone.text.clear()
-            textMontant.text.clear()
-            buttonRegister.text = "effectuer la transaction"
-
-            // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-
-            checkBox.isChecked = false
-
-            context.bottomNavUnlock()
-        }
 
         progressBar.visibility = View.INVISIBLE
 
@@ -257,6 +241,25 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         typeOperation.adapter = adapter
+
+        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationTresor)
+        btnCancel.setOnClickListener {
+            textTelephone.text.clear()
+            textMontant.text.clear()
+            buttonRegister.text = "effectuer la transaction"
+
+            // Masquer le block
+            previewImage.setImageResource(0)
+            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
+            params.height = 0
+            sectionUpload.layoutParams = params
+
+            typeOperation.setSelection(0)
+
+            checkBox.isChecked = false
+
+            context.bottomNavUnlock()
+        }
 
         buttonRegister.setOnClickListener {
             if (checkForInternet(context)) {
@@ -340,6 +343,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                             progressBar.visibility = View.INVISIBLE
                                             buttonRegister.text = "effectuer la transaction"
                                             previewImage.setImageResource(0)
+                                            typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                                             db.collection("operation").add(operationMap).addOnCompleteListener {
@@ -383,6 +387,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                             progressBar.visibility = View.INVISIBLE
                             buttonRegister.text = "effectuer la transaction"
                             previewImage.setImageResource(0)
+                            typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                             db.collection("operation").add(operationMap).addOnCompleteListener {

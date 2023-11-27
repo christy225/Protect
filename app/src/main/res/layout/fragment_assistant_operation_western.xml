@@ -49,6 +49,7 @@
                     android:text="Annuler"
                     android:textStyle="bold"
                     android:textColor="#038DF6"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="@+id/textView2"
                     app:layout_constraintTop_toTopOf="parent" />
 

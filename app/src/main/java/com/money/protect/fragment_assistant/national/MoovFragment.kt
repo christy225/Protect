@@ -199,22 +199,6 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             }
         })
 
-        // Effacer tout le contenu
-        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMoov)
-        btnCancel.setOnClickListener {
-            textTelephone.text.clear()
-            textMontant.text.clear()
-            buttonRegister.text = "effectuer la transaction"
-
-            // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-
-            context.bottomNavUnlock()
-        }
-
         // L'historique des transferts
         val btnHistory = view.findViewById<TextView>(R.id.historiqueMoov)
         btnHistory.setOnClickListener {
@@ -286,6 +270,24 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
+        // Effacer tout le contenu
+        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMoov)
+        btnCancel.setOnClickListener {
+            textTelephone.text.clear()
+            textMontant.text.clear()
+            buttonRegister.text = "effectuer la transaction"
+
+            // Masquer le block
+            previewImage.setImageResource(0)
+            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
+            params.height = 0
+            sectionUpload.layoutParams = params
+
+            typeOperation.setSelection(0)
+
+            context.bottomNavUnlock()
+        }
+
         buttonRegister.setOnClickListener {
             if (checkForInternet(context)) {
                 if(textTelephone.text.isEmpty() || textMontant.text.isEmpty() || typeOperation.selectedItem.toString() == "Sélectionner")
@@ -305,7 +307,9 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                     {
                         val tel = textTelephone.text.toString()
                         val amount = textMontant.text.toString()
-                        val syntaxe = "*155*1*4*" + tel + "*" + amount + Uri.encode("#")
+                        val caractere = ','
+                        val newValue = amount.filter { it != caractere }
+                        val syntaxe = "*155*1*4*" + tel + "*" + newValue + Uri.encode("#")
                         val callIntent = Intent(Intent.ACTION_CALL)
                         callIntent.data = Uri.parse("tel:$syntaxe")
                         startActivity(callIntent)
@@ -317,13 +321,13 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Dépôt"){
 
                         envoi()
-
+                        typeOperation.setSelection(0)
                         buttonRegister.text = "effectuer la transaction"
                         context.bottomNavUnlock()
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Retrait"){
 
                         envoi()
-
+                        typeOperation.setSelection(0)
                         buttonRegister.text = "effectuer la transaction"
                         context.bottomNavUnlock()
                     }

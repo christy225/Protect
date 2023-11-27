@@ -104,6 +104,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
         }
         textMontant.addTextChangedListener(textWatcher)
 
+
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_mtn)
         val link2 = view.findViewById<ImageView>(R.id.assistant_link2_mtn)
         val link3 = view.findViewById<ImageView>(R.id.assistant_link3_mtn)
@@ -200,23 +201,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
         })
 
-        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMtn)
-        btnCancel.setOnClickListener {
-            textTelephone.text.clear()
-            textMontant.text.clear()
-            buttonRegister.text = "effectuer la transaction"
-
-            // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-
-            checkBox.isChecked = false
-
-            context.bottomNavUnlock()
-        }
-
         val btnHistory = view.findViewById<TextView>(R.id.historiqueMtn)
         btnHistory.setOnClickListener {
             val syntaxe = "*133" + Uri.encode("#")
@@ -287,6 +271,25 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
+
+        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMtn)
+        btnCancel.setOnClickListener {
+            textTelephone.text.clear()
+            textMontant.text.clear()
+            buttonRegister.text = "effectuer la transaction"
+
+            // Masquer le block
+            previewImage.setImageResource(0)
+            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
+            params.height = 0
+            sectionUpload.layoutParams = params
+            typeOperation.setSelection(0)
+
+            checkBox.isChecked = false
+
+            context.bottomNavUnlock()
+        }
+
         buttonRegister.setOnClickListener {
             if (checkForInternet(context)) {
                 if(textTelephone.text.isEmpty() || textMontant.text.isEmpty() || typeOperation.selectedItem.toString() == "Sélectionner")
@@ -307,7 +310,9 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                         {
                             val tel = textTelephone.text.toString()
                             val amount = textMontant.text.toString()
-                            val syntaxe = "*133*1*" + tel + "*" + amount + Uri.encode("#")
+                            val caractere = ','
+                            val newValue = amount.filter { it != caractere }
+                            val syntaxe = "*133*2*" + tel + "*" + newValue + Uri.encode("#")
                             val callIntent = Intent(Intent.ACTION_CALL)
                             callIntent.data = Uri.parse("tel:$syntaxe")
                             startActivity(callIntent)
@@ -319,7 +324,9 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                         }else if (typeOperation.selectedItem.toString() == "Retrait"){
                             val tel = textTelephone.text.toString()
                             val amount = textMontant.text.toString()
-                            val syntaxe = "*133*2*" + tel + "*" + amount + Uri.encode("#")
+                            val caractere = ','
+                            val newValue = amount.filter { it != caractere }
+                            val syntaxe = "*133*2*" + tel + "*" + newValue + Uri.encode("#")
                             val callIntent = Intent(Intent.ACTION_CALL)
                             callIntent.data = Uri.parse("tel:$syntaxe")
                             startActivity(callIntent)
@@ -372,6 +379,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                             progressBar.visibility = View.INVISIBLE
                                             buttonRegister.text = "effectuer la transaction"
                                             previewImage.setImageResource(0)
+                                            typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
 
@@ -416,6 +424,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             progressBar.visibility = View.INVISIBLE
                             buttonRegister.text = "effectuer la transaction"
                             previewImage.setImageResource(0)
+                            typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                             db.collection("operation").add(operationMap).addOnCompleteListener {
