@@ -14,6 +14,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
@@ -24,6 +25,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
@@ -167,6 +169,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -187,6 +190,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -241,6 +245,22 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         typeOperation.adapter = adapter
+
+        typeOperation.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                if (selectedItem == "Dépôt")
+                {
+                    buttonRegister.text = "effectuer la transaction"
+                }else if(selectedItem == "Retrait"){
+                    buttonRegister.text = "effectuer la transaction"
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Ne fait rien ici
+            }
+        }
 
         val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationWave)
         btnCancel.setOnClickListener {
@@ -407,6 +427,11 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                 Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
             }
         }
+
+        if (textTelephone.text.isNotEmpty()){
+            context.blockBackButton(this)
+        }
+
         return view
     }
 

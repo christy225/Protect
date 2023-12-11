@@ -42,6 +42,8 @@
     <string name="info_text_point">Vous avez déjà enregistré le point de ce jour</string>
     <string name="info_avant_enregistrement">Cette opération est irréversible. Veuillez donc vérifier les informations avant l\'enregistrement.</string>
 
+    <!--   -->
+    <string name="info_double_compte">Ce deuxième compte servira pour les opérations Orange Money principalement \n Vous pourrez utiliser directement la syntaxe comme dans le cas des opérateurs MTN/MOOV</string>
     <!-- POPUP MENU OPERATEUR POUR OPERATION -->
     <string name="orange">orange</string>
     <string name="mtn">mtn</string>

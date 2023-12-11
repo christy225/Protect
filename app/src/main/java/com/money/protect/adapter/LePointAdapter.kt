@@ -13,6 +13,7 @@ import com.money.protect.SuperviseurActivity
 import com.money.protect.SuperviseurDetailPointActivity
 import com.money.protect.SuperviseurDetailPointInterActivity
 import com.money.protect.SuperviseurDetailPointNational
+import java.text.DecimalFormat
 
 class LePointAdapter(
     private val context: SuperviseurActivity,
@@ -41,7 +42,7 @@ class LePointAdapter(
     override fun onBindViewHolder(holder: CaisseviewHolder, position: Int) {
         val currentPoint = caisseArrayList[position]
         holder.daterecherche.text = currentPoint.date
-        holder.total.text = currentPoint.total
+        holder.total.text = DecimalFormat("#,###").format(currentPoint.total.toInt())
 
         holder.itemView.setOnClickListener {
             val intent1 = Intent(context, SuperviseurDetailPointActivity::class.java)

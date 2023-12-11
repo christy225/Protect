@@ -165,6 +165,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -185,6 +186,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {

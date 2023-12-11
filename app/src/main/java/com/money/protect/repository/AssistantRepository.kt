@@ -22,6 +22,7 @@ class AssistantRepository {
             "email" to assistant.email,
             "role" to "assistant",
             "statut" to assistant.statut,
+            "module" to assistant.module,
             "nomcommercial" to assistant.nomcommercial,
             "ville" to assistant.ville,
             "quartier" to assistant.quartier,

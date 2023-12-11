@@ -77,7 +77,7 @@ class SmsMtn(
         val contentResolver = context.contentResolver
 
         val selection = "${Telephony.Sms.ADDRESS} = ?" // Sélectionnez les SMS avec l'adresse spécifique
-        val selectionArgs = arrayOf("Mobile Money")
+        val selectionArgs = arrayOf("MobileMoney")
 
         val uri = Telephony.Sms.Inbox.CONTENT_URI
         val cursor = contentResolver.query(uri, null, selection, selectionArgs, null)

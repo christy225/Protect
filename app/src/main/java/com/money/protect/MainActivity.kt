@@ -1,6 +1,8 @@
 package com.money.protect
 
+import android.app.ActivityManager
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -9,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,12 +33,19 @@ import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.FactureFragment
 import com.money.protect.fragment_assistant.HomeFragment
 import com.money.protect.fragment_assistant.SettingsFragment
+import com.money.protect.popup.MenuPopupAssistant
+import com.money.protect.popup.MenuPopupCompte1Assistant
+import com.money.protect.popup.MenuPopupCompte2Assistant
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.security.Key
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Arrays
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : AppCompatActivity() {
@@ -49,9 +59,20 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
+    private var compte: String? = null
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Récupère la dernière page visitée
+        val sharedPreferences = getSharedPreferences("my_app_preferences", Context.MODE_PRIVATE)
+        val lastPage = sharedPreferences.getString("last_page", null)
+
+        // Ouvre la dernière page visitée
+        if (lastPage != null) {
+            val intent = Intent(this, Class.forName(lastPage))
+            startActivity(intent)
+        }
 
         blockScreenShot()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -68,6 +89,9 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+
+        val intent: Intent = getIntent()
+        compte = intent.getStringExtra("compte")
 
         // Vérifier si la permission appel est déjà accordée
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
@@ -87,48 +111,7 @@ class MainActivity : AppCompatActivity() {
                 {
                     val superviseurId = data!!.data["superviseur"].toString()
 
-                    var modelX = data.data["model"].toString()
-                    var brandX = data.data["brand"].toString()
-
-                    // On récupère ces données pour mettre à jour en infos en incluant les données du téléphone
-
-                    val creation = data.data["creation"].toString()
-                    val email = data.data["email"].toString()
-                    val nomcommercial = data.data["nomcommercial"].toString()
-                    val nomcomplet = data.data["nomcomplet"].toString()
-                    val quartier = data.data["quartier"].toString()
-                    val telephone = data.data["telephone"].toString()
-                    val ville = data.data["ville"].toString()
-
                     module = data.data["module"].toString()
-
-                    if (modelX == "null" || brandX == "null")
-                    {
-                        modelX = Build.MODEL
-                        brandX = Build.BRAND
-
-                        val accountMap = hashMapOf(
-                            "creation" to creation,
-                            "email" to email,
-                            "id" to auth.currentUser!!.uid,
-                            "nomcommercial" to nomcommercial,
-                            "nomcomplet" to nomcomplet,
-                            "quartier" to quartier,
-                            "module" to module,
-                            "role" to "assistant",
-                            "statut" to true,
-                            "superviseur" to superviseurId,
-                            "telephone" to telephone,
-                            "ville" to ville,
-                            "model" to modelX,
-                            "brand" to brandX
-                        )
-
-                        db.collection("account")
-                            .document(auth.currentUser!!.uid)
-                            .set(accountMap)
-                            .addOnSuccessListener {/* Ne rien faire */}
-                    }
 
                     // VERIFIER L'ETAT D'ABONNEMENT DE SON SUPERVISEUR
 
@@ -309,6 +292,17 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    fun Compte(){
+        if (compte == "compte1")
+        {
+            MenuPopupCompte1Assistant(this).show()
+        }else if (compte == "compte2"){
+            MenuPopupCompte2Assistant(this).show()
+        }else{
+            MenuPopupAssistant(this).show()
+        }
+    }
+
     fun bottomNavBlocked(mont: String, num: String) {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         if (mont.isNotEmpty() || num.isNotEmpty())
@@ -331,5 +325,19 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
+    }
+
+    fun blockBackButton(fragment: Fragment){
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Redirection vers une autre Activity
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 }

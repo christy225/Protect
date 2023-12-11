@@ -54,19 +54,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/linkToCapital"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Capital"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#108BED"
-                style="@style/inputFont"
-                app:layout_constraintBottom_toBottomOf="@+id/nom_assistant"
-                app:layout_constraintEnd_toEndOf="@+id/cardView7"
-                app:layout_constraintTop_toTopOf="@+id/nom_assistant" />
-
-            <TextView
                 android:id="@+id/nom_assistant"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,6 +61,7 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 style="@style/TitleFont"
+                android:ellipsize="end"
                 android:layout_marginTop="65dp"
                 app:layout_constraintStart_toStartOf="@+id/cardView7"
                 app:layout_constraintTop_toTopOf="parent"
@@ -111,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="0dp"
+                app:cardElevation="20dp"
                 android:layout_marginTop="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -127,13 +115,13 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginEnd="15dp"
-                        android:backgroundTint="#FF9800"
+                        android:backgroundTint="#FFF"
                         android:paddingHorizontal="15dp"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:text="Point du jour"
+                        android:text="AFFICHER LE POINT"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
+                        android:textColor="#FF9800"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -183,17 +171,26 @@
 
             </androidx.cardview.widget.CardView>
 
+            <ImageButton
+                android:id="@+id/menuIconSuperviseur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_menu_24"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@+id/cardView7"
+                app:layout_constraintTop_toBottomOf="@+id/cardView7" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView99"
                 app:cardCornerRadius="50dp"
                 app:cardElevation="0dp"
                 android:layout_marginHorizontal="15dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardView7">
+                app:layout_constraintTop_toBottomOf="@+id/menuIconSuperviseur">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

@@ -110,14 +110,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
                         android:hint="Montant"
+                        style="@style/inputFont"
                         android:inputType="number"
                         android:paddingLeft="10dp" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <CheckBox
+                    android:id="@+id/reduireCapitalSuperviseur"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Réduire le capital"/>
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/superviseur_capital_btn_register"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ajouter au capital"
+                    android:text="mettre à jour"
                     android:textStyle="bold"
                     android:background="@drawable/backgroundgradientsuperviseurbutton"
                     android:layout_marginTop="30dp"

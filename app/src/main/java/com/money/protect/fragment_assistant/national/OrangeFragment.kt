@@ -14,6 +14,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
@@ -164,6 +165,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -184,6 +186,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -238,6 +241,22 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         typeOperation.adapter = adapter
+
+        typeOperation.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                if (selectedItem == "Dépôt")
+                {
+                    buttonRegister.text = "effectuer la transaction"
+                }else if(selectedItem == "Retrait"){
+                    buttonRegister.text = "effectuer la transaction"
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Ne fait rien ici
+            }
+        }
 
         val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationOrange)
         btnCancel.setOnClickListener {

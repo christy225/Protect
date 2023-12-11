@@ -350,6 +350,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
+                    <ImageView
+                        android:id="@+id/successPoint"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/success"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                     <TextView
                         android:id="@+id/superviseur_detail_point_resultat_all"
                         android:layout_width="wrap_content"

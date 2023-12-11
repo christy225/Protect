@@ -9,8 +9,8 @@
     <item
         android:id="@+id/factures"
         android:iconTint="@color/black"
-        android:icon="@drawable/baseline_facture_24"
-        android:title="Factures"/>
+        android:icon="@drawable/baseline_room_service_24"
+        android:title="Autres Services"/>
     <item
         android:id="@+id/settings"
         android:iconTint="@color/black"

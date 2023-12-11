@@ -109,7 +109,7 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
                 builder.setMessage("Votre compte est configuré pour effectuer uniquement les transferts internationaux")
                 builder.show()
             }else{
-                MenuPopupAssistant(context).show()
+                context.Compte()
             }
         }
         internationalLink.setOnClickListener {

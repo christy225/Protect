@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -32,7 +33,8 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
     var db = Firebase.firestore
     lateinit var auth : FirebaseAuth
     private val database = Firebase.firestore
-    @SuppressLint("MissingInflatedId")
+    private lateinit var annexe: Switch
+    @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +54,7 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
         val btnLogout = view.findViewById<Button>(R.id.assistant_settings_logout)
         val numAbonnement = view.findViewById<TextView>(R.id.assistant_settings_num_abonnement)
         val identifiant = view.findViewById<TextView>(R.id.assistant_identifiant)
+        annexe = view.findViewById(R.id.doubleCompteAssist)
 
         val linkReabonnement = view.findViewById<TextView>(R.id.assistant_settings_reabonnement_link)
 
@@ -73,6 +76,57 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse("https://api.whatsapp.com/send/?phone=$tel")
             startActivity(intent)
+        }
+
+        annexe.visibility = View.INVISIBLE
+
+        // Verifier le compte annexe
+        db.collection("annexe")
+            .whereEqualTo("id", auth.currentUser?.uid)
+            .get()
+            .addOnSuccessListener { documents->
+                for (donnee in documents)
+                {
+                    if (donnee != null)
+                    {
+                        annexe.visibility = View.VISIBLE
+                        annexe.isChecked = donnee.data["mainprofile"].toString().toBoolean()
+                    }
+                }
+            }.addOnFailureListener {
+                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+            }
+
+        // Activer le double-compte
+        annexe.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Confirmation")
+                .setMessage("Souhaiteriez-vous activer le double-compte ?")
+                .setPositiveButton("Oui"){ dialog, id->
+                    val annexeMap = hashMapOf(
+                        "id" to auth.currentUser?.uid,
+                        "statut" to true,
+                        "mainprofil" to true
+                    )
+                    db.collection("annexe")
+                        .document(auth.currentUser!!.uid)
+                        .set(annexeMap)
+                        .addOnCompleteListener { it->
+                            if (it.isSuccessful)
+                            {
+                                Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                            }else{
+                                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                            }
+                    }.addOnFailureListener{
+                            Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                        }
+                }
+                .setNegativeButton("Non"){ dialod, id->
+                    // Ne rien faire
+                }
+
+            builder.create().show()
         }
 
         // RECHERCHER LE SUPERVISEUR POUR L'ABONNEMENT

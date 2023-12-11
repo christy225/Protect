@@ -105,7 +105,7 @@ class ListAssistantSuperviseurFragment(private val context: SuperviseurActivity)
                     {
                         assistantArrayList.add(item)
                     }
-                    recyclerView.adapter = AssistantListAdapter(assistantArrayList)
+                    recyclerView.adapter = AssistantListAdapter(context, assistantArrayList)
                     recyclerView.layoutManager = LinearLayoutManager(context)
                 }
             }.addOnFailureListener {

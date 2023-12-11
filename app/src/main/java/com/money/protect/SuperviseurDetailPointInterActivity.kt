@@ -14,13 +14,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.DecimalFormat
 
 class SuperviseurDetailPointInterActivity : AppCompatActivity() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
     private lateinit var resultat: TextView
     private lateinit var backButton: ImageView
-    @SuppressLint("MissingInflatedId")
+    private lateinit var succes: ImageView
+    @SuppressLint("MissingInflatedId", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -33,6 +35,7 @@ class SuperviseurDetailPointInterActivity : AppCompatActivity() {
             finish()
         }
 
+        succes = findViewById(R.id.successPointInter)
         resultat = findViewById(R.id.superviseur_detail_point_resultat_inter)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar_superviseur_point_inter)
         progressBar.visibility = View.VISIBLE
@@ -55,10 +58,10 @@ class SuperviseurDetailPointInterActivity : AppCompatActivity() {
         val id = intent.getStringExtra("id")
 
         dateX.text = date
-        retraitX.text = retrait
-        envoiX.text = envoi
-        especesX.text = especes
-        diversX.text = divers
+        retraitX.text = DecimalFormat("#,###").format(retrait!!.toInt())
+        envoiX.text = DecimalFormat("#,###").format(envoi!!.toInt())
+        especesX.text = DecimalFormat("#,###").format(especes!!.toInt())
+        diversX.text = DecimalFormat("#,###").format(divers!!.toInt())
 
         // Montant du point à la date sélectionné
 
@@ -76,13 +79,15 @@ class SuperviseurDetailPointInterActivity : AppCompatActivity() {
                     val res = capital - pointValeur
                     if (res < 0) {
                         progressBar.visibility = View.INVISIBLE
-                        resultat.text = "Surplus : " + (-1 * res)
+                        val calcul = -1 * res
+                        resultat.text = "Surplus : " + DecimalFormat("#,###").format(calcul)
                     }else if(res > 0) {
                         progressBar.visibility = View.INVISIBLE
-                        resultat.text = "Perte : $res"
+                        resultat.text = "Perte : " + DecimalFormat("#,###").format(res)
                     }else{
                         progressBar.visibility = View.INVISIBLE
-                        resultat.text = "COMPTE OK"
+                        resultat.visibility = View.INVISIBLE
+                        succes.visibility = View.VISIBLE
                     }
                 }
             }.addOnFailureListener {

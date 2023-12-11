@@ -19,7 +19,6 @@
                 android:id="@+id/constraintLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="230dp"
-                android:background="@drawable/backgroundgradientblue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -31,15 +30,14 @@
                     android:layout_margin="10dp"
                     android:src="@drawable/baseline_arrow_back_24"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/white" />
+                    app:layout_constraintTop_toTopOf="parent"/>
                 <TextView
                     android:id="@+id/textView2"
                     style="@style/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Détails de la transaction"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:layout_marginTop="58dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

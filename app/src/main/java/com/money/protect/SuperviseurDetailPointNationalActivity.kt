@@ -14,13 +14,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.DecimalFormat
+import java.text.NumberFormat
 
 class SuperviseurDetailPointNational : AppCompatActivity() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
     private lateinit var resultat: TextView
     private lateinit var backButton: ImageView
-    @SuppressLint("MissingInflatedId")
+    private lateinit var succes: ImageView
+    @SuppressLint("MissingInflatedId", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -33,6 +36,7 @@ class SuperviseurDetailPointNational : AppCompatActivity() {
             finish()
         }
 
+        succes = findViewById(R.id.successPointNational)
         resultat = findViewById(R.id.superviseur_detail_point_resultat_national)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar_superviseur_point_national)
         progressBar.visibility = View.VISIBLE
@@ -60,13 +64,13 @@ class SuperviseurDetailPointNational : AppCompatActivity() {
         val id = intent.getStringExtra("id")
 
         dateX.text = date
-        orangeX.text = orange
-        mtnX.text = mtn
-        moovX.text = moov
-        waveX.text = wave
-        tresorX.text = tresor
-        especesX.text = especes
-        diversX.text = divers
+        orangeX.text = DecimalFormat("#,###").format(orange!!.toInt())
+        mtnX.text = DecimalFormat("#,###").format(mtn!!.toInt())
+        moovX.text = DecimalFormat("#,###").format(moov!!.toInt())
+        waveX.text = DecimalFormat("#,###").format(wave!!.toInt())
+        tresorX.text = DecimalFormat("#,###").format(tresor!!.toInt())
+        especesX.text = DecimalFormat("#,###").format(especes!!.toInt())
+        diversX.text = DecimalFormat("#,###").format(divers!!.toInt())
 
         // Montant du point à la date sélectionné
 
@@ -88,13 +92,15 @@ class SuperviseurDetailPointNational : AppCompatActivity() {
                     val res = capital - pointValeur
                     if (res < 0) {
                         progressBar.visibility = View.INVISIBLE
-                        resultat.text = "Surplus : " + (-1 * res)
+                        val calcul = -1 * res
+                        resultat.text = "Surplus : " + DecimalFormat("#,###").format(calcul)
                     }else if(res > 0) {
                         progressBar.visibility = View.INVISIBLE
-                        resultat.text = "Perte : $res"
+                        resultat.text = "Perte : " + DecimalFormat("#,###").format(res)
                     }else{
                         progressBar.visibility = View.INVISIBLE
-                        resultat.text = "COMPTE OK"
+                        resultat.visibility = View.INVISIBLE
+                        succes.visibility = View.VISIBLE
                     }
                 }
             }.addOnFailureListener {

@@ -167,6 +167,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -187,6 +188,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -312,7 +314,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             val amount = textMontant.text.toString()
                             val caractere = ','
                             val newValue = amount.filter { it != caractere }
-                            val syntaxe = "*133*2*" + tel + "*" + newValue + Uri.encode("#")
+                            val syntaxe = "*133*1*" + tel + "*" + newValue + Uri.encode("#")
                             val callIntent = Intent(Intent.ACTION_CALL)
                             callIntent.data = Uri.parse("tel:$syntaxe")
                             startActivity(callIntent)
@@ -331,7 +333,9 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             callIntent.data = Uri.parse("tel:$syntaxe")
                             startActivity(callIntent)
                             buttonRegister.text = "enregistrer opération"
-                            context.bottomNavUnlock()
+
+                            // Bloquer le bottomNavigation si l'utilisateur a oublié d'enregistrer la transaction
+                            context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
                         }
                     }else if (buttonRegister.text === "enregistrer opération") {
                         progressBar.visibility = View.VISIBLE

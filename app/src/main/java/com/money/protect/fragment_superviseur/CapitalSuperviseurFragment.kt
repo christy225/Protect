@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -24,13 +25,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
+import java.text.DecimalFormat
 
 class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
     private var database = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var valeurAcuelleCapital: TextView
+    private lateinit var valeurAcuelleCapital: TextView
     lateinit var montant: EditText
+    private lateinit var checkBox: CheckBox
     lateinit var button: AppCompatButton
     lateinit var progressBar: ProgressBar
     @RequiresApi(Build.VERSION_CODES.M)
@@ -56,6 +59,7 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
 
         valeurAcuelleCapital = view.findViewById(R.id.superviseur_capital_valeur_actuel)
         montant = view.findViewById(R.id.superviseur_capital_montant)
+        checkBox = view.findViewById(R.id.reduireCapitalSuperviseur)
         button = view.findViewById(R.id.superviseur_capital_btn_register)
         progressBar = view.findViewById(R.id.superviseur_capital_progressbar)
 
@@ -129,8 +133,17 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
 
                 // ON RECUPERE LA NOUVELLE VALEUR DU CAPITAL AVANT L'ENVOI EN BASE DE DONNEES
 
-                val nouvelleValeurCapital =
-                    montant.text.toString().toInt() + valeurAcuelleCapital.text.toString().toInt()
+                val valeur1 = montant.text.toString().toInt() + valeurAcuelleCapital.text.toString().toInt()
+                val valeur2 = valeurAcuelleCapital.text.toString().toInt() - montant.text.toString().toInt()
+
+                var nouvelleValeurCapital: Int
+
+                if (checkBox.isChecked)
+                {
+                    nouvelleValeurCapital = valeur2
+                }else{
+                    nouvelleValeurCapital = valeur1
+                }
 
                 button.isEnabled = false
                 progressBar.visibility = View.VISIBLE

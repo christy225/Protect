@@ -2,12 +2,15 @@ package com.money.protect
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
@@ -24,12 +27,23 @@ class LoginActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
     private var database = Firebase.firestore
+    private lateinit var progressBar: ProgressBar
     @RequiresApi(Build.VERSION_CODES.M)
-    @SuppressLint("SuspiciousIndentation")
+    @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_login)
+
+        // Récupère la dernière page visitée
+        val sharedPreferences = getSharedPreferences("my_app_preferences", Context.MODE_PRIVATE)
+        val lastPage = sharedPreferences.getString("last_page", null)
+
+        // Ouvre la dernière page visitée
+        if (lastPage != null) {
+            val intent = Intent(this, Class.forName(lastPage))
+            startActivity(intent)
+        }
 
         auth = FirebaseAuth.getInstance()
 
@@ -56,12 +70,6 @@ class LoginActivity : AppCompatActivity() {
                                     val role = data.data!!["role"].toString()
                                     val statut = data.data["statut"].toString().toBoolean()
 
-                                    val model = data.data["model"].toString()
-                                    val brand = data.data["brand"].toString()
-
-                                    val modelX = Build.MODEL
-                                    val brandX = Build.BRAND
-
                                     if (role == "superviseur") {
                                         if (statut)
                                         {
@@ -79,73 +87,57 @@ class LoginActivity : AppCompatActivity() {
                                     } else if (role == "assistant") {
                                         if (statut)
                                         {
-                                            if (model == modelX && brand == brandX)
-                                            {
-                                                // Historique de connexion
+                                            // Historique de connexion
 
-                                                // Générer la date
-                                                val current = LocalDateTime.now()
-                                                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-                                                val dateFormatted = current.format(formatterDate)
+                                            // Générer la date
+                                            val current = LocalDateTime.now()
+                                            val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
+                                            val dateFormatted = current.format(formatterDate)
 
-                                                // Générer l'heure
-                                                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
-                                                val hourFormatted = current.format(formatterHour)
+                                            // Générer l'heure
+                                            val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
+                                            val hourFormatted = current.format(formatterHour)
 
-                                                val connexionMap = hashMapOf(
-                                                    "id" to auth.currentUser!!.uid,
-                                                    "statut" to "connexion",
-                                                    "date" to dateFormatted,
-                                                    "heure" to hourFormatted
-                                                )
+                                            val connexionMap = hashMapOf(
+                                                "id" to auth.currentUser!!.uid,
+                                                "statut" to "connexion",
+                                                "date" to dateFormatted,
+                                                "heure" to hourFormatted
+                                            )
 
-                                                database.collection("connexion")
-                                                    .add(connexionMap)
-                                                    .addOnCompleteListener {
+                                            database.collection("connexion")
+                                                .add(connexionMap)
+                                                .addOnCompleteListener {
                                                     // Ne rien faire
                                                 }
 
-
-                                                val intent = Intent(this, MainActivity::class.java)
-                                                startActivity(intent)
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }else if(brand == "null" && model == "null"){
-                                                // Historique de connexion
-
-                                                // Générer la date
-                                                val current = LocalDateTime.now()
-                                                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-                                                val dateFormatted = current.format(formatterDate)
-
-                                                // Générer l'heure
-                                                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
-                                                val hourFormatted = current.format(formatterHour)
-
-                                                val connexionMap = hashMapOf(
-                                                    "id" to auth.currentUser!!.uid,
-                                                    "statut" to "connexion",
-                                                    "date" to dateFormatted,
-                                                    "heure" to hourFormatted
-                                                )
-
-                                                database.collection("connexion")
-                                                    .add(connexionMap)
-                                                    .addOnCompleteListener {
-                                                        // Ne rien faire
+                                            db.collection("annexe")
+                                                .whereEqualTo("id", auth.currentUser!!.uid)
+                                                .get()
+                                                .addOnSuccessListener { documents->
+                                                    for (donne in documents)
+                                                    {
+                                                        if (donne != null)
+                                                        {
+                                                            progressBar.visibility = View.INVISIBLE
+                                                            val mainprofil = donne.data["mainprofil"].toString().toBoolean()
+                                                            // Vérifier si le double-compte est activé et rediriger
+                                                            if (mainprofil)
+                                                            {
+                                                                val intent = Intent(this, DoubleAccountActivity::class.java)
+                                                                startActivity(intent)
+                                                                button.isEnabled = true
+                                                                button.setText(R.string.login_button_default_text)
+                                                            }else{
+                                                                val intent = Intent(this, MainActivity::class.java)
+                                                                startActivity(intent)
+                                                                button.isEnabled = true
+                                                                button.setText(R.string.login_button_default_text)
+                                                            }
+                                                        }
                                                     }
+                                                }
 
-                                                val intent = Intent(this, MainActivity::class.java)
-                                                startActivity(intent)
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }else{
-                                                val builder = AlertDialog.Builder(this)
-                                                builder.setMessage("Vous n'êtes pas autorisé")
-                                                builder.show()
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }
                                         }else{
                                             val builder = AlertDialog.Builder(this)
                                             builder.setMessage("Votre compte a été désactivé par votre superviseur.")
@@ -196,14 +188,49 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        progressBar = findViewById(R.id.progressBarLogin)
+
+        progressBar.visibility = View.VISIBLE
         if (auth.currentUser != null)
         {
-            db.collection("account").whereEqualTo("brand", Build.BRAND)
+            db.collection("account").whereEqualTo("id", auth.currentUser!!.uid)
                 .get()
-                .addOnSuccessListener {
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
+                .addOnSuccessListener { document->
+                    for (donnee in document)
+                    {
+                        val role = donnee.data["role"].toString()
+                        if (role == "assistant")
+                        {
+                            db.collection("annexe")
+                                .whereEqualTo("id", auth.currentUser!!.uid)
+                                .get()
+                                .addOnSuccessListener { documents->
+                                    for (donne in documents)
+                                    {
+                                        if (donne != null)
+                                        {
+                                            progressBar.visibility = View.INVISIBLE
+                                            val mainprofil = donne.data["mainprofil"].toString().toBoolean()
+                                            // Vérifier si le double-compte est activé et rediriger
+                                            if (mainprofil)
+                                            {
+                                                val intent = Intent(this, DoubleAccountActivity::class.java)
+                                                startActivity(intent)
+                                            }else{
+                                                val intent = Intent(this, MainActivity::class.java)
+                                                startActivity(intent)
+                                            }
+                                        }
+                                    }
+                                }
+                        }else if (role == "superviseur"){
+                            val intent2 = Intent(this, SuperviseurActivity::class.java)
+                            startActivity(intent2)
+                        }
+                    }
                 }
+        }else{
+            progressBar.visibility = View.INVISIBLE
         }
     }
 }

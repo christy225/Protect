@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -27,7 +28,6 @@ import com.money.protect.adapter.LePointAdapter
 import com.money.protect.models.PointModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
@@ -42,9 +42,9 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
     private lateinit var resultat: TextView
-    lateinit var button: Button
+    private lateinit var button: Button
 
-    lateinit var adapter: LePointAdapter
+    private lateinit var adapter: LePointAdapter
 
     private lateinit var capitalArrayList: ArrayList<String>
     private lateinit var retrieveArrayList: ArrayList<String>
@@ -58,7 +58,6 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
 
     private var verificationSoldeDefini: Boolean = false
     private var etatCapital: Boolean = false
-
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -106,24 +105,25 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         progressBar.visibility = View.VISIBLE
         card.visibility = View.INVISIBLE
 
-        val linkToCapital = view.findViewById<TextView>(R.id.linkToCapital)
-        val capitalFragment = CapitalSuperviseurFragment(context)
-        linkToCapital.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("id", id)
-            bundle.putString("nom", nom)
-            bundle.putString("module", assignation)
-            capitalFragment.arguments = bundle
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_superviseur, capitalFragment)
-                .addToBackStack(null)
-                .commit()
-        }
-
         val linkToHome = view.findViewById<ImageView>(R.id.backToHomeSuperviseur)
         linkToHome.setOnClickListener {
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, ListAssistantHome(context))
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // Open POPUP
+        val buttonMenu = view.findViewById<ImageButton>(R.id.menuIconSuperviseur)
+        val menuFragment = MenuAssistSuperviseur(context)
+        buttonMenu.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("id", id)
+            bundle.putString("nom", nom)
+            bundle.putString("module", assignation)
+            menuFragment.arguments = bundle
+            context.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_superviseur, menuFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -237,12 +237,12 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
             }
 
         button.setOnClickListener {
-            if (verificationSoldeDefini == false)
+            if (!verificationSoldeDefini)
             {
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("Le solde du jour n'a pas encore été défini par votre assistant.")
                 builder.show()
-            }else if (etatCapital == false){
+            }else if (!etatCapital){
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("Vous n'avez pas encore défini le capital.")
                 builder.show()

@@ -19,8 +19,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:textColor="#FFF"
-            android:textSize="18sp"
             android:textStyle="bold"
+            android:ellipsize="end"
+            android:textAllCaps="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nom Assistant" />
