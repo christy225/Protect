@@ -92,8 +92,6 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         datePicker = view.findViewById(R.id.superviseur_point_datePicker)
         buttonSearchDate = view.findViewById(R.id.superviseur_point_btn_search)
         progressBar = view.findViewById(R.id.superviseur_point_progressbar)
-        val card: CardView = view.findViewById(R.id.affiche_delai)
-        val libelleDelai: TextView = view.findViewById(R.id.libelle_delai)
 
         retrieveArrayList = arrayListOf()
         capitalArrayList = arrayListOf()
@@ -103,7 +101,6 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         adapter = LePointAdapter(context, pointArrayList)
 
         progressBar.visibility = View.VISIBLE
-        card.visibility = View.INVISIBLE
 
         val linkToHome = view.findViewById<ImageView>(R.id.backToHomeSuperviseur)
         linkToHome.setOnClickListener {
@@ -153,11 +150,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
                     val duree = dureeAutorisee.toLong() - jourEcoules
 
                     // SI ON A ATTEINT LA DUREE AUTORISEE LE COMPTE EST VEROUILLE
-                    if (duree >= 0 && duree <= 3)
-                    {
-                        libelleDelai.text = "Votre abonnement expire dans " + duree + " jour(s)"
-                        card.visibility = View.VISIBLE
-                    }else if(duree < 0){
+                    if(duree < 0){
                         // APPLIQUER EXPIRATION DE L'ABONNEMENT
 
                         val abonnementMap = hashMapOf(

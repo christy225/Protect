@@ -33,6 +33,7 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
     var db = Firebase.firestore
     lateinit var auth : FirebaseAuth
     private val database = Firebase.firestore
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var annexe: Switch
     @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -90,7 +91,7 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
                     if (donnee != null)
                     {
                         annexe.visibility = View.VISIBLE
-                        annexe.isChecked = donnee.data["mainprofile"].toString().toBoolean()
+                        annexe.isChecked = donnee.data["mainprofil"].toString().toBoolean()
                     }
                 }
             }.addOnFailureListener {
@@ -99,34 +100,73 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
 
         // Activer le double-compte
         annexe.setOnClickListener {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Confirmation")
-                .setMessage("Souhaiteriez-vous activer le double-compte ?")
-                .setPositiveButton("Oui"){ dialog, id->
-                    val annexeMap = hashMapOf(
-                        "id" to auth.currentUser?.uid,
-                        "statut" to true,
-                        "mainprofil" to true
-                    )
-                    db.collection("annexe")
-                        .document(auth.currentUser!!.uid)
-                        .set(annexeMap)
-                        .addOnCompleteListener { it->
-                            if (it.isSuccessful)
-                            {
-                                Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                            }else{
+            if (annexe.isChecked)
+            {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Confirmation")
+                    .setMessage("Souhaiteriez-vous désactiver le double-compte ?")
+                    .setPositiveButton("Oui"){ dialog, id->
+                        val annexeMap = hashMapOf(
+                            "id" to auth.currentUser?.uid,
+                            "statut" to true,
+                            "mainprofil" to false
+                        )
+                        db.collection("annexe")
+                            .document(auth.currentUser!!.uid)
+                            .set(annexeMap)
+                            .addOnCompleteListener { it->
+                                if (it.isSuccessful)
+                                {
+                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                    auth.signOut()
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    startActivity(intent)
+                                }else{
+                                    Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                                }
+                            }.addOnFailureListener{
                                 Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
                             }
-                    }.addOnFailureListener{
-                            Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-                        }
-                }
-                .setNegativeButton("Non"){ dialod, id->
-                    // Ne rien faire
-                }
+                    }
+                    .setNegativeButton("Non"){ dialod, id->
+                        // Ne rien faire
+                    }
 
-            builder.create().show()
+                builder.create().show()
+
+            }else{
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Confirmation")
+                    .setMessage("Souhaiteriez-vous activer le double-compte ?")
+                    .setPositiveButton("Oui"){ dialog, id->
+                        val annexeMap = hashMapOf(
+                            "id" to auth.currentUser?.uid,
+                            "statut" to true,
+                            "mainprofil" to true
+                        )
+                        db.collection("annexe")
+                            .document(auth.currentUser!!.uid)
+                            .set(annexeMap)
+                            .addOnCompleteListener { it->
+                                if (it.isSuccessful)
+                                {
+                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                    auth.signOut()
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    startActivity(intent)
+                                }else{
+                                    Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                                }
+                            }.addOnFailureListener{
+                                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                    .setNegativeButton("Non"){ dialod, id->
+                        // Ne rien faire
+                    }
+
+                builder.create().show()
+            }
         }
 
         // RECHERCHER LE SUPERVISEUR POUR L'ABONNEMENT

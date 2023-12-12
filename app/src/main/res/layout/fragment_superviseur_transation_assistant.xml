@@ -48,7 +48,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/superviseur_transac_btn_search"
                 android:layout_width="60dp"
                 android:layout_height="45dp"
                 android:background="#FFF"

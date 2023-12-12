@@ -16,7 +16,6 @@
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +24,6 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
@@ -109,7 +107,6 @@
                         android:layout_height="43dp">
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cardView1100"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
@@ -157,7 +154,6 @@
                         android:layout_height="43dp">
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cardView11001"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
@@ -205,7 +201,6 @@
                         android:layout_height="43dp">
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/cardView11021"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
@@ -293,7 +288,6 @@
 
 
                                 <androidx.cardview.widget.CardView
-                                    android:id="@+id/card_transac"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="28dp"

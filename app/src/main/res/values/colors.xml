@@ -5,15 +5,8 @@
     <color name="gray_color">#B2B3B3</color>
     <color name="gray_color_border">#F3F3F3</color>
     <color name="background_color">#E3E3E3</color>
-    <color name="view_item_color">#ebf3fe</color>
     <color name="color_item_amount">#F60327</color>
     <color name="back_type_transfer_depot">#FF5722</color>
     <color name="back_type_transfer_retrait">#038AAA</color>
-    <color name="color_type_transfer_depot">#00A110</color>
-    <color name="color_type_transfer_retrait">#0088A8</color>
-    <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
-    <color name="light_blue_A200">#FF40C4FF</color>
-    <color name="light_blue_A400">#FF00B0FF</color>
-    <color name="black_overlay">#66000000</color>
 </resources>

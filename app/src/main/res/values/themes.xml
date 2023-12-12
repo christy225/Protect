@@ -3,14 +3,14 @@
     <style name="Base.Theme.Protect" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="android:fontFamily">@font/segoe</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:spinnerItemStyle">@style/inputFont</item>
         <item name="android:spinnerDropDownItemStyle">@style/inputFont</item>
         <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="TitleFont">
-        <item name="android:fontFamily">@font/tahoma</item>
+        <item name="android:fontFamily">@font/interbold</item>
         <item name="android:textSize">22sp</item>
     </style>
 
@@ -19,14 +19,6 @@
         <item name="android:textSize">19sp</item>
     </style>
 
-    <style name="ThinFont">
-        <item name="android:fontFamily">@font/ubuntu</item>
-    </style>
-
     <style name="Theme.Protect" parent="Base.Theme.Protect" />
-
-    <style name="BottomNav" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:fontFamily">@font/ubuntu</item>
-    </style>
 
 </resources>

@@ -118,15 +118,15 @@ class TransactionAssistant(private val context: SuperviseurActivity) : Fragment(
             datePickerDialog.show()
         }
 
-        val homeFragment = HomeSuperviseurFragment(context)
+        val menuFragment = MenuAssistSuperviseur(context)
         linkToHomeListPoint.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", module)
-            homeFragment.arguments = bundle
+            menuFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_superviseur, homeFragment)
+                .replace(R.id.fragment_container_superviseur, menuFragment)
                 .addToBackStack(null)
                 .commit()
         }

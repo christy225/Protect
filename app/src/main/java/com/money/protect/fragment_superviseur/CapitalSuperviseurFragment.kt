@@ -87,15 +87,15 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
         })
 
         val linkToHomeListPoint = view.findViewById<ImageView>(R.id.backToListHomeSuperviseur)
-        val homeFragment = HomeSuperviseurFragment(context)
+        val menuFragment = MenuAssistSuperviseur(context)
         linkToHomeListPoint.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", module)
-            homeFragment.arguments = bundle
+            menuFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_superviseur, homeFragment)
+                .replace(R.id.fragment_container_superviseur, menuFragment)
                 .addToBackStack(null)
                 .commit()
         }

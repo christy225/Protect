@@ -7,70 +7,84 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <ImageView
+        android:id="@+id/backFromMenuSuperviseur"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/baseline_arrow_back_24"
+        app:layout_constraintStart_toStartOf="@+id/cardView"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView23"
+        android:id="@+id/cardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        app:cardElevation="20dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
         app:cardCornerRadius="10dp"
+        app:cardElevation="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/backFromMenuSuperviseur">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:padding="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/popupCapital"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:backgroundTint="#FF9800"
+                android:background="@drawable/button_menu_superviseur"
+                android:drawableEnd="@drawable/baseline_navigate_next_24"
                 android:text="CAPITAL"
-                android:textColor="@color/white"
+                android:textColor="#FF9800"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/view5"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/popupTransaction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#FF9800"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/button_menu_superviseur"
+                android:drawableEnd="@drawable/baseline_navigate_next_24"
                 android:text="TRANSACTIONS"
-                android:textColor="@color/white"
+                android:textColor="#FF9800"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toEndOf="@+id/view5"
                 app:layout_constraintTop_toTopOf="@+id/popupCapital" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/popupCumul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#FF9800"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/button_menu_superviseur"
+                android:drawableEnd="@drawable/baseline_navigate_next_24"
                 android:text="CUMULS"
-                android:textColor="@color/white"
+                android:textColor="#FF9800"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view5"
                 app:layout_constraintTop_toBottomOf="@+id/popupCapital" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/popupDoubleCompte"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#FF9800"
-                android:text="COMPTE ANNEXE"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
+                android:layout_marginTop="15dp"
                 android:layout_marginBottom="20dp"
+                android:background="@drawable/button_menu_superviseur"
+                android:drawableEnd="@drawable/baseline_navigate_next_24"
+                android:text="COMPTE ANNEXE"
+                android:textColor="#FF9800"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view5"
                 app:layout_constraintTop_toBottomOf="@+id/popupTransaction" />
