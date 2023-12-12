@@ -42,7 +42,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <TextView
-                    android:id="@+id/btnCancelOperationOrange"
+                    android:id="@+id/btnCancelOperationOrange_compte2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Annuler"
@@ -62,7 +62,7 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginVertical="10dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btnCancelOperationOrange" />
+                    app:layout_constraintTop_toBottomOf="@+id/btnCancelOperationOrange_compte2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

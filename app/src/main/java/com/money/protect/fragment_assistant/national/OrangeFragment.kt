@@ -108,6 +108,11 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         val link3 = view.findViewById<ImageView>(R.id.assistant_link3_orange)
         val link4 = view.findViewById<ImageView>(R.id.assistant_link4_orange)
 
+        if (!context.account())
+        {
+            link4.visibility = View.VISIBLE
+        }
+
         link1.setOnClickListener {
             if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
             {

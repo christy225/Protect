@@ -3,11 +3,12 @@ package com.money.protect.fragment_assistant.national
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -27,6 +28,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.money.protect.MainActivity
 import com.money.protect.R
@@ -38,24 +40,23 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.money.protect.fragment_assistant.HomeFragment
-import com.money.protect.popup.SmsMtn
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class MtnFragment(private val context: MainActivity) : Fragment() {
+class TresorCompte2Fragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    private lateinit var textTelephone: EditText
-    private lateinit var textMontant: EditText
-    private lateinit var typeOperation: Spinner
-    private lateinit var checkBox: CheckBox
-    private lateinit var previewImage: ImageView
-    private lateinit var buttonRegister: AppCompatButton
-    private lateinit var buttonUpload: Button
+    lateinit var textTelephone: EditText
+    lateinit var textMontant: EditText
+    lateinit var typeOperation: Spinner
+    lateinit var checkBox: CheckBox
+    lateinit var previewImage: ImageView
+    lateinit var buttonRegister: AppCompatButton
+    lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    private lateinit var sectionUpload: CardView
+    lateinit var sectionUpload: CardView
 
     private var textWatcher: TextWatcher? = null
 
@@ -70,22 +71,22 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_assistant_operation_mtn, container, false)
+        val view = inflater.inflate(R.layout.fragment_assistant_operation_tresor_compte2, container, false)
 
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
 
-        textTelephone = view.findViewById(R.id.tel_input_mtn)
-        textMontant = view.findViewById(R.id.montant_input_mtn)
-        typeOperation = view.findViewById(R.id.type_op_spinner_mtn)
+        textTelephone = view.findViewById(R.id.tel_input_tresor_compte2)
+        textMontant = view.findViewById(R.id.montant_input_tresor_compte2)
+        typeOperation = view.findViewById(R.id.type_op_spinner_tresor_compte2)
 
-        previewImage = view.findViewById(R.id.image_preview_mtn)
-        checkBox = view.findViewById(R.id.checkBoxMtn)
-        sectionUpload = view.findViewById(R.id.section_upload_input_mtn)
-        buttonUpload = view.findViewById(R.id.uploadPhotoMtn)
+        previewImage = view.findViewById(R.id.image_preview_tresor_compte2)
+        checkBox = view.findViewById(R.id.checkBoxTresor_compte2)
+        sectionUpload = view.findViewById(R.id.section_upload_input_tresor_compte2)
+        buttonUpload = view.findViewById(R.id.uploadPhotoTresor_compte2)
 
-        buttonRegister = view.findViewById(R.id.btn_register_input_mtn)
-        progressBar = view.findViewById(R.id.progressBar_input_mtn)
+        buttonRegister = view.findViewById(R.id.btn_register_input_tresor_compte2)
+        progressBar = view.findViewById(R.id.progressBar_input_tresor_compte2)
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -98,22 +99,13 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                    this@MtnFragment.formatEditext(s)
+                this@TresorCompte2Fragment.formatEditext(s)
             }
 
         }
         textMontant.addTextChangedListener(textWatcher)
 
-
-        val link1 = view.findViewById<ImageView>(R.id.assistant_link1_mtn)
-        val link2 = view.findViewById<ImageView>(R.id.assistant_link2_mtn)
-        val link3 = view.findViewById<ImageView>(R.id.assistant_link3_mtn)
-        val link4 = view.findViewById<ImageView>(R.id.assistant_link4_mtn)
-
-        if (!context.account())
-        {
-           link4.visibility = View.VISIBLE
-        }
+        val link1 = view.findViewById<ImageView>(R.id.assistant_link1_tresor_compte2)
 
         link1.setOnClickListener {
             if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
@@ -122,43 +114,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }else {
                 context.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link2.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, MoovFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link3.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, WaveFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link4.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, TresorFragment(context))
+                    .replace(R.id.fragment_container, OrangeCompte2Fragment(context))
                     .addToBackStack(null)
                     .commit()
             }
@@ -208,18 +164,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
         })
 
-        val btnHistory = view.findViewById<TextView>(R.id.historiqueMtn)
-        btnHistory.setOnClickListener {
-            val syntaxe = "*133" + Uri.encode("#")
-            val callApp = Intent(Intent.ACTION_CALL)
-            callApp.data = Uri.parse("tel:$syntaxe")
-            startActivity(callApp)
-        }
-
-        val readSMS = view.findViewById<TextView>(R.id.openSMSMtn)
-        readSMS.setOnClickListener {
-            SmsMtn(context, this).show()
-        }
 
         progressBar.visibility = View.INVISIBLE
 
@@ -278,8 +222,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
-
-        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMtn)
+        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationTresor_compte2)
         btnCancel.setOnClickListener {
             textTelephone.text.clear()
             textMontant.text.clear()
@@ -290,6 +233,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
             params.height = 0
             sectionUpload.layoutParams = params
+
             typeOperation.setSelection(0)
 
             checkBox.isChecked = false
@@ -305,42 +249,34 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                     builder.setTitle("Alerte")
                     builder.setMessage("Veuillez saisir tous les champs SVP.")
                     builder.show()
+
                 }else if(textTelephone.text.length < 10){
                     val builder = AlertDialog.Builder(context)
                     builder.setMessage("Ce numéro ne comporte pas les 10 chiffres requis")
                     builder.show()
+
                 }else{
                     // OUVRIR APPLICATION TIERS
                     if (buttonRegister.text === "effectuer la transaction")
                     {
-                        if (typeOperation.selectedItem.toString() == "Dépôt")
-                        {
-                            val tel = textTelephone.text.toString()
-                            val amount = textMontant.text.toString()
-                            val caractere = ','
-                            val newValue = amount.filter { it != caractere }
-                            val syntaxe = "*133*1*" + tel + "*" + newValue + Uri.encode("#")
-                            val callIntent = Intent(Intent.ACTION_CALL)
-                            callIntent.data = Uri.parse("tel:$syntaxe")
-                            startActivity(callIntent)
+                        val packageName = "com.BMI_CI.tresor_detaillant"  // Package name de Facebook
+                        val className = "com.BMI_CI.tresor_detaillant.MainActivity"  // Nom de la classe de l'activité que vous voulez démarrer
+
+                        val intent = Intent()
+                        intent.component = ComponentName(packageName, className)
+                        try {
+                            startActivity(intent)
                             buttonRegister.text = "enregistrer opération"
 
                             // Bloquer le bottomNavigation si l'utilisateur a oublié d'enregistrer la transaction
                             context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
 
-                        }else if (typeOperation.selectedItem.toString() == "Retrait"){
-                            val tel = textTelephone.text.toString()
-                            val amount = textMontant.text.toString()
-                            val caractere = ','
-                            val newValue = amount.filter { it != caractere }
-                            val syntaxe = "*133*2*" + tel + "*" + newValue + Uri.encode("#")
-                            val callIntent = Intent(Intent.ACTION_CALL)
-                            callIntent.data = Uri.parse("tel:$syntaxe")
-                            startActivity(callIntent)
-                            buttonRegister.text = "enregistrer opération"
-
-                            // Bloquer le bottomNavigation si l'utilisateur a oublié d'enregistrer la transaction
-                            context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
+                        } catch (e: ActivityNotFoundException) {
+                            // Gérez le cas où L'Application WAVE Agent n'est pas installé ou ne permet pas d'ouvrir cette activité
+                            val intent = AlertDialog.Builder(context)
+                            intent.setTitle("Infos")
+                            intent.setMessage("veuillez installer l'application Tresor Money")
+                            intent.show()
                         }
                     }else if (buttonRegister.text === "enregistrer opération") {
                         progressBar.visibility = View.VISIBLE
@@ -360,7 +296,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                         val montantInput = textMontant.text
                         val typeSpinner = typeOperation.selectedItem.toString()
 
-
                         // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
                         if (uploaded == true)
                         {
@@ -373,7 +308,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                                 "id" to auth.currentUser?.uid,
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
-                                                "operateur" to "mtn",
+                                                "operateur" to "tresor money",
                                                 "telephone" to telInput.toString(),
                                                 "montant" to montantInput.toString(),
                                                 "typeoperation" to typeSpinner,
@@ -390,7 +325,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                             previewImage.setImageResource(0)
                                             typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
 
                                             db.collection("operation").add(operationMap).addOnCompleteListener {
                                                 // Ne rien faire ici
@@ -418,7 +352,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                 "id" to auth.currentUser?.uid,
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
-                                "operateur" to "mtn",
+                                "operateur" to "tresor money",
                                 "telephone" to telInput.toString(),
                                 "montant" to montantInput.toString(),
                                 "typeoperation" to typeSpinner,
@@ -437,8 +371,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                             db.collection("operation").add(operationMap).addOnCompleteListener {
-                                // Ne rien faire ici
-
+                                // ne rien faire ici
                             }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(context)
                                 builder.setTitle("Alerte")
@@ -446,6 +379,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                 builder.show()
                             }
                         }
+
                     }
 
                 }
@@ -480,7 +414,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
         if (resultCode == Activity.RESULT_OK) {
             //Image Uri will not be null for RESULT_OK
-            var it: Uri = data?.data!!
+            val it: Uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
             previewImage.setImageURI(it)
             uri = it

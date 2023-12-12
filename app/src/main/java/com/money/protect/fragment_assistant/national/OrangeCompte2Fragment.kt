@@ -112,7 +112,7 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
             }else {
                 context.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, MtnFragment(context))
+                    .replace(R.id.fragment_container, TresorCompte2Fragment(context))
                     .addToBackStack(null)
                     .commit()
             }
@@ -219,7 +219,7 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
             }
         }
 
-        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationOrange)
+        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationOrange_compte2)
         btnCancel.setOnClickListener {
             textTelephone.text.clear()
             textMontant.text.clear()

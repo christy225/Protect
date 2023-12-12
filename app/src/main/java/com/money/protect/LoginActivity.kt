@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -28,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
     private var db = Firebase.firestore
     private var database = Firebase.firestore
     private lateinit var progressBar: ProgressBar
+    private lateinit var button: Button
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         val query = db.collection("account")
-        val button = findViewById<AppCompatButton>(R.id.button_login_user)
+        button = findViewById<AppCompatButton>(R.id.button_login_user)
 
         button.setOnClickListener {
             if (checkForInternet(this)) {
@@ -67,7 +69,7 @@ class LoginActivity : AppCompatActivity() {
                             .get().addOnSuccessListener { document->
                                 for (data in document)
                                 {
-                                    val role = data.data!!["role"].toString()
+                                    val role = data.data["role"].toString()
                                     val statut = data.data["statut"].toString().toBoolean()
 
                                     if (role == "superviseur") {
@@ -134,6 +136,11 @@ class LoginActivity : AppCompatActivity() {
                                                                 button.isEnabled = true
                                                                 button.setText(R.string.login_button_default_text)
                                                             }
+                                                        }else{
+                                                            val intent = Intent(this, MainActivity::class.java)
+                                                            startActivity(intent)
+                                                            button.isEnabled = true
+                                                            button.setText(R.string.login_button_default_text)
                                                         }
                                                     }
                                                 }
@@ -220,6 +227,11 @@ class LoginActivity : AppCompatActivity() {
                                                 val intent = Intent(this, MainActivity::class.java)
                                                 startActivity(intent)
                                             }
+                                        }else{
+                                            val intent = Intent(this, MainActivity::class.java)
+                                            startActivity(intent)
+                                            button.isEnabled = true
+                                            button.setText(R.string.login_button_default_text)
                                         }
                                     }
                                 }

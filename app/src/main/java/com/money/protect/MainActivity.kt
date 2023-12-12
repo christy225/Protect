@@ -303,6 +303,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun account() : Boolean{
+        return compte == "compte1"
+    }
+
     fun bottomNavBlocked(mont: String, num: String) {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         if (mont.isNotEmpty() || num.isNotEmpty())

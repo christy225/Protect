@@ -33,16 +33,16 @@
                     app:cardElevation="0dp"
                     app:layout_constraintBottom_toBottomOf="@+id/textView2"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/btnCancelOperationOrange">
+                    app:layout_constraintTop_toTopOf="@+id/btnCancelOperationTresor">
 
                     <ImageView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@drawable/orange" />
+                        android:src="@drawable/tresor" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
-                    android:id="@+id/btnCancelOperationOrange"
+                    android:id="@+id/btnCancelOperationTresor_compte2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Annuler"
@@ -58,11 +58,11 @@
                     style="@style/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/national_orange"
+                    android:text="@string/national_tresor"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginVertical="10dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btnCancelOperationOrange" />
+                    app:layout_constraintTop_toBottomOf="@+id/btnCancelOperationTresor_compte2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -129,7 +129,7 @@
                         </androidx.cardview.widget.CardView>
 
                         <Spinner
-                            android:id="@+id/type_op_spinner_orange"
+                            android:id="@+id/type_op_spinner_tresor_compte2"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
                             android:background="@color/white"
@@ -177,7 +177,7 @@
                         </androidx.cardview.widget.CardView>
 
                         <EditText
-                            android:id="@+id/tel_input_orange"
+                            android:id="@+id/tel_input_tresor_compte2"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
                             android:background="@color/white"
@@ -225,7 +225,7 @@
                         </androidx.cardview.widget.CardView>
 
                         <EditText
-                            android:id="@+id/montant_input_orange"
+                            android:id="@+id/montant_input_tresor_compte2"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
                             android:background="@color/white"
@@ -246,7 +246,7 @@
                         android:layout_height="wrap_content">
 
                         <CheckBox
-                            android:id="@+id/checkBoxOrange"
+                            android:id="@+id/checkBoxTresor_compte2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:layout_constraintStart_toStartOf="parent"
@@ -259,18 +259,18 @@
                             android:textColor="@color/black"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/checkBoxOrange"
+                            app:layout_constraintStart_toEndOf="@+id/checkBoxTresor_compte2"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/section_upload_input_orange"
+                        android:id="@+id/section_upload_input_tresor_compte2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:cardCornerRadius="10dp"
                         app:cardElevation="0dp"
                         android:layout_marginTop="10dp"
-                        app:layout_constraintTop_toBottomOf="@+id/checkBoxOrange"
+                        app:layout_constraintTop_toBottomOf="@+id/checkBoxTresor_compte2"
                         tools:layout_editor_absoluteX="15dp">
 
                         <LinearLayout
@@ -283,13 +283,14 @@
                                 android:layout_height="match_parent">
 
                                 <Button
-                                    android:id="@+id/uploadPhotoOrange"
+                                    android:id="@+id/uploadPhotoTresor_compte2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Prendre un photo"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent" />
+
 
                                 <androidx.cardview.widget.CardView
                                     android:id="@+id/card_transac"
@@ -302,10 +303,10 @@
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@+id/uploadPhotoOrange">
+                                    app:layout_constraintTop_toBottomOf="@+id/uploadPhotoTresor_compte2">
 
                                     <ImageView
-                                        android:id="@+id/image_preview_orange"
+                                        android:id="@+id/image_preview_tresor_compte2"
                                         android:layout_width="250dp"
                                         android:layout_height="150dp"
                                         android:layout_gravity="center"
@@ -318,7 +319,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btn_register_input_orange"
+                        android:id="@+id/btn_register_input_tresor_compte2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="20dp"
@@ -327,10 +328,10 @@
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/section_upload_input_orange"/>
+                        app:layout_constraintTop_toTopOf="@+id/section_upload_input_tresor_compte2"/>
 
                     <ProgressBar
-                        android:id="@+id/progressBar_input_orange"
+                        android:id="@+id/progressBar_input_tresor_compte2"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -343,16 +344,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="20dp"
+            android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_register_input_orange">
+            app:layout_constraintTop_toBottomOf="@+id/btn_register_input_tresor_compte2">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
@@ -362,58 +363,13 @@
                 app:cardElevation="10dp">
 
                 <ImageView
-                    android:id="@+id/assistant_link1_orange"
+                    android:id="@+id/assistant_link1_tresor_compte2"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/mtn" />
+                    android:src="@drawable/orange" />
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="10dp">
-
-                <ImageView
-                    android:id="@+id/assistant_link2_orange"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/moov" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="10dp">
-
-                <ImageView
-                    android:id="@+id/assistant_link3_orange"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/wave" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="10dp">
-
-                <ImageView
-                    android:id="@+id/assistant_link4_orange"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/tresor" />
-            </androidx.cardview.widget.CardView>
         </LinearLayout>
 
     </LinearLayout>

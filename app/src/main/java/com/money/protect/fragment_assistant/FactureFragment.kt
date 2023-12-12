@@ -13,15 +13,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.money.protect.MainActivity
 import com.money.protect.R
+import com.money.protect.TikeramaActivity
 
 class FactureFragment(private val context: MainActivity) : Fragment() {
     lateinit var auth: FirebaseAuth
-    private lateinit var mtn: ImageView
-    private lateinit var moov: ImageView
+    private lateinit var mtn: CardView
+    private lateinit var moov: CardView
+    private lateinit var tikerama: CardView
 
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.M)
@@ -35,6 +38,7 @@ class FactureFragment(private val context: MainActivity) : Fragment() {
 
         mtn = view.findViewById(R.id.lienMTNFacture)
         moov = view.findViewById(R.id.lienMoovFacture)
+        tikerama = view.findViewById(R.id.lienTikeramaFacture)
 
         mtn.setOnClickListener{
             val syntaxe = "*188" + Uri.encode("#")
@@ -48,6 +52,11 @@ class FactureFragment(private val context: MainActivity) : Fragment() {
             val callIntent = Intent(Intent.ACTION_CALL)
             callIntent.data = Uri.parse("tel:$syntaxe")
             startActivity(callIntent)
+        }
+
+        tikerama.setOnClickListener{
+            val intent = Intent(context, TikeramaActivity::class.java)
+            startActivity(intent)
         }
 
         return view

@@ -107,6 +107,11 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         val link3 = view.findViewById<ImageView>(R.id.assistant_link3_moov)
         val link4 = view.findViewById<ImageView>(R.id.assistant_link4_moov)
 
+        if (!context.account())
+        {
+            link4.visibility = View.VISIBLE
+        }
+
         // Empêcher l'utilisateur de quitter la fenêtre s'il a oublié d'enregistrer une transaction
         link1.setOnClickListener {
             if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())

@@ -11,6 +11,7 @@ import com.money.protect.fragment_assistant.national.MoovFragment
 import com.money.protect.fragment_assistant.national.MtnFragment
 import com.money.protect.fragment_assistant.national.OrangeCompte2Fragment
 import com.money.protect.fragment_assistant.national.OrangeFragment
+import com.money.protect.fragment_assistant.national.TresorCompte2Fragment
 import com.money.protect.fragment_assistant.national.TresorFragment
 import com.money.protect.fragment_assistant.national.WaveFragment
 
@@ -40,7 +41,7 @@ class MenuPopupCompte2Assistant(
         val btn = findViewById<CardView>(R.id.linkTo_tresor_popup_compte2)
         btn.setOnClickListener {
             context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, TresorFragment(context))
+                .replace(R.id.fragment_container, TresorCompte2Fragment(context))
                 .addToBackStack(null)
                 .commit()
             this.dismiss()
