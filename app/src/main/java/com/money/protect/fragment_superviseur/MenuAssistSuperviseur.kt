@@ -54,7 +54,7 @@ class MenuAssistSuperviseur(private val context: SuperviseurActivity, ) : Fragme
         }
 
         val buttonTransaction = view.findViewById<Button>(R.id.popupTransaction)
-        val transacFragment = TransactionAssistant(context)
+        val transacFragment = TransactionAssistantFragment(context)
         buttonTransaction.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("id", id)

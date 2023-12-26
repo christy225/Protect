@@ -42,6 +42,7 @@ import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 
 class OrangeFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -208,6 +209,9 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
 
         progressBar.visibility = View.INVISIBLE
 
+        // Empêcher le retour en arrière si les champs ne sont pas vide
+        context.blockBackNavigation(buttonRegister)
+
         // ON MASQUE LA SECTION DE L'UPLOAD
         val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
         params.height = 0
@@ -316,7 +320,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                             // Gérez le cas où L'Application Agent n'est pas installé ou ne permet pas d'ouvrir cette activité
                             val intent = AlertDialog.Builder(context)
                             intent.setTitle("Infos")
-                            intent.setMessage("veuillez installer l'application Point de Vente Orange Money")
+                            intent.setMessage("Veuillez installer l'application Point de Vente Orange Money")
                             intent.show()
                         }
                     }else if (buttonRegister.text === "enregistrer opération") {
@@ -344,16 +348,24 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                 .putFile(uri)
                                 .addOnSuccessListener { task->
                                     task.metadata!!.reference!!.downloadUrl
-                                        .addOnSuccessListener {
+                                        .addOnSuccessListener {it->
+                                            //formater le montant
+                                            val theAmount = montantInput.toString()
+                                            val caractere = ','
+                                            val theNewAmount = theAmount.filter { it != caractere }
+
+                                            val uid = UUID.randomUUID().toString()
                                             val operationMap = hashMapOf(
                                                 "id" to auth.currentUser?.uid,
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
                                                 "operateur" to "orange",
                                                 "telephone" to telInput.toString(),
-                                                "montant" to montantInput.toString(),
+                                                "montant" to theNewAmount,
                                                 "typeoperation" to typeSpinner,
-                                                "url" to it.toString()
+                                                "statut" to true,
+                                                "url" to "null",
+                                                "idDoc" to uid
                                             )
 
                                             val tel = textTelephone.text
@@ -367,7 +379,10 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                             typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                                            db.collection("operation").add(operationMap).addOnCompleteListener {
+                                            db.collection("operation")
+                                                .document(uid)
+                                                .set(operationMap)
+                                                .addOnCompleteListener {
                                                 // Ne rien faire ici
 
                                             }.addOnFailureListener {
@@ -389,15 +404,23 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                         }else{
 
                             // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                            //formater le montant
+                            val theAmount = montantInput.toString()
+                            val caractere = ','
+                            val theNewAmount = theAmount.filter { it != caractere }
+
+                            val uid = UUID.randomUUID().toString()
                             val operationMap = hashMapOf(
                                 "id" to auth.currentUser?.uid,
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "orange",
                                 "telephone" to telInput.toString(),
-                                "montant" to montantInput.toString(),
+                                "montant" to theNewAmount,
                                 "typeoperation" to typeSpinner,
-                                "url" to "null"
+                                "statut" to true,
+                                "url" to "null",
+                                "idDoc" to uid
                             )
 
                             val tel = textTelephone.text
@@ -411,7 +434,10 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                             typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                            db.collection("operation").add(operationMap).addOnCompleteListener {
+                            db.collection("operation")
+                                .document(uid)
+                                .set(operationMap)
+                                .addOnCompleteListener {
                                 // Ne rien faire ici
                             }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(context)

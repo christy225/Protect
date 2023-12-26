@@ -1,60 +1,64 @@
 package com.money.protect.fragment_assistant.national
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.ActivityNotFoundException
-import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Telephony
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.money.protect.MainActivity
 import com.money.protect.R
-import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
-import java.text.NumberFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.money.protect.adapter.SmsAdapter
+import com.money.protect.popup.OrangePopup
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    private lateinit var textTelephone: EditText
-    private lateinit var textMontant: EditText
-    private lateinit var typeOperation: Spinner
     private lateinit var checkBox: CheckBox
     private lateinit var previewImage: ImageView
     private lateinit var buttonRegister: AppCompatButton
     private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
     private lateinit var sectionUpload: CardView
+    private lateinit var numeroOrange: TextView
+    private lateinit var typeOperation: TextView
+    private lateinit var montantOrange: TextView
+    private lateinit var idTransaction: TextView
+    private lateinit var soldeOrange: TextView
+    private lateinit var buttonPopupOrange: Button
 
     private var textWatcher: TextWatcher? = null
 
@@ -62,8 +66,15 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
     lateinit var uri: Uri
     var uploaded: Boolean = false
 
+    // Déclarez une liste pour stocker les SMS.
+    private lateinit var smsList: ArrayList<String>
+
+    private val SMS_PERMISSION_REQUEST_CODE = 123
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var smsAdapterOrange: SmsAdapter
+
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SetTextI18n", "NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,9 +85,111 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
 
-        textTelephone = view.findViewById(R.id.tel_input_orange_compte2)
-        textMontant = view.findViewById(R.id.montant_input_orange_compte2)
-        typeOperation = view.findViewById(R.id.type_op_spinner_orange_compte2)
+        // Récupérer le dernier message et l'introduire dans le texteView
+        val data = arguments
+
+        smsList = arrayListOf()
+        recyclerView = view.findViewById(R.id.recyclerViewSmsOrange)
+        numeroOrange = view.findViewById(R.id.numeroOrange)
+        typeOperation = view.findViewById(R.id.operationOrange)
+        montantOrange = view.findViewById(R.id.montantOrange)
+        idTransaction = view.findViewById(R.id.idTransactionOrange)
+        soldeOrange = view.findViewById(R.id.soldeOrange)
+        buttonPopupOrange = view.findViewById(R.id.openOrangePopup)
+
+        smsAdapterOrange = SmsAdapter(context, smsList)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = smsAdapterOrange
+        recyclerView.isEnabled = false
+
+        buttonPopupOrange.setOnClickListener {
+            OrangePopup(this).show()
+        }
+
+        // Utilisation de la locale par défaut pour obtenir le séparateur de milliers correct
+        val format = DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.getDefault()))
+
+        val message = data?.getString("message")
+        if (message != null) {
+            if (message.contains("Retrait"))
+            {
+                typeOperation.text = "Retrait"
+                val tableauDeChaines = message.split(".")
+                val chaineDesireeNumero = tableauDeChaines.getOrNull(3)
+
+                val textNumero = chaineDesireeNumero?.split(" ")
+                val valNumero = textNumero?.getOrNull(2)
+
+                numeroOrange.text = valNumero
+
+                val chaineDesireeMontant = tableauDeChaines.getOrNull(4)
+                val textMontant = chaineDesireeMontant?.split(" ")
+                val valMontant = textMontant?.getOrNull(2)
+
+                montantOrange.text = format.format(valMontant?.toInt()).toString()
+
+                val chaineDesireeTransaction = tableauDeChaines.getOrNull(6)
+                val textIdTransac = chaineDesireeTransaction?.split(" ")
+
+                val valIdTransac1= textIdTransac?.getOrNull(2)
+                val valIdTransac2= tableauDeChaines.getOrNull(7)
+                val valIdTransac3= tableauDeChaines.getOrNull(8)
+
+                idTransaction.text = "$valIdTransac1.$valIdTransac2.$valIdTransac3"
+
+                val chaineDesireeSolde = tableauDeChaines.getOrNull(1)
+                val textSolde = chaineDesireeSolde?.split(" ")
+                val valSolde = textSolde?.getOrNull(3)
+                soldeOrange.text = format.format(valSolde?.toInt()).toString()
+
+            }else if (message.contains("Depot")){
+                typeOperation.text = "Dépôt"
+                val tableauDeChaines2 = message.split(".")
+                val chaineDesiree2 = tableauDeChaines2.getOrNull(0)
+
+                val textNumero2 = chaineDesiree2?.split(" ")
+                val valNumero2 = textNumero2?.getOrNull(2)
+
+                numeroOrange.text = valNumero2
+
+                val chaineDesiree3 = tableauDeChaines2.getOrNull(1)
+                val textMontant3 = chaineDesiree3?.split(" ")
+                val valMontant3 = textMontant3?.getOrNull(2)
+
+                montantOrange.text = format.format(valMontant3?.toInt()).toString()
+
+                val chaineDesireeTransactionX = tableauDeChaines2.getOrNull(4)
+                val textIdTransac1 = chaineDesireeTransactionX?.split(" ")
+
+                val valIdTransac1= textIdTransac1?.getOrNull(4)
+                val valIdTransac2= tableauDeChaines2.getOrNull(5)
+
+                val xx = tableauDeChaines2.getOrNull(6)
+                val dd = xx?.split(',')
+                val valIdTransac3 = dd?.getOrNull(0)
+
+                idTransaction.text = "$valIdTransac1.$valIdTransac2.$valIdTransac3"
+
+                val chaineDesireeSolde = tableauDeChaines2.getOrNull(6)
+                val textSolde = chaineDesireeSolde?.split(" ")
+                val valSolde = textSolde?.getOrNull(3)
+                soldeOrange.text = format.format(valSolde?.toInt()).toString()
+            }
+        }
+
+        if (hasReadSmsPermission()) {
+            // Vous avez déjà la permission pour lire les SMS.
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_SMS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // Ne rien faire
+            }
+            readSms()
+        } else {
+            requestSmsPermission()
+        }
 
         previewImage = view.findViewById(R.id.image_preview_orange_compte2)
         checkBox = view.findViewById(R.id.checkBoxOrange_compte2)
@@ -101,86 +214,27 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
             }
 
         }
-        textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link_orange_compte2)
 
         link1.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, TresorCompte2Fragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
+
         }
 
-        // BLOQUER LE NOMBRE DE CARACTERES DE SAISIE
-        textTelephone.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
-                // Avant que le texte change
-            }
-
-            override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
-                // Pendant que le texte change
-                buttonRegister.text = "effectuer la transaction"
-            }
-
-            override fun afterTextChanged(editable: Editable) {
-                // Après que le texte a changé
-
-                // Vérifier si la longueur du texte est supérieure à la limite
-                val maxLength = 10
-                if (editable.length > maxLength) {
-                    // Supprimer les caractères excédentaires
-                    editable.delete(maxLength, editable.length)
-                }
-            }
-        })
-        textMontant.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
-                // Avant que le texte change
-            }
-
-            override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
-                // Pendant que le texte change
-                buttonRegister.text = "effectuer la transaction"
-            }
-
-            override fun afterTextChanged(editable: Editable) {
-                // Après que le texte a changé
-
-                // Vérifier si la longueur du texte est supérieure à la limite
-                val maxLength = 10
-                if (editable.length > maxLength) {
-                    // Supprimer les caractères excédentaires
-                    editable.delete(maxLength, editable.length)
-                }
-            }
-        })
 
         progressBar.visibility = View.INVISIBLE
-
-        // ON MASQUE LA SECTION DE L'UPLOAD
-        val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-        params.height = 0
 
         checkBox.setOnClickListener {
             if (checkBox.isChecked)
             {
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 500
-                sectionUpload.layoutParams = params
+                sectionUpload.visibility = View.VISIBLE
             }else{
-                previewImage.setImageResource(0)
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 0
-                sectionUpload.layoutParams = params
+                sectionUpload.visibility = View.GONE
             }
         }
+
+        // Empêcher le retour en arrière si les champs ne sont pas vide
+        context.blockBackNavigation(buttonRegister)
 
         // Upload Photo
         buttonUpload.setOnClickListener {
@@ -194,35 +248,8 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister.text = "effectuer la transaction"
 
-        // EVENEMENT SUR LE SPINNER (Avec les retrait, il n'y a pas de syntaxe à faire)
-
-        val items = arrayOf("Sélectionner", "Dépôt", "Retrait")
-
-        val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, items)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        typeOperation.adapter = adapter
-
-        typeOperation.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                if (selectedItem == "Dépôt")
-                {
-                    buttonRegister.text = "effectuer la transaction"
-                }else if(selectedItem == "Retrait"){
-                    buttonRegister.text = "effectuer la transaction"
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Ne fait rien ici
-            }
-        }
-
         val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationOrange_compte2)
         btnCancel.setOnClickListener {
-            textTelephone.text.clear()
-            textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
 
             // Masquer le block
@@ -231,25 +258,18 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
             params.height = 0
             sectionUpload.layoutParams = params
 
-            typeOperation.setSelection(0)
-
             checkBox.isChecked = false
 
             context.bottomNavUnlock()
         }
 
-        buttonRegister.setOnClickListener {
+        /*buttonRegister.setOnClickListener {
             if (checkForInternet(context)) {
-                if(textTelephone.text.isEmpty() || textMontant.text.isEmpty() || typeOperation.selectedItem.toString() == "Sélectionner")
+                if(textMontant.text.isEmpty())
                 {
                     val builder = AlertDialog.Builder(context)
                     builder.setTitle("Alerte")
                     builder.setMessage("Veuillez saisir tous les champs SVP.")
-                    builder.show()
-
-                }else if(textTelephone.text.length < 10){
-                    val builder = AlertDialog.Builder(context)
-                    builder.setMessage("Ce numéro ne comporte pas les 10 chiffres requis")
                     builder.show()
 
                 }else{
@@ -302,16 +322,24 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
                                 .putFile(uri)
                                 .addOnSuccessListener { task->
                                     task.metadata!!.reference!!.downloadUrl
-                                        .addOnSuccessListener {
+                                        .addOnSuccessListener {it->
+                                            //formater le montant
+                                            val theAmount = montantInput.toString()
+                                            val caractere = ','
+                                            val theNewAmount = theAmount.filter { it != caractere }
+
+                                            val uid = UUID.randomUUID().toString()
                                             val operationMap = hashMapOf(
                                                 "id" to auth.currentUser?.uid,
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
                                                 "operateur" to "orange",
                                                 "telephone" to telInput.toString(),
-                                                "montant" to montantInput.toString(),
+                                                "montant" to theNewAmount,
                                                 "typeoperation" to typeSpinner,
-                                                "url" to it.toString()
+                                                "statut" to true,
+                                                "url" to "null",
+                                                "idDoc" to uid
                                             )
 
                                             val tel = textTelephone.text
@@ -325,7 +353,10 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
                                             typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                                            db.collection("operation").add(operationMap).addOnCompleteListener {
+                                            db.collection("operation")
+                                                .document(uid)
+                                                .set(operationMap)
+                                                .addOnCompleteListener {
                                                 // Ne rien faire ici
 
                                             }.addOnFailureListener {
@@ -347,15 +378,23 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
                         }else{
 
                             // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                            //formater le montant
+                            val theAmount = montantInput.toString()
+                            val caractere = ','
+                            val theNewAmount = theAmount.filter { it != caractere }
+
+                            val uid = UUID.randomUUID().toString()
                             val operationMap = hashMapOf(
                                 "id" to auth.currentUser?.uid,
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "orange",
                                 "telephone" to telInput.toString(),
-                                "montant" to montantInput.toString(),
+                                "montant" to theNewAmount,
                                 "typeoperation" to typeSpinner,
-                                "url" to "null"
+                                "statut" to true,
+                                "url" to "null",
+                                "idDoc" to uid
                             )
 
                             val tel = textTelephone.text
@@ -369,7 +408,10 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
                             typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                            db.collection("operation").add(operationMap).addOnCompleteListener {
+                            db.collection("operation")
+                                .document(uid)
+                                .set(operationMap)
+                                .addOnCompleteListener {
                                 // Ne rien faire ici
                             }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(context)
@@ -384,8 +426,44 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
             }else{
                 Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
             }
-        }
+        }*/
         return view
+    }
+
+    private fun hasReadSmsPermission(): Boolean {
+        val permission = Manifest.permission.READ_SMS
+        val granted = PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(context, permission) == granted
+    }
+
+    private fun requestSmsPermission() {
+        ActivityCompat.requestPermissions(
+            context,
+            arrayOf(Manifest.permission.READ_SMS),
+            SMS_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    @SuppressLint("SupportAnnotationUsage", "NotifyDataSetChanged")
+    @RequiresPermission(android.Manifest.permission.READ_SMS)
+    private fun readSms() {
+        val contentResolver = context.contentResolver
+
+        val selection = "${Telephony.Sms.ADDRESS} = ?" // Sélectionnez les SMS avec l'adresse spécifique
+        val selectionArgs = arrayOf("+2250747033014")
+
+        val uri = Telephony.Sms.Inbox.CONTENT_URI
+        val cursor = contentResolver.query(uri, null, selection, selectionArgs, null)
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val bodyIndex = cursor.getColumnIndex(Telephony.Sms.BODY)
+                val smsBody = cursor.getString(bodyIndex)
+                smsList.add(smsBody)
+            }
+            cursor.close()
+            smsAdapterOrange.notifyDataSetChanged() // Notifiez l'adaptateur que les données ont changé.
+        }
     }
 
     // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
@@ -394,15 +472,6 @@ class OrangeCompte2Fragment(private val context: MainActivity) : Fragment() {
         {
             val originalText = s.toString().replace(",","")
             val number = originalText.toBigDecimalOrNull()
-
-            if (number != null)
-            {
-                val formattedText = NumberFormat.getNumberInstance(Locale.US).format(number)
-                textMontant.removeTextChangedListener(textWatcher)
-                textMontant.setText(formattedText)
-                textMontant.setSelection(formattedText.length)
-                textMontant.addTextChangedListener(textWatcher)
-            }
         }
     }
 

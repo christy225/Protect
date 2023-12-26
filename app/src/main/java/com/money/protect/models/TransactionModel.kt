@@ -8,5 +8,7 @@ data class TransactionModel(
     val operateur: String = "",
     val telephone: String = "",
     val typeoperation: String = "",
-    val url: String = ""
+    val statut: Boolean = false,
+    val url: String = "",
+    val idDoc: String = ""
 )

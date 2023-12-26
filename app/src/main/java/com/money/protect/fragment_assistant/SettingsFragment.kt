@@ -14,6 +14,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.money.protect.LoginActivity
 import com.money.protect.MainActivity
@@ -55,6 +56,8 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
         val btnLogout = view.findViewById<Button>(R.id.assistant_settings_logout)
         val numAbonnement = view.findViewById<TextView>(R.id.assistant_settings_num_abonnement)
         val identifiant = view.findViewById<TextView>(R.id.assistant_identifiant)
+        val cardContainerAnnex = view.findViewById<CardView>(R.id.cardDoubleCompte)
+        val titleDoubleCompte = view.findViewById<TextView>(R.id.titleDoubleCompte)
         annexe = view.findViewById(R.id.doubleCompteAssist)
 
         val linkReabonnement = view.findViewById<TextView>(R.id.assistant_settings_reabonnement_link)
@@ -79,8 +82,6 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
             startActivity(intent)
         }
 
-        annexe.visibility = View.INVISIBLE
-
         // Verifier le compte annexe
         db.collection("annexe")
             .whereEqualTo("id", auth.currentUser?.uid)
@@ -90,7 +91,8 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
                 {
                     if (donnee != null)
                     {
-                        annexe.visibility = View.VISIBLE
+                        cardContainerAnnex.visibility = View.VISIBLE
+                        titleDoubleCompte.visibility = View.VISIBLE
                         annexe.isChecked = donnee.data["mainprofil"].toString().toBoolean()
                     }
                 }
@@ -102,39 +104,6 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
         annexe.setOnClickListener {
             if (annexe.isChecked)
             {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle("Confirmation")
-                    .setMessage("Souhaiteriez-vous désactiver le double-compte ?")
-                    .setPositiveButton("Oui"){ dialog, id->
-                        val annexeMap = hashMapOf(
-                            "id" to auth.currentUser?.uid,
-                            "statut" to true,
-                            "mainprofil" to false
-                        )
-                        db.collection("annexe")
-                            .document(auth.currentUser!!.uid)
-                            .set(annexeMap)
-                            .addOnCompleteListener { it->
-                                if (it.isSuccessful)
-                                {
-                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                                    auth.signOut()
-                                    val intent = Intent(context, LoginActivity::class.java)
-                                    startActivity(intent)
-                                }else{
-                                    Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-                                }
-                            }.addOnFailureListener{
-                                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-                            }
-                    }
-                    .setNegativeButton("Non"){ dialod, id->
-                        // Ne rien faire
-                    }
-
-                builder.create().show()
-
-            }else{
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Confirmation")
                     .setMessage("Souhaiteriez-vous activer le double-compte ?")
@@ -162,7 +131,42 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
                             }
                     }
                     .setNegativeButton("Non"){ dialod, id->
-                        // Ne rien faire
+                        // Remettre le switch à son précedent état
+                        annexe.isChecked = !annexe.isChecked
+                    }
+
+                builder.create().show()
+
+            }else{
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Confirmation")
+                    .setMessage("Souhaiteriez-vous désactiver le double-compte ?")
+                    .setPositiveButton("Oui"){ dialog, id->
+                        val annexeMap = hashMapOf(
+                            "id" to auth.currentUser?.uid,
+                            "statut" to true,
+                            "mainprofil" to false
+                        )
+                        db.collection("annexe")
+                            .document(auth.currentUser!!.uid)
+                            .set(annexeMap)
+                            .addOnCompleteListener { it->
+                                if (it.isSuccessful)
+                                {
+                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                    auth.signOut()
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    startActivity(intent)
+                                }else{
+                                    Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                                }
+                            }.addOnFailureListener{
+                                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                    .setNegativeButton("Non"){ dialod, id->
+                        // Remettre le switch à son précedent état
+                        annexe.isChecked = !annexe.isChecked
                     }
 
                 builder.create().show()
@@ -179,8 +183,8 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
                 {
                     val superviseurId = data!!.data["superviseur"].toString()
                     // Afficher le nom de l'assistant
-                    nomComplet.text = data!!.data["nomcomplet"].toString()
-                    identifiant.text = data!!.data["telephone"].toString()
+                    nomComplet.text = data.data["nomcomplet"].toString()
+                    identifiant.text = data.data["telephone"].toString()
 
                     // Afficher le nom du superviseur
                     db.collection("account")

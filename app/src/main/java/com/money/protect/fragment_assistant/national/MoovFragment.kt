@@ -3,10 +3,13 @@ package com.money.protect.fragment_assistant.national
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -41,6 +44,7 @@ import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 
 class MoovFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -170,7 +174,10 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
-                buttonRegister.text = "effectuer la transaction"
+                if (typeOperation.selectedItem.toString() == "Dépôt")
+                {
+                    buttonRegister.text = "effectuer la transaction"
+                }
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -191,7 +198,10 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
-                buttonRegister.text = "effectuer la transaction"
+                if (typeOperation.selectedItem.toString() == "Dépôt")
+                {
+                    buttonRegister.text = "effectuer la transaction"
+                }
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -205,6 +215,9 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                 }
             }
         })
+
+        // Empêcher le retour en arrière si les champs ne sont pas vide
+        context.blockBackNavigation(buttonRegister)
 
         // L'historique des transferts
         val btnHistory = view.findViewById<TextView>(R.id.historiqueMoov)
@@ -320,7 +333,10 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                         val callIntent = Intent(Intent.ACTION_CALL)
                         callIntent.data = Uri.parse("tel:$syntaxe")
                         startActivity(callIntent)
-                        buttonRegister.text = "enregistrer opération"
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            buttonRegister.text = "enregistrer opération" // Remplacez "Nouveau Texte" par le texte que vous souhaitez afficher
+                        }, 2000)
 
                         // Bloquer le bottomNavigation si l'utilisateur a oublié d'enregistrer la transaction
                         context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
@@ -390,16 +406,24 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                 .putFile(uri)
                 .addOnSuccessListener { task->
                     task.metadata!!.reference!!.downloadUrl
-                        .addOnSuccessListener {
+                        .addOnSuccessListener { it->
+                            //formater le montant
+                            val theAmount = montantInput.toString()
+                            val caractere = ','
+                            val theNewAmount = theAmount.filter { it != caractere }
+
+                            val uid = UUID.randomUUID().toString()
                             val operationMap = hashMapOf(
                                 "id" to auth.currentUser?.uid,
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "moov",
                                 "telephone" to telInput.toString().trim(),
-                                "montant" to montantInput.toString().trim(),
+                                "montant" to theNewAmount,
                                 "typeoperation" to typeSpinner,
-                                "url" to it.toString()
+                                "statut" to true,
+                                "url" to it.toString(),
+                                "idDoc" to uid
                             )
 
                             telInput.clear()
@@ -409,7 +433,10 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                             previewImage.setImageResource(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                            db.collection("operation").add(operationMap).addOnCompleteListener {
+                            db.collection("operation")
+                                .document(uid)
+                                .set(operationMap)
+                                .addOnCompleteListener {
                                 //Ne rien faire ici
 
                             }.addOnFailureListener {
@@ -431,15 +458,24 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         }else{
 
             // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+
+            //formater le montant
+            val theAmount = montantInput.toString()
+            val caractere = ','
+            val theNewAmount = theAmount.filter { it != caractere }
+
+            val uid = UUID.randomUUID().toString()
             val operationMap = hashMapOf(
                 "id" to auth.currentUser?.uid,
                 "date" to dateFormatted,
                 "heure" to hourFormatted,
                 "operateur" to "moov",
                 "telephone" to telInput.toString(),
-                "montant" to montantInput.toString(),
+                "montant" to theNewAmount,
                 "typeoperation" to typeSpinner,
-                "url" to "null"
+                "statut" to true,
+                "url" to "null",
+                "idDoc" to uid
             )
 
             telInput.clear()
@@ -449,7 +485,10 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             previewImage.setImageResource(0)
             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-            db.collection("operation").add(operationMap).addOnCompleteListener {
+            db.collection("operation")
+                .document(uid)
+                .set(operationMap)
+                .addOnCompleteListener {
                 // Ne rien faire ici
             }.addOnFailureListener {
                 val builder = AlertDialog.Builder(context)

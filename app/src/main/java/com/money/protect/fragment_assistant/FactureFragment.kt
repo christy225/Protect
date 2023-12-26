@@ -12,16 +12,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import com.money.protect.MainActivity
 import com.money.protect.R
 import com.money.protect.TikeramaActivity
 
 class FactureFragment(private val context: MainActivity) : Fragment() {
     lateinit var auth: FirebaseAuth
+    private var db = Firebase.firestore
+    private lateinit var titleFacture: TextView
     private lateinit var mtn: CardView
     private lateinit var moov: CardView
     private lateinit var tikerama: CardView
@@ -35,7 +42,9 @@ class FactureFragment(private val context: MainActivity) : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_facture, container, false)
         auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
+        titleFacture = view.findViewById<TextView>(R.id.titleFacture)
         mtn = view.findViewById(R.id.lienMTNFacture)
         moov = view.findViewById(R.id.lienMoovFacture)
         tikerama = view.findViewById(R.id.lienTikeramaFacture)

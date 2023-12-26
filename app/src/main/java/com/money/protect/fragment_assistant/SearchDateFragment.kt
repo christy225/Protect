@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageButton
@@ -34,6 +35,7 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
     lateinit var transactionArrayList: ArrayList<TransactionModel>
     lateinit var adapter: OperationAdapter
     lateinit var recyclerView: RecyclerView
+    private lateinit var progressBar: ProgressBar
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -51,6 +53,7 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
         button = view.findViewById(R.id.button_search_date)
         transactionArrayList = arrayListOf()
         recyclerView = view.findViewById(R.id.recyclerViewSearchDate)
+        progressBar = view.findViewById(R.id.progressBarSearchdate)
         adapter = OperationAdapter(context, transactionArrayList)
 
         // Initialiser le recyclerView
@@ -79,7 +82,6 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
                 context, { view, year, monthOfYear, dayOfMonth ->
                     val dat = (dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year)
                     datePicker.setText(dat)
-
                     // On met à jour automatiquement le tableau de recherche
                     filterList(datePicker.text.toString())
                     recyclerView.adapter = adapter
@@ -99,10 +101,12 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
         if (query != null)
         {
             val filteredList = ArrayList<TransactionModel>()
+            progressBar.visibility = View.VISIBLE
             for (i in transactionArrayList)
             {
                 if (i.date.lowercase(Locale.ROOT).contains(query))
                 {
+                    progressBar.visibility = View.INVISIBLE
                     filteredList.add(i)
                 }
             }
@@ -110,6 +114,7 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
             {
                 adapter.setFilteredList(filteredList)
             }else{
+                progressBar.visibility = View.INVISIBLE
                 adapter.setFilteredList(filteredList)
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("Aucun résultat pour cette date")

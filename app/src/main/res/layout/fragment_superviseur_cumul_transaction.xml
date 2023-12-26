@@ -1,333 +1,518 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        android:src="@drawable/baseline_arrow_back_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginHorizontal="10dp"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/tt1"
-            style="@style/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Orange Money"
+        <ImageView
+            android:id="@+id/backToListHomeSuperviseur1"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/baseline_arrow_back_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/d1"
-            android:layout_width="wrap_content"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView99"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="0dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Dépôt"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/tt1"
-            app:layout_constraintTop_toBottomOf="@+id/tt1" />
-
-        <TextView
-            android:id="@+id/ma1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Montant"
-            android:textSize="17sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/d1" />
-
-        <TextView
-            android:id="@+id/r1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:text="Retrait"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/d1"
-            app:layout_constraintTop_toBottomOf="@+id/d1" />
-
-        <TextView
-            android:id="@+id/maa1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Montant"
-            android:textStyle="bold"
-            android:textSize="17sp"
-            app:layout_constraintEnd_toEndOf="@+id/ma1"
-            app:layout_constraintTop_toTopOf="@+id/r1" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:background="@color/background_color"
-        android:layout_height="2dp"/>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginHorizontal="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/tt2"
-            style="@style/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MTN Money"
-            android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/cardView7">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/dateSelectCumulSuperviseur"
+                    android:layout_width="0dp"
+                    android:layout_height="47dp"
+                    android:background="@color/white"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Rechercher une date"
+                    android:iconifiedByDefault="false"
+                    android:inputType="date"
+                    android:paddingStart="65dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/buttonDatepickerCumulSuperviseur"
+                    android:layout_width="60dp"
+                    android:layout_height="45dp"
+                    android:background="#FFF"
+                    android:src="@drawable/baseline_search_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/d2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/loaderCumulSuperviseur"
+            android:visibility="gone"
             android:layout_marginTop="10dp"
-            android:text="Dépôt"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/tt2"
-            app:layout_constraintTop_toBottomOf="@+id/tt2" />
-
-        <TextView
-            android:id="@+id/ma2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Montant"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/d2" />
+            android:layout_gravity="center"
+            android:text="Recherche en cours..."/>
 
-        <TextView
-            android:id="@+id/r2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:text="Retrait"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/d2"
-            app:layout_constraintTop_toBottomOf="@+id/d2" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="25dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/maa2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Montant"
-            android:textStyle="bold"
-            android:textSize="17sp"
-            app:layout_constraintEnd_toEndOf="@+id/ma2"
-            app:layout_constraintTop_toTopOf="@+id/r2" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tt1"
+                style="@style/TitleFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Orange Money"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:background="@color/background_color"
-        android:layout_height="2dp"/>
+            <TextView
+                android:id="@+id/d1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Dépôt"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/tt1"
+                app:layout_constraintTop_toBottomOf="@+id/tt1" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginHorizontal="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tdep1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:paddingHorizontal="10dp"
+                android:layout_marginStart="10dp"
+                android:background="#D3D2D2"
+                app:layout_constraintBottom_toBottomOf="@+id/d1"
+                app:layout_constraintStart_toEndOf="@+id/d1"
+                app:layout_constraintTop_toTopOf="@+id/d1" />
 
-        <TextView
-            android:id="@+id/tt3"
-            style="@style/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Moov Money"
-            android:layout_marginTop="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/tret1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#D3D2D2"
+                android:paddingHorizontal="10dp"
+                android:text="0"
+                app:layout_constraintBottom_toBottomOf="@+id/r1"
+                app:layout_constraintEnd_toEndOf="@+id/tdep1"
+                app:layout_constraintStart_toStartOf="@+id/tdep1"
+                app:layout_constraintTop_toTopOf="@+id/r1" />
 
-        <TextView
-            android:id="@+id/d3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Dépôt"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/tt3"
-            app:layout_constraintTop_toBottomOf="@+id/tt3" />
+            <TextView
+                android:id="@+id/ma1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Montant"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/d1" />
 
-        <TextView
-            android:id="@+id/ma3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Montant"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/d3" />
+            <TextView
+                android:id="@+id/r1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:text="Retrait"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/d1"
+                app:layout_constraintTop_toBottomOf="@+id/d1" />
 
-        <TextView
-            android:id="@+id/r3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:text="Retrait"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/d3"
-            app:layout_constraintTop_toBottomOf="@+id/d3" />
+            <TextView
+                android:id="@+id/maa1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Montant"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="@+id/ma1"
+                app:layout_constraintTop_toTopOf="@+id/r1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/maa3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Montant"
-            android:textStyle="bold"
-            android:textSize="17sp"
-            app:layout_constraintEnd_toEndOf="@+id/ma3"
-            app:layout_constraintTop_toTopOf="@+id/r3" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            android:background="@color/background_color"
+            android:layout_height="2dp"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:background="@color/background_color"
-        android:layout_height="2dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginHorizontal="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tt2"
+                style="@style/TitleFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MTN Money"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tt4"
-            style="@style/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Wave"
-            android:layout_marginTop="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/d2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Dépôt"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/tt2"
+                app:layout_constraintTop_toBottomOf="@+id/tt2" />
 
-        <TextView
-            android:id="@+id/d4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Dépôt"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/tt4"
-            app:layout_constraintTop_toBottomOf="@+id/tt4" />
+            <TextView
+                android:id="@+id/tdep2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:paddingHorizontal="10dp"
+                android:layout_marginStart="10dp"
+                android:background="#D3D2D2"
+                app:layout_constraintBottom_toBottomOf="@+id/d2"
+                app:layout_constraintStart_toEndOf="@+id/d2"
+                app:layout_constraintTop_toTopOf="@+id/d2" />
 
-        <TextView
-            android:id="@+id/ma4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Montant"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/d4" />
+            <TextView
+                android:id="@+id/tret2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#D3D2D2"
+                android:paddingHorizontal="10dp"
+                android:text="0"
+                app:layout_constraintEnd_toEndOf="@+id/tdep2"
+                app:layout_constraintBottom_toBottomOf="@+id/r2"
+                app:layout_constraintStart_toStartOf="@+id/tdep2"
+                app:layout_constraintTop_toTopOf="@+id/r2" />
 
-        <TextView
-            android:id="@+id/r4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:text="Retrait"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/d4"
-            app:layout_constraintTop_toBottomOf="@+id/d4" />
+            <TextView
+                android:id="@+id/ma2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Montant"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/d2" />
 
-        <TextView
-            android:id="@+id/maa4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Montant"
-            android:textStyle="bold"
-            android:textSize="17sp"
-            app:layout_constraintEnd_toEndOf="@+id/ma4"
-            app:layout_constraintTop_toTopOf="@+id/r4" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/r2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:text="Retrait"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/d2"
+                app:layout_constraintTop_toBottomOf="@+id/d2" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:background="@color/background_color"
-        android:layout_height="2dp"/>
+            <TextView
+                android:id="@+id/maa2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Montant"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="@+id/ma2"
+                app:layout_constraintTop_toTopOf="@+id/r2" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginHorizontal="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:background="@color/background_color"
+            android:layout_marginVertical="10dp"
+            android:layout_height="2dp"/>
 
-        <TextView
-            android:id="@+id/tt5"
-            style="@style/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trésor Money"
-            android:layout_marginTop="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/d5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Dépôt"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/tt5"
-            app:layout_constraintTop_toBottomOf="@+id/tt5" />
+            <TextView
+                android:id="@+id/tt3"
+                style="@style/TitleFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Moov Money"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/ma5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Montant"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/d5" />
+            <TextView
+                android:id="@+id/d3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Dépôt"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/tt3"
+                app:layout_constraintTop_toBottomOf="@+id/tt3" />
 
-        <TextView
-            android:id="@+id/r5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:text="Retrait"
-            android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@+id/d5"
-            app:layout_constraintTop_toBottomOf="@+id/d5" />
+            <TextView
+                android:id="@+id/tdep3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:paddingHorizontal="10dp"
+                android:layout_marginStart="10dp"
+                android:background="#D3D2D2"
+                app:layout_constraintBottom_toBottomOf="@+id/d3"
+                app:layout_constraintStart_toEndOf="@+id/d3"
+                app:layout_constraintTop_toTopOf="@+id/d3" />
 
-        <TextView
-            android:id="@+id/maa5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Montant"
-            android:textStyle="bold"
-            android:textSize="17sp"
-            app:layout_constraintEnd_toEndOf="@+id/ma5"
-            app:layout_constraintTop_toTopOf="@+id/r5" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tret3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#D3D2D2"
+                android:paddingHorizontal="10dp"
+                android:text="0"
+                app:layout_constraintBottom_toBottomOf="@+id/r3"
+                app:layout_constraintEnd_toEndOf="@+id/tdep3"
+                app:layout_constraintStart_toStartOf="@+id/tdep3"
+                app:layout_constraintTop_toTopOf="@+id/r3" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:background="@color/background_color"
-        android:layout_height="2dp"/>
+            <TextView
+                android:id="@+id/ma3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Montant"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/d3" />
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/r3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:text="Retrait"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/d3"
+                app:layout_constraintTop_toBottomOf="@+id/d3" />
+
+            <TextView
+                android:id="@+id/maa3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Montant"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="@+id/ma3"
+                app:layout_constraintTop_toTopOf="@+id/r3" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:background="@color/background_color"
+            android:layout_marginVertical="10dp"
+            android:layout_height="2dp"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tt4"
+                style="@style/TitleFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wave"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/d4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Dépôt"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/tt4"
+                app:layout_constraintTop_toBottomOf="@+id/tt4" />
+
+            <TextView
+                android:id="@+id/tdep4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:paddingHorizontal="10dp"
+                android:layout_marginStart="10dp"
+                android:background="#D3D2D2"
+                app:layout_constraintBottom_toBottomOf="@+id/d4"
+                app:layout_constraintStart_toEndOf="@+id/d4"
+                app:layout_constraintTop_toTopOf="@+id/d4" />
+
+            <TextView
+                android:id="@+id/tret4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#D3D2D2"
+                android:paddingHorizontal="10dp"
+                android:text="0"
+                app:layout_constraintBottom_toBottomOf="@+id/r4"
+                app:layout_constraintEnd_toEndOf="@+id/tdep4"
+                app:layout_constraintStart_toStartOf="@+id/tdep4"
+                app:layout_constraintTop_toTopOf="@+id/r4" />
+
+            <TextView
+                android:id="@+id/ma4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Montant"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/d4" />
+
+            <TextView
+                android:id="@+id/r4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:text="Retrait"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/d4"
+                app:layout_constraintTop_toBottomOf="@+id/d4" />
+
+            <TextView
+                android:id="@+id/maa4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Montant"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="@+id/ma4"
+                app:layout_constraintTop_toTopOf="@+id/r4" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:background="@color/background_color"
+            android:layout_marginVertical="10dp"
+            android:layout_height="2dp"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tt5"
+                style="@style/TitleFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trésor Money"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/d5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Dépôt"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/tt5"
+                app:layout_constraintTop_toBottomOf="@+id/tt5" />
+
+            <TextView
+                android:id="@+id/tdep5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:paddingHorizontal="10dp"
+                android:layout_marginStart="10dp"
+                android:background="#D3D2D2"
+                app:layout_constraintBottom_toBottomOf="@+id/d5"
+                app:layout_constraintStart_toEndOf="@+id/d5"
+                app:layout_constraintTop_toTopOf="@+id/d5" />
+
+            <TextView
+                android:id="@+id/tret5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#D3D2D2"
+                android:paddingHorizontal="10dp"
+                android:text="0"
+                app:layout_constraintBottom_toBottomOf="@+id/r5"
+                app:layout_constraintEnd_toEndOf="@+id/tdep5"
+                app:layout_constraintStart_toStartOf="@+id/tdep5"
+                app:layout_constraintTop_toTopOf="@+id/r5" />
+
+            <TextView
+                android:id="@+id/ma5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Montant"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/d5" />
+
+            <TextView
+                android:id="@+id/r5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:text="Retrait"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="@+id/d5"
+                app:layout_constraintTop_toBottomOf="@+id/d5" />
+
+            <TextView
+                android:id="@+id/maa5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Montant"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="@+id/ma5"
+                app:layout_constraintTop_toTopOf="@+id/r5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:background="@color/background_color"
+            android:layout_height="2dp"/>
+    </LinearLayout>
+
+</ScrollView>

@@ -7,16 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.money.protect.models.AccountModel
 import com.money.protect.repository.AssistantRepository
 import com.money.protect.R
 import com.money.protect.SuperviseurActivity
 
-class AssistantListAdapter(
+class SettingsAdapterSuperviseur(
     private val context: SuperviseurActivity,
     private var assistantArrayList: ArrayList<AccountModel>
-) : RecyclerView.Adapter<AssistantListAdapter.AssitantViewHolder>() {
+) : RecyclerView.Adapter<SettingsAdapterSuperviseur.AssitantViewHolder>() {
     class AssitantViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nomcomplet = itemView.findViewById<TextView>(R.id.nomcompletAssistanItemVw)
         val tel = itemView.findViewById<TextView>(R.id.telAssistantItemVw)
@@ -40,17 +41,33 @@ class AssistantListAdapter(
         holder.nomcomplet.text = currentAssistant.nomcomplet
         holder.tel.text = currentAssistant.telephone
         holder.switch.setOnClickListener {
-            currentAssistant.statut = !currentAssistant.statut
-            repo.updateStatut(currentAssistant)
-            if (!currentAssistant.statut)
+            if (holder.switch.isChecked)
             {
-                val builer = AlertDialog.Builder(context)
-                builer.setMessage("Vous avez désactivé le compte de votre assistant")
-                builer.show()
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Activation")
+                    .setMessage("Voulez-vous continuer le compte de cet Assistant ?")
+                    .setPositiveButton("Oui"){ dialog, id->
+                        currentAssistant.statut = !currentAssistant.statut
+                        repo.updateStatut(currentAssistant)
+                        Toast.makeText(context, "Le compte est maintenant réactivé", Toast.LENGTH_SHORT).show()
+                    }.setNegativeButton("Non"){ dialod, id->
+                        // Ne rien faire
+                        holder.switch.isChecked = currentAssistant.statut
+                    }
+                builder.create().show()
             }else{
-                val builer = AlertDialog.Builder(context)
-                builer.setMessage("Le compte de votre assistant est activé")
-                builer.show()
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Désactivation")
+                    .setMessage("Vous êtes sur le point de désactiver le compte de cet Assistant.\nVoulez-vous continuer ?")
+                    .setPositiveButton("Oui"){ dialog, id->
+                        currentAssistant.statut = !currentAssistant.statut
+                        repo.updateStatut(currentAssistant)
+                        Toast.makeText(context, "Le compte est maintenant désactivé", Toast.LENGTH_SHORT).show()
+                    }.setNegativeButton("Non"){ dialod, id->
+                        // Ne rien faire
+                        holder.switch.isChecked = currentAssistant.statut
+                    }
+                builder.create().show()
             }
         }
         holder.switch.isChecked = currentAssistant.statut

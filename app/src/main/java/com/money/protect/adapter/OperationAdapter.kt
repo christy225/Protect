@@ -12,6 +12,9 @@ import com.money.protect.MainDetailOperationActivity
 import com.money.protect.MainActivity
 import com.money.protect.R
 import com.money.protect.models.TransactionModel
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 class OperationAdapter(
     val context: MainActivity,
@@ -76,10 +79,21 @@ class OperationAdapter(
             holder.type.setBackgroundResource(R.color.back_type_transfer_retrait)
         }
         holder.type.text = currentTransaction.typeoperation
-        holder.montant.text = currentTransaction.montant
+
+        // Utilisation de la locale par défaut pour obtenir le séparateur de milliers correct
+        val format = DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.getDefault()))
+        if (currentTransaction.statut) {
+            holder.montant.text = format.format(currentTransaction.montant.toInt()).toString()
+        }else {
+            holder.montant.text = "Annulé"
+        }
+
 
         holder.itemView.setOnClickListener {
+            val statut = currentTransaction.statut
             val intent = Intent(context, MainDetailOperationActivity::class.java)
+            intent.putExtra("id", currentTransaction.id)
+            intent.putExtra("idDoc", currentTransaction.idDoc)
             intent.putExtra("operateur", currentTransaction.operateur)
             intent.putExtra("telephone", currentTransaction.telephone)
             intent.putExtra("montant", currentTransaction.montant)
@@ -87,6 +101,7 @@ class OperationAdapter(
             intent.putExtra("date", currentTransaction.date)
             intent.putExtra("heure", currentTransaction.heure)
             intent.putExtra("url", currentTransaction.url)
+            intent.putExtra("statut", statut.toString())
             it.context.startActivity(intent)
         }
     }

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +28,7 @@ import com.money.protect.models.TransactionModel
 import java.util.Calendar
 import java.util.Locale
 
-class AdvancedFragment(private val context: MainActivity) : Fragment() {
+class SearchAdvancedFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var numero: EditText
     lateinit var montant: EditText
@@ -36,6 +37,7 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
     lateinit var transactionArrayList: ArrayList<TransactionModel>
     lateinit var adapter: OperationAdapter
     lateinit var button: Button
+    private lateinit var progressBar: ProgressBar
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -43,7 +45,7 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_advanced, container, false)
+        val view = inflater.inflate(R.layout.fragment_assistant_search_advanced, container, false)
 
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
@@ -52,6 +54,8 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         transactionArrayList = arrayListOf()
+
+        progressBar = view.findViewById(R.id.progressBarSearchAdvanced)
 
         datePicker = view.findViewById(R.id.datePickerAdvanced)
         adapter = OperationAdapter(context, transactionArrayList)
@@ -96,9 +100,16 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
 
 
         button.setOnClickListener {
-            filterList(numero.text.toString(), montant.text.toString(), datePicker.text.toString())
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(context)
+            progressBar.visibility = View.VISIBLE
+            if (numero.text.isEmpty() || montant.text.isEmpty() || datePicker.text.isEmpty())
+            {
+                Toast.makeText(context, "Veuillez saisir tous les champs", Toast.LENGTH_SHORT).show()
+            }else{
+                progressBar.visibility = View.INVISIBLE
+                filterList(numero.text.toString(), montant.text.toString(), datePicker.text.toString())
+                recyclerView.adapter = adapter
+                recyclerView.layoutManager = LinearLayoutManager(context)
+            }
         }
 
         return view
@@ -108,12 +119,14 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
         if (num != null && mon != null && dat != null)
         {
             val filteredList = ArrayList<TransactionModel>()
+            progressBar.visibility = View.VISIBLE
             for (i in transactionArrayList)
             {
                 if (i.telephone.lowercase(Locale.ROOT).contains(num) &&
                     i.montant.lowercase(Locale.ROOT).contains(mon) &&
                     i.date.lowercase(Locale.ROOT).contains(dat))
                 {
+                    progressBar.visibility = View.INVISIBLE
                     filteredList.add(i)
                 }
             }
@@ -121,6 +134,7 @@ class AdvancedFragment(private val context: MainActivity) : Fragment() {
             {
                 adapter.setFilteredList(filteredList)
             }else{
+                progressBar.visibility = View.INVISIBLE
                 adapter.setFilteredList(filteredList)
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("Aucun résultat pour cette date")

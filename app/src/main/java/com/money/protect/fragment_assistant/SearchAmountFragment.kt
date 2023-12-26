@@ -4,10 +4,14 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -22,14 +26,19 @@ import com.money.protect.R
 import com.money.protect.adapter.OperationAdapter
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.models.TransactionModel
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.ArrayList
+import java.util.Locale
 
-class AmountFragment(private val context: MainActivity) : Fragment() {
+class SearchAmountFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
-    lateinit var searchView: SearchView
-    lateinit var adapter: OperationAdapter
-    lateinit var recyclerView: RecyclerView
-    lateinit var resultArrayList: ArrayList<TransactionModel>
+    private lateinit var searchAmount: EditText
+    private lateinit var adapter: OperationAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var resultArrayList: ArrayList<TransactionModel>
+    private var textWatcher: TextWatcher? = null
+    private lateinit var progressBar: ProgressBar
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -44,8 +53,9 @@ class AmountFragment(private val context: MainActivity) : Fragment() {
         }
 
         db = FirebaseFirestore.getInstance()
-        searchView = view.findViewById(R.id.searchAmount)
+        searchAmount = view.findViewById(R.id.searchAmount)
         recyclerView = view.findViewById(R.id.recyclerSearchMontant)
+        progressBar = view.findViewById(R.id.progressBarSearchAmount)
         resultArrayList = arrayListOf()
         adapter = OperationAdapter(context, resultArrayList)
 
@@ -63,19 +73,29 @@ class AmountFragment(private val context: MainActivity) : Fragment() {
                 Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
             }
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
+        // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
+        textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                //
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                filterList(newText)
-                recyclerView.adapter = adapter
-                recyclerView.layoutManager = LinearLayoutManager(context)
-                return true
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                //
+                if (searchAmount.text.isNotEmpty())
+                {
+                    filterList(searchAmount.text.toString())
+                    recyclerView.adapter = adapter
+                    recyclerView.layoutManager = LinearLayoutManager(context)
+                }
             }
 
-        })
+            override fun afterTextChanged(s: Editable?) {
+                //
+            }
+
+        }
+        searchAmount.addTextChangedListener(textWatcher)
+
         return view
     }
 
@@ -83,10 +103,12 @@ class AmountFragment(private val context: MainActivity) : Fragment() {
         if (query != null)
         {
             val filteredList = ArrayList<TransactionModel>()
+            progressBar.visibility = View.VISIBLE
             for (i in resultArrayList)
             {
                 if (i.montant.startsWith(query))
                 {
+                    progressBar.visibility = View.INVISIBLE
                     filteredList.add(i)
                 }
             }
@@ -94,6 +116,7 @@ class AmountFragment(private val context: MainActivity) : Fragment() {
             {
                 adapter.setFilteredList(filteredList)
             }else{
+                progressBar.visibility = View.INVISIBLE
                 adapter.setFilteredList(filteredList)
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage("Aucun résultat")

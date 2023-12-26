@@ -48,7 +48,7 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
     private lateinit var recyclerView: RecyclerView
     lateinit var progressBar: ProgressBar
     private lateinit var infoFailedRetrieveData: TextView
-    private var module = "null"
+    private var module: String? = null
 
     @SuppressLint("MissingInflatedId", "HardwareIds")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -91,37 +91,36 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
             .whereEqualTo("id", auth.currentUser?.uid)
             .get()
             .addOnSuccessListener { document->
-                for (data in document)
+                for (dons in document)
                 {
-                    nomCom.text = data!!.data["nomcommercial"].toString()
-                    module = data!!.data["module"].toString()
+                    nomCom.text = dons.data["nomcommercial"].toString()
+                    module = dons.data["module"].toString()
+
+                    if (module == "International") {
+                        internationalLink.visibility = View.VISIBLE
+                        comptabiliteLink.visibility = View.VISIBLE
+                    }else if (module == "National") {
+                        nationalLink.visibility = View.VISIBLE
+                        comptabiliteLink.visibility = View.VISIBLE
+                    }else{
+                        internationalLink.visibility = View.VISIBLE
+                        nationalLink.visibility = View.VISIBLE
+                        comptabiliteLink.visibility = View.VISIBLE
+                    }
                 }
             }
 
         searchLink.setOnClickListener {
             SearchPopup(context).show()
         }
+
+
         nationalLink.setOnClickListener {
-            if (module == "International")
-            {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle("Vous n'êtes pas autorisé")
-                builder.setMessage("Votre compte est configuré pour effectuer uniquement les transferts internationaux")
-                builder.show()
-            }else{
+            // Cette instruction à cause du double compte qui affiche différent menu en National
                 context.Compte()
-            }
         }
         internationalLink.setOnClickListener {
-            if (module == "National")
-            {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle("Vous n'êtes pas autorisé")
-                builder.setMessage("Votre compte est configuré pour effectuer uniquement les transferts nationaux")
-                builder.show()
-            }else{
                 MenuPopupAssistantInter(context).show()
-            }
         }
 
         // RECHERCHER LE SUPERVISEUR POUR L'ABONNEMENT

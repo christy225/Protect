@@ -36,6 +36,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 class RiaFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -207,19 +208,26 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
                             .addOnSuccessListener { task->
                                 task.metadata!!.reference!!.downloadUrl
                                     .addOnSuccessListener {
+
+                                        val uid = UUID.randomUUID().toString()
                                         val operationMap = hashMapOf(
                                             "id" to auth.currentUser?.uid,
                                             "date" to dateFormatted,
                                             "heure" to hourFormatted,
                                             "operateur" to "ria",
-                                            "telephone" to telInput.toString().trim(),
+                                            "telephone" to telInput.toString(),
                                             "montant" to "N/A",
                                             "typeoperation" to typeSpinner,
-                                            "url" to it.toString()
+                                            "statut" to true,
+                                            "url" to "null",
+                                            "idDoc" to uid
                                         )
 
 
-                                        db.collection("operation").add(operationMap).addOnCompleteListener {
+                                        db.collection("operation")
+                                            .document(uid)
+                                            .set(operationMap)
+                                            .addOnCompleteListener {
                                             val tel = textTelephone.text
 
                                             tel.clear()
@@ -248,19 +256,25 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
                     }else{
 
                         // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                        val uid = UUID.randomUUID().toString()
                         val operationMap = hashMapOf(
                             "id" to auth.currentUser?.uid,
                             "date" to dateFormatted,
                             "heure" to hourFormatted,
                             "operateur" to "ria",
-                            "telephone" to telInput.toString().trim(),
+                            "telephone" to telInput.toString(),
                             "montant" to "N/A",
                             "typeoperation" to typeSpinner,
-                            "url" to "null"
+                            "statut" to true,
+                            "url" to "null",
+                            "idDoc" to uid
                         )
 
 
-                        db.collection("operation").add(operationMap).addOnCompleteListener {
+                        db.collection("operation")
+                            .document(uid)
+                            .set(operationMap)
+                            .addOnCompleteListener {
                             val tel = textTelephone.text
 
                             tel.clear()

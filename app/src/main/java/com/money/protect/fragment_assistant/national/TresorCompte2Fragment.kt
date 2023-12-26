@@ -44,6 +44,7 @@ import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 
 class TresorCompte2Fragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -163,6 +164,9 @@ class TresorCompte2Fragment(private val context: MainActivity) : Fragment() {
                 }
             }
         })
+
+        // Empêcher le retour en arrière si les champs ne sont pas vide
+        context.blockBackNavigation(buttonRegister)
 
 
         progressBar.visibility = View.INVISIBLE
@@ -303,16 +307,24 @@ class TresorCompte2Fragment(private val context: MainActivity) : Fragment() {
                                 .putFile(uri)
                                 .addOnSuccessListener { task->
                                     task.metadata!!.reference!!.downloadUrl
-                                        .addOnSuccessListener {
+                                        .addOnSuccessListener {it->
+                                            //formater le montant
+                                            val theAmount = montantInput.toString()
+                                            val caractere = ','
+                                            val theNewAmount = theAmount.filter { it != caractere }
+
+                                            val uid = UUID.randomUUID().toString()
                                             val operationMap = hashMapOf(
                                                 "id" to auth.currentUser?.uid,
                                                 "date" to dateFormatted,
                                                 "heure" to hourFormatted,
                                                 "operateur" to "tresor money",
                                                 "telephone" to telInput.toString(),
-                                                "montant" to montantInput.toString(),
+                                                "montant" to theNewAmount,
                                                 "typeoperation" to typeSpinner,
-                                                "url" to it.toString()
+                                                "statut" to true,
+                                                "url" to "null",
+                                                "idDoc" to uid
                                             )
 
                                             val tel = textTelephone.text
@@ -326,7 +338,10 @@ class TresorCompte2Fragment(private val context: MainActivity) : Fragment() {
                                             typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                                            db.collection("operation").add(operationMap).addOnCompleteListener {
+                                            db.collection("operation")
+                                                .document(uid)
+                                                .set(operationMap)
+                                                .addOnCompleteListener {
                                                 // Ne rien faire ici
 
                                             }.addOnFailureListener {
@@ -348,15 +363,23 @@ class TresorCompte2Fragment(private val context: MainActivity) : Fragment() {
                         }else{
 
                             // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                            //formater le montant
+                            val theAmount = montantInput.toString()
+                            val caractere = ','
+                            val theNewAmount = theAmount.filter { it != caractere }
+
+                            val uid = UUID.randomUUID().toString()
                             val operationMap = hashMapOf(
                                 "id" to auth.currentUser?.uid,
                                 "date" to dateFormatted,
                                 "heure" to hourFormatted,
                                 "operateur" to "tresor money",
                                 "telephone" to telInput.toString(),
-                                "montant" to montantInput.toString(),
+                                "montant" to theNewAmount,
                                 "typeoperation" to typeSpinner,
-                                "url" to "null"
+                                "statut" to true,
+                                "url" to "null",
+                                "idDoc" to uid
                             )
 
                             val tel = textTelephone.text
@@ -370,7 +393,10 @@ class TresorCompte2Fragment(private val context: MainActivity) : Fragment() {
                             typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                            db.collection("operation").add(operationMap).addOnCompleteListener {
+                            db.collection("operation")
+                                .document(uid)
+                                .set(operationMap)
+                                .addOnCompleteListener {
                                 // ne rien faire ici
                             }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(context)

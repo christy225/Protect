@@ -1,11 +1,17 @@
 package com.money.protect.fragment_superviseur
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,6 +23,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Locale
 
 class CumulTransactionSuperviseur(
@@ -33,6 +40,23 @@ class CumulTransactionSuperviseur(
     private lateinit var wave2: TextView
     private lateinit var tresor1: TextView
     private lateinit var tresor2: TextView
+
+    private lateinit var sumDepot1: TextView
+    private lateinit var sumRetrait1: TextView
+    private lateinit var sumDepot2: TextView
+    private lateinit var sumRetrait2: TextView
+    private lateinit var sumDepot3: TextView
+    private lateinit var sumRetrait3: TextView
+    private lateinit var sumDepot4: TextView
+    private lateinit var sumRetrait4: TextView
+    private lateinit var sumDepot5: TextView
+    private lateinit var sumRetrait5: TextView
+
+    private lateinit var datePicker: EditText
+    private lateinit var button: ImageButton
+
+    private lateinit var loader: TextView
+    @SuppressLint("MissingInflatedId", "SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,14 +68,14 @@ class CumulTransactionSuperviseur(
 
         // Recupérer le point du jour
 
+        datePicker = view.findViewById(R.id.dateSelectCumulSuperviseur)
+        button = view.findViewById(R.id.buttonDatepickerCumulSuperviseur)
+        loader = view.findViewById(R.id.loaderCumulSuperviseur)
+
         val data = arguments
         val identifiant = data?.getString("id")
         val nom = data?.getString("nom")
-        val assignation = data?.getString("module")
-
-        val current = LocalDateTime.now()
-        val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-        val dateFormatted = current.format(formatterDate)
+        val module = data?.getString("module")
 
         orange1 = view.findViewById(R.id.ma1)
         orange2 = view.findViewById(R.id.maa1)
@@ -63,134 +87,218 @@ class CumulTransactionSuperviseur(
         wave2 = view.findViewById(R.id.maa4)
         tresor1 = view.findViewById(R.id.ma5)
         tresor2 = view.findViewById(R.id.maa5)
+        // RECHERCHER UN POINT A UNE DATE PRECISE
 
+        sumDepot1 = view.findViewById(R.id.tdep1)
+        sumRetrait1 = view.findViewById(R.id.tret1)
+        sumDepot2 = view.findViewById(R.id.tdep2)
+        sumRetrait2 = view.findViewById(R.id.tret2)
+        sumDepot3 = view.findViewById(R.id.tdep3)
+        sumRetrait3 = view.findViewById(R.id.tret3)
+        sumDepot4 = view.findViewById(R.id.tdep4)
+        sumRetrait4 = view.findViewById(R.id.tret4)
+        sumDepot5 = view.findViewById(R.id.tdep5)
+        sumRetrait5 = view.findViewById(R.id.tret5)
 
-        db.collection("operation")
-            .whereEqualTo("id", identifiant)
-            .get()
-            .addOnSuccessListener { documents->
-                var totalOrange1 = 0
-                var totalOrange2 = 0
-                var totalMtn1 = 0
-                var totalMtn2 = 0
-                var totalMoov1 = 0
-                var totalMoov2 = 0
-                var totalWave1 = 0
-                var totalWave2 = 0
-                var totalTresor1 = 0
-                var totalTresor2 = 0
-                for (donnee in documents)
-                {
-                    if (donnee != null)
-                    {
-                        val operateur = donnee.data["operateur"].toString()
-                        val typeOperateur = donnee.data["typeoperation"].toString()
-                        val date = donnee.data["date"].toString()
+        datePicker.setOnClickListener {
+            val c = Calendar.getInstance()
 
-                        if (operateur == "orange" && date == dateFormatted.toString())
-                        {
-                            if (typeOperateur == "Dépôt")
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(
+                context, { view, year, monthOfYear, dayOfMonth ->
+                    val dat = (dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year)
+                    datePicker.setText(dat)
+                    loader.visibility = View.VISIBLE
+
+                    db.collection("operation")
+                        .whereEqualTo("id", identifiant)
+                        .get()
+                        .addOnSuccessListener { documents->
+                            loader.visibility = View.GONE
+
+                            var totalOrange1 = 0
+                            var totalOrange2 = 0
+                            var totalMtn1 = 0
+                            var totalMtn2 = 0
+                            var totalMoov1 = 0
+                            var totalMoov2 = 0
+                            var totalWave1 = 0
+                            var totalWave2 = 0
+                            var totalTresor1 = 0
+                            var totalTresor2 = 0
+
+                            var sumDep1 = 0
+                            var sumRet1 = 0
+                            var sumDep2 = 0
+                            var sumRet2 = 0
+                            var sumDep3 = 0
+                            var sumRet3 = 0
+                            var sumDep4 = 0
+                            var sumRet4 = 0
+                            var sumDep5 = 0
+                            var sumRet5 = 0
+
+                            if (!documents.isEmpty())
                             {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalOrange1 += newValue.toInt()
-                            }else if (typeOperateur == "Retrait") {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalOrange2 += newValue.toInt()
-                            }
-                        }
-                        if (operateur == "mtn" && date == dateFormatted.toString())
-                        {
-                            if (typeOperateur == "Dépôt")
-                            {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalMtn1 += newValue.toInt()
-                            }else if (typeOperateur == "Retrait") {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalMtn2 += newValue.toInt()
-                            }
-                        }
-                        if (operateur == "moov" && date == dateFormatted.toString())
-                        {
-                            if (typeOperateur == "Dépôt")
-                            {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalMoov1 += newValue.toInt()
-                            }else if (typeOperateur == "Retrait") {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalMoov2 += newValue.toInt()
-                            }
-                        }
-                        if (operateur == "wave" && date == dateFormatted.toString())
-                        {
-                            if (typeOperateur == "Dépôt")
-                            {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalWave1 += newValue.toInt()
-                            }else if (typeOperateur == "Retrait") {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalWave2 += newValue.toInt()
-                            }
-                        }
-                        if (operateur == "tresor" && date == dateFormatted.toString())
-                        {
-                            if (typeOperateur == "Dépôt")
-                            {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalTresor1 += newValue.toInt()
-                            }else if (typeOperateur == "Retrait") {
-                                val sum = donnee.data["montant"].toString()
-                                val caractere = ','
-                                val newValue = sum.filter { it != caractere }
-                                totalTresor2 += newValue.toInt()
-                            }
-                        }
-                    }
-                }
+                                for (donnee in documents)
+                                {
+                                    val operateur = donnee.data["operateur"].toString()
+                                    val typeOperateur = donnee.data["typeoperation"].toString()
+                                    val date = donnee.data["date"].toString()
+                                    val statut = donnee.data["statut"].toString().toBoolean()
 
-                // Utilisation de la locale par défaut pour obtenir le séparateur de milliers correct
-                val format = DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.getDefault()))
+                                    // Statut pour vérifier que la transaction n'est pas annulée
+                                    if (operateur == "orange" && date == datePicker.text.toString() && statut)
+                                    {
+                                        if (typeOperateur == "Dépôt")
+                                        {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalOrange1 += newValue.toInt()
+                                            sumDep1 += 1
+                                        }else if (typeOperateur == "Retrait") {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalOrange2 += newValue.toInt()
+                                            sumRet1 += 1
+                                        }
+                                    }
+                                    if (operateur == "mtn" && date == datePicker.text.toString() && statut)
+                                    {
+                                        if (typeOperateur == "Dépôt")
+                                        {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalMtn1 += newValue.toInt()
+                                            sumDep2 += 1
+                                        }else if (typeOperateur == "Retrait") {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalMtn2 += newValue.toInt()
+                                            sumRet2 += 1
+                                        }
+                                    }
+                                    if (operateur == "moov" && date == datePicker.text.toString() && statut)
+                                    {
+                                        if (typeOperateur == "Dépôt")
+                                        {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalMoov1 += newValue.toInt()
+                                            sumDep3 += 1
+                                        }else if (typeOperateur == "Retrait") {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalMoov2 += newValue.toInt()
+                                            sumRet3 += 1
+                                        }
+                                    }
+                                    if (operateur == "wave" && date == datePicker.text.toString() && statut)
+                                    {
+                                        if (typeOperateur == "Dépôt")
+                                        {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalWave1 += newValue.toInt()
+                                            sumDep4 += 1
+                                        }else if (typeOperateur == "Retrait") {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalWave2 += newValue.toInt()
+                                            sumRet4 += 1
+                                        }
+                                    }
+                                    if (operateur == "tresor money" && date == datePicker.text.toString() && statut)
+                                    {
+                                        if (typeOperateur == "Dépôt")
+                                        {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalTresor1 += newValue.toInt()
+                                            sumDep5 += 1
+                                        }else if (typeOperateur == "Retrait") {
+                                            val sum = donnee.data["montant"].toString()
+                                            val caractere = ','
+                                            val newValue = sum.filter { it != caractere }
+                                            totalTresor2 += newValue.toInt()
+                                            sumRet5 += 1
+                                        }
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(context, "Aucun résultat", Toast.LENGTH_SHORT).show()
+                            }
 
-                // Appliquer le format au nombre
-                val nombreFormateOrange1 = format.format(totalOrange1)
-                val nombreFormateOrange2 = format.format(totalOrange2)
-                val nombreFormateMtn1 = format.format(totalMtn1)
-                val nombreFormateMtn2 = format.format(totalMtn2)
-                val nombreFormateMoov1 = format.format(totalMoov1)
-                val nombreFormateMoov2 = format.format(totalMoov2)
-                val nombreFormateWave1 = format.format(totalWave1)
-                val nombreFormateWave2 = format.format(totalWave2)
-                val nombreFormateTresor1 = format.format(totalTresor1)
-                val nombreFormateTresor2 = format.format(totalTresor2)
+                            // Utilisation de la locale par défaut pour obtenir le séparateur de milliers correct
+                            val format = DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.getDefault()))
 
-                orange1.text = nombreFormateOrange1.toString()
-                orange2.text = nombreFormateOrange2.toString()
-                mtn1.text = nombreFormateMtn1.toString()
-                mtn2.text = nombreFormateMtn2.toString()
-                moov1.text = nombreFormateMoov1.toString()
-                moov2.text = nombreFormateMoov2.toString()
-                wave1.text = nombreFormateWave1.toString()
-                wave2.text = nombreFormateWave2.toString()
-                tresor1.text = nombreFormateTresor1.toString()
-                tresor2.text = nombreFormateTresor2.toString()
-            }
+                            // Appliquer le format au nombre
+                            val nombreFormateOrange1 = format.format(totalOrange1)
+                            val nombreFormateOrange2 = format.format(totalOrange2)
+                            val nombreFormateMtn1 = format.format(totalMtn1)
+                            val nombreFormateMtn2 = format.format(totalMtn2)
+                            val nombreFormateMoov1 = format.format(totalMoov1)
+                            val nombreFormateMoov2 = format.format(totalMoov2)
+                            val nombreFormateWave1 = format.format(totalWave1)
+                            val nombreFormateWave2 = format.format(totalWave2)
+                            val nombreFormateTresor1 = format.format(totalTresor1)
+                            val nombreFormateTresor2 = format.format(totalTresor2)
+
+                            orange1.text = nombreFormateOrange1.toString()
+                            orange2.text = nombreFormateOrange2.toString()
+                            mtn1.text = nombreFormateMtn1.toString()
+                            mtn2.text = nombreFormateMtn2.toString()
+                            moov1.text = nombreFormateMoov1.toString()
+                            moov2.text = nombreFormateMoov2.toString()
+                            wave1.text = nombreFormateWave1.toString()
+                            wave2.text = nombreFormateWave2.toString()
+                            tresor1.text = nombreFormateTresor1.toString()
+                            tresor2.text = nombreFormateTresor2.toString()
+
+                            sumDepot1.text = "($sumDep1)"
+                            sumRetrait1.text = "($sumRet1)"
+                            sumDepot2.text = "($sumDep2)"
+                            sumRetrait2.text = "($sumRet2)"
+                            sumDepot3.text = "($sumDep3)"
+                            sumRetrait3.text = "($sumRet3)"
+                            sumDepot4.text = "($sumDep4)"
+                            sumRetrait4.text = "($sumRet4)"
+                            sumDepot5.text = "($sumDep5)"
+                            sumRetrait5.text = "($sumRet5)"
+                        }
+                },
+                year,
+                month,
+                day
+            )
+            datePickerDialog.show()
+        }
+
+        val linkToHomeListPoint = view.findViewById<ImageView>(R.id.backToListHomeSuperviseur1)
+        val menuFragment = MenuAssistSuperviseur(context)
+        linkToHomeListPoint.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("id", identifiant)
+            bundle.putString("nom", nom)
+            bundle.putString("module", module)
+            menuFragment.arguments = bundle
+            context.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_superviseur, menuFragment)
+                .addToBackStack(null)
+                .commit()
+        }
 
         return view
     }

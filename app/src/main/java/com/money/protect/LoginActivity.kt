@@ -65,6 +65,9 @@ class LoginActivity : AppCompatActivity() {
                     button.setText(R.string.button_loading)
                     // CONVERSION DU N° TELEPHONE EN MAIL
                     val emailTel = "ci-" + email + "@mail.com"
+                    if (!checkForInternet(this)) {
+                        Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                    }
                     auth.signInWithEmailAndPassword(emailTel, password).addOnSuccessListener {
                         query.whereEqualTo("id", auth.currentUser!!.uid)
                             .get().addOnSuccessListener { document->
@@ -114,34 +117,46 @@ class LoginActivity : AppCompatActivity() {
                                                     // Ne rien faire
                                                 }
 
+                                            if (!checkForInternet(this)) {
+                                                Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                                            }
                                             db.collection("annexe")
+                                                .whereEqualTo("id", auth.currentUser?.uid)
                                                 .get()
                                                 .addOnSuccessListener { documents->
-                                                    for (donne in documents)
-                                                    {
-                                                        progressBar.visibility = View.INVISIBLE
-                                                        val id = donne.data["id"].toString()
-                                                        val mainprofil = donne.data["mainprofil"].toString().toBoolean()
-
-                                                        if (id == auth.currentUser?.uid.toString() && mainprofil)
+                                                    if (!documents.isEmpty) {
+                                                        for (donne in documents)
                                                         {
-                                                            // Vérifier si le double-compte est activé et rediriger
-                                                            val intent = Intent(this, DoubleAccountActivity::class.java)
-                                                            startActivity(intent)
-                                                            button.isEnabled = true
-                                                            button.setText(R.string.login_button_default_text)
-                                                        }else{
-                                                            // Vérifier si le double-compte est activé et rediriger
-                                                            val intent = Intent(this, MainActivity::class.java)
-                                                            startActivity(intent)
-                                                            button.isEnabled = true
-                                                            button.setText(R.string.login_button_default_text)
+                                                            progressBar.visibility = View.INVISIBLE
+                                                            val mainprofil = donne.data["mainprofil"].toString().toBoolean()
+
+                                                            if (mainprofil)
+                                                            {
+                                                                // Vérifier si le double-compte est activé et rediriger
+                                                                val intent = Intent(this, DoubleAccountActivity::class.java)
+                                                                startActivity(intent)
+                                                                button.isEnabled = true
+                                                                button.setText(R.string.login_button_default_text)
+                                                            }else{
+                                                                // Vérifier si le double-compte est activé et rediriger
+                                                                val intent = Intent(this, MainActivity::class.java)
+                                                                startActivity(intent)
+                                                                button.isEnabled = true
+                                                                button.setText(R.string.login_button_default_text)
+                                                            }
                                                         }
+                                                    }else{
+                                                        // Vérifier si le double-compte est activé et rediriger
+                                                        val intent = Intent(this, MainActivity::class.java)
+                                                        startActivity(intent)
+                                                        button.isEnabled = true
+                                                        button.setText(R.string.login_button_default_text)
                                                     }
                                                 }.addOnFailureListener {
                                                     Toast.makeText(applicationContext, R.string.onFailureText, Toast.LENGTH_SHORT)
                                                         .show()
                                                 }
+
 
                                         }else{
                                             val builder = AlertDialog.Builder(this)
@@ -191,6 +206,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onStart() {
         super.onStart()
         progressBar = findViewById(R.id.progressBarLogin)
@@ -198,6 +214,9 @@ class LoginActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         if (auth.currentUser != null)
         {
+            if (!checkForInternet(this)) {
+                Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+            }
             db.collection("account").whereEqualTo("id", auth.currentUser!!.uid)
                 .get()
                 .addOnSuccessListener { document->
@@ -206,29 +225,39 @@ class LoginActivity : AppCompatActivity() {
                         val role = donnee.data["role"].toString()
                         if (role == "assistant")
                         {
+                            if (!checkForInternet(this)) {
+                                Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                            }
                             db.collection("annexe")
                                 .get()
                                 .addOnSuccessListener { documents->
-                                    for (donne in documents)
-                                    {
-                                        progressBar.visibility = View.INVISIBLE
-                                        val id = donne.data["id"].toString()
-                                        val mainprofil = donne.data["mainprofil"].toString().toBoolean()
-
-                                        if (id == auth.currentUser?.uid.toString() && mainprofil)
+                                    if (!documents.isEmpty) {
+                                        for (donne in documents)
                                         {
-                                            // Vérifier si le double-compte est activé et rediriger
-                                            val intent = Intent(this, DoubleAccountActivity::class.java)
-                                            startActivity(intent)
-                                            button.isEnabled = true
-                                            button.setText(R.string.login_button_default_text)
-                                        }else{
-                                            // Vérifier si le double-compte est activé et rediriger
-                                            val intent = Intent(this, MainActivity::class.java)
-                                            startActivity(intent)
-                                            button.isEnabled = true
-                                            button.setText(R.string.login_button_default_text)
+                                            progressBar.visibility = View.INVISIBLE
+                                            val mainprofil = donne.data["mainprofil"].toString().toBoolean()
+
+                                            if (mainprofil)
+                                            {
+                                                // Vérifier si le double-compte est activé et rediriger
+                                                val intent = Intent(this, DoubleAccountActivity::class.java)
+                                                startActivity(intent)
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
+                                            }else{
+                                                // Vérifier si le double-compte est activé et rediriger
+                                                val intent = Intent(this, MainActivity::class.java)
+                                                startActivity(intent)
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
+                                            }
                                         }
+                                    }else{
+                                        // Vérifier si le double-compte est activé et rediriger
+                                        val intent = Intent(this, MainActivity::class.java)
+                                        startActivity(intent)
+                                        button.isEnabled = true
+                                        button.setText(R.string.login_button_default_text)
                                     }
                                 }.addOnFailureListener {
                                     Toast.makeText(applicationContext, R.string.onFailureText, Toast.LENGTH_SHORT).show()

@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.money.protect.LoginActivity
 import com.money.protect.R
 import com.money.protect.SuperviseurActivity
-import com.money.protect.adapter.AssistantListAdapter
+import com.money.protect.adapter.SettingsAdapterSuperviseur
 import com.money.protect.models.AccountModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,11 +28,11 @@ import com.google.firebase.ktx.Firebase
 import com.money.protect.UpdatePasswordActivity
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 
-class ListAssistantSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
+class SettingsSuperviseur(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
     private lateinit var auth : FirebaseAuth
-    lateinit var nomCommercial: TextView
-    lateinit var nomComplet: TextView
+    private lateinit var nomCommercial: TextView
+    private lateinit var nomComplet: TextView
     lateinit var recyclerView: RecyclerView
     private var assistantArrayList = ArrayList<AccountModel>()
     lateinit var progressBar: ProgressBar
@@ -44,7 +44,7 @@ class ListAssistantSuperviseurFragment(private val context: SuperviseurActivity)
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_superviseur_list_assistant, container, false)
+        val view = inflater.inflate(R.layout.fragment_superviseur_settings, container, false)
 
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
@@ -105,7 +105,7 @@ class ListAssistantSuperviseurFragment(private val context: SuperviseurActivity)
                     {
                         assistantArrayList.add(item)
                     }
-                    recyclerView.adapter = AssistantListAdapter(context, assistantArrayList)
+                    recyclerView.adapter = SettingsAdapterSuperviseur(context, assistantArrayList)
                     recyclerView.layoutManager = LinearLayoutManager(context)
                 }
             }.addOnFailureListener {

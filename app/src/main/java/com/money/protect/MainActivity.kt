@@ -1,6 +1,5 @@
 package com.money.protect
 
-import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -9,13 +8,17 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -38,14 +41,10 @@ import com.money.protect.popup.MenuPopupCompte1Assistant
 import com.money.protect.popup.MenuPopupCompte2Assistant
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.security.Key
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Arrays
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : AppCompatActivity() {
@@ -90,8 +89,16 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        val intent: Intent = getIntent()
+        val intent: Intent = intent
         compte = intent.getStringExtra("compte")
+
+        // Masquer le menu facture pour le compte 2
+        if (compte == "compte2")
+        {
+            val menu: Menu = bottomNavigationView.menu
+            val menuItem: MenuItem? = menu.findItem(R.id.factures)
+            menuItem?.isVisible = false
+        }
 
         // Vérifier si la permission appel est déjà accordée
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
@@ -118,11 +125,11 @@ class MainActivity : AppCompatActivity() {
                     db.collection("abonnement")
                         .whereEqualTo("id", superviseurId)
                         .get()
-                        .addOnSuccessListener { document->
-                            for (data in document)
+                        .addOnSuccessListener { documents->
+                            for (data in documents)
                             {
                                 val dureeAutorisee = data!!.data["duration"].toString()
-                                val creation = data!!.data["creation"].toString()
+                                val creation = data.data["creation"].toString()
 
                                 // On formate la date de création réçue de la BDD
                                 val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
@@ -140,14 +147,16 @@ class MainActivity : AppCompatActivity() {
                                 if (dureeAutorisee.toLong() >= jourEcoules)
                                 {
                                     loadFragment(HomeFragment(this))
+
                                     bottomNavigationView.setOnItemSelectedListener {
-                                        when(it.itemId)
-                                        {
-                                            R.id.home -> loadFragment(HomeFragment(this))
-                                            R.id.factures -> loadFragment(FactureFragment(this))
-                                            R.id.settings -> loadFragment(SettingsFragment(this))
-                                        }
-                                        false
+                                            when(it.itemId)
+                                            {
+                                                R.id.home -> loadFragment(HomeFragment(this))
+                                                R.id.factures -> loadFragment(FactureFragment(this))
+                                                R.id.settings -> loadFragment(SettingsFragment(this))
+                                            }
+                                            false
+
                                     }
                                 } else if (dureeAutorisee.toLong() < jourEcoules){
 
@@ -189,6 +198,22 @@ class MainActivity : AppCompatActivity() {
                 builder.show()
             }
 
+    }
+
+    fun blockBackNavigation(query: Button){
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val fragmentManager: FragmentManager = supportFragmentManager
+                if (query.text == "enregistrer opération") {
+                    val builder = AlertDialog.Builder(this@MainActivity)
+                    builder.setTitle("Avertissement").setMessage("Vous n'avez pas enregistré l'opération.\nCliquer sur Annuler pour interrompre la transaction").show()
+                }else{
+                    fragmentManager.popBackStack()
+                }
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     private fun requestCallPermission() {
@@ -292,6 +317,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    // Affichage du menu popup en fonction du type de compte
     fun Compte(){
         if (compte == "compte1")
         {

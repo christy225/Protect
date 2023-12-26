@@ -22,17 +22,14 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.R
 import com.money.protect.SuperviseurActivity
-import com.money.protect.adapter.OperationAdapter
 import com.money.protect.adapter.OperationAdapterSuperviseur
-import com.money.protect.models.PointModel
 import com.money.protect.models.TransactionModel
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
-class TransactionAssistant(private val context: SuperviseurActivity) : Fragment() {
+class TransactionAssistantFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: OperationAdapterSuperviseur

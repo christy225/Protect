@@ -39,7 +39,7 @@
     <string name="info_avant_enregistrement">Cette opération est irréversible. Veuillez donc vérifier les informations avant l\'enregistrement.</string>
 
     <!--   -->
-    <string name="info_double_compte">Ce deuxième compte servira pour les opérations Orange Money principalement \n Vous pourrez utiliser directement la syntaxe comme dans le cas des opérateurs MTN/MOOV</string>
+    <string name="info_double_compte">Ce deuxième compte servira pour les opérations Orange Money principalement. Vous pourrez utiliser directement la syntaxe comme dans le cas des opérateurs MTN/MOOV</string>
     <!-- POPUP MENU OPERATEUR POUR OPERATION -->
 
     <!-- DETAILS OPERATON PAGE -->

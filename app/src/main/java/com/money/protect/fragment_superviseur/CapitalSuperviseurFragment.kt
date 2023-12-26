@@ -26,16 +26,19 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 
 class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
     private var database = Firebase.firestore
     lateinit var auth: FirebaseAuth
     private lateinit var valeurAcuelleCapital: TextView
-    lateinit var montant: EditText
+    private lateinit var montant: EditText
     private lateinit var checkBox: CheckBox
-    lateinit var button: AppCompatButton
-    lateinit var progressBar: ProgressBar
+    private lateinit var button: AppCompatButton
+    private lateinit var progressBar: ProgressBar
+    private var textWatcher: TextWatcher? = null
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -64,6 +67,23 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
         progressBar = view.findViewById(R.id.superviseur_capital_progressbar)
 
         progressBar.visibility = View.INVISIBLE
+
+        // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
+        textWatcher = object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                //
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                //
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                this@CapitalSuperviseurFragment.formatEditext(s)
+            }
+
+        }
+        montant.addTextChangedListener(textWatcher)
 
         montant.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
@@ -132,9 +152,13 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
             } else {
 
                 // ON RECUPERE LA NOUVELLE VALEUR DU CAPITAL AVANT L'ENVOI EN BASE DE DONNEES
+                //formater le montant
+                val theAmount = montant.text.toString()
+                val caractere = ','
+                val theNewAmount = theAmount.filter { it != caractere }
 
-                val valeur1 = montant.text.toString().toInt() + valeurAcuelleCapital.text.toString().toInt()
-                val valeur2 = valeurAcuelleCapital.text.toString().toInt() - montant.text.toString().toInt()
+                val valeur1 = theNewAmount.toInt() + valeurAcuelleCapital.text.toString().toInt()
+                val valeur2 = valeurAcuelleCapital.text.toString().toInt() - theNewAmount.toInt()
 
                 var nouvelleValeurCapital: Int
 
@@ -173,5 +197,23 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
             }
         }
         return view
+    }
+
+    // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
+    private fun formatEditext(s: Editable?) {
+        if (!s.isNullOrBlank())
+        {
+            val originalText = s.toString().replace(",","")
+            val number = originalText.toBigDecimalOrNull()
+
+            if (number != null)
+            {
+                val formattedText = NumberFormat.getNumberInstance(Locale.US).format(number)
+                montant.removeTextChangedListener(textWatcher)
+                montant.setText(formattedText)
+                montant.setSelection(formattedText.length)
+                montant.addTextChangedListener(textWatcher)
+            }
+        }
     }
 }

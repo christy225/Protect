@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -14,10 +13,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.money.protect.fragment_superviseur.CapitalSuperviseurFragment
-import com.money.protect.fragment_superviseur.HomeSuperviseurFragment
 import com.money.protect.fragment_superviseur.ListAssistantHome
-import com.money.protect.fragment_superviseur.ListAssistantSuperviseurFragment
+import com.money.protect.fragment_superviseur.SettingsSuperviseur
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -67,7 +64,7 @@ class SuperviseurActivity : AppCompatActivity() {
                             {
                                 R.id.homeMenuSuperviseur -> loadFragment(ListAssistantHome(this))
                                 R.id.listAssistantMenuSuperviseur -> loadFragment(
-                                    ListAssistantSuperviseurFragment(this)
+                                    SettingsSuperviseur(this)
                                 )
                             }
                             false

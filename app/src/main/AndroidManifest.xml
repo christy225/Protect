@@ -33,9 +33,6 @@
             android:name=".DoubleAccountActivity"
             android:exported="false" />
         <activity
-            android:name=".AssistantTransactionSuperviseurActivity"
-            android:exported="false" />
-        <activity
             android:name=".SuperviseurDetailPointNational"
             android:exported="false"
             android:screenOrientation="portrait" />

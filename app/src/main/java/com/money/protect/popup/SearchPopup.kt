@@ -5,9 +5,8 @@ import android.os.Bundle
 import androidx.cardview.widget.CardView
 import com.money.protect.MainActivity
 import com.money.protect.R
-import com.money.protect.fragment_assistant.AdvancedFragment
-import com.money.protect.fragment_assistant.AmountFragment
-import com.money.protect.fragment_assistant.HomeFragment
+import com.money.protect.fragment_assistant.SearchAdvancedFragment
+import com.money.protect.fragment_assistant.SearchAmountFragment
 import com.money.protect.fragment_assistant.SearchDateFragment
 import com.money.protect.fragment_assistant.SearchPhoneFragment
 
@@ -28,7 +27,7 @@ class SearchPopup(
         val btn = findViewById<CardView>(R.id.linkToSearchAdvance)
         btn.setOnClickListener {
             context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AdvancedFragment(context))
+                .replace(R.id.fragment_container, SearchAdvancedFragment(context))
                 .addToBackStack(null)
                 .commit()
             dismiss()
@@ -39,7 +38,7 @@ class SearchPopup(
         val btn = findViewById<CardView>(R.id.linkToSearchMontant)
         btn.setOnClickListener {
             context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AmountFragment(context))
+                .replace(R.id.fragment_container, SearchAmountFragment(context))
                 .addToBackStack(null)
                 .commit()
             dismiss()
