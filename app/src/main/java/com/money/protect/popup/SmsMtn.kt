@@ -22,7 +22,7 @@ class SmsMtn(
     private val fragment: MtnFragment
 ) : Dialog(fragment.requireContext()) {
     // Déclarez une liste pour stocker les SMS.
-    lateinit var smsList: ArrayList<String>
+    private lateinit var smsList: ArrayList<String>
 
     private val SMS_PERMISSION_REQUEST_CODE = 123
     private lateinit var recyclerView: RecyclerView

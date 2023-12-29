@@ -42,11 +42,13 @@
         android:id="@+id/linkTo_wave_popup_compte1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:layout_marginTop="20dp"
-        app:cardCornerRadius="5dp"
+        android:layout_marginEnd="10dp"
         android:backgroundTint="@color/background_color"
+        app:cardCornerRadius="5dp"
         app:cardElevation="0dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/view2"
         app:layout_constraintTop_toBottomOf="@+id/cardView21">
 
@@ -69,12 +71,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WAVE"
-                android:textStyle="bold"
-                android:textSize="11sp"
-                android:layout_marginTop="5dp"
                 android:layout_marginHorizontal="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:text="WAVE"
+                android:textSize="11sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,10 +88,12 @@
         android:id="@+id/linkTo_mtn_popup_compte1"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:backgroundTint="@color/background_color"
         app:cardCornerRadius="5dp"
         app:cardElevation="0dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/view2"
         app:layout_constraintTop_toTopOf="@+id/linkTo_wave_popup_compte1">
 
@@ -112,108 +116,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MTN MONEY"
-                android:textStyle="bold"
-                android:textSize="11sp"
-                android:layout_marginTop="5dp"
                 android:layout_marginHorizontal="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:text="MTN MONEY"
+                android:textSize="11sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView3" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/linkTo_moov_popup_compte1"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="10dp"
-        android:backgroundTint="@color/background_color"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="0dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/view2"
-        app:layout_constraintTop_toBottomOf="@+id/linkTo_wave_popup_compte1">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="96dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="8dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/moov"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="MOOV MONEY"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView4" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/linkTo_orange_popup_compte1"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="25dp"
-        android:backgroundTint="@color/background_color"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="0dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/view2"
-        app:layout_constraintTop_toBottomOf="@+id/linkTo_mtn_popup_compte1">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="8dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/orange"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="ORANGE MONEY"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

@@ -16,7 +16,7 @@
         android:text="Transaction"/>
 
     <RadioGroup
-        android:id="@+id/radioGroup"
+        android:id="@+id/radioGroupOrangePopup"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -42,6 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
+            android:id="@+id/numeroOrangePopup"
             android:hint="Numéro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -55,18 +56,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
+            android:id="@+id/montantOrangePopup"
             android:hint="Montant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
+        android:id="@+id/buttonRegisterOrangePopup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="20dp"
         android:textColor="@color/white"
-        android:background="@drawable/backgroundgradientbluebutton"
+        android:backgroundTint="@color/black"
         android:text="Enregistrer"/>
 </LinearLayout>

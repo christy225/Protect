@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.money.protect.MainActivity
-import com.money.protect.popup.MenuPopupAssistant
 import com.money.protect.R
 import com.money.protect.models.TransactionModel
 import com.money.protect.adapter.OperationAdapter

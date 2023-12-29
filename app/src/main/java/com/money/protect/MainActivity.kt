@@ -36,7 +36,6 @@ import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.FactureFragment
 import com.money.protect.fragment_assistant.HomeFragment
 import com.money.protect.fragment_assistant.SettingsFragment
-import com.money.protect.popup.MenuPopupAssistant
 import com.money.protect.popup.MenuPopupCompte1Assistant
 import com.money.protect.popup.MenuPopupCompte2Assistant
 import kotlinx.coroutines.delay
@@ -91,14 +90,6 @@ class MainActivity : AppCompatActivity() {
 
         val intent: Intent = intent
         compte = intent.getStringExtra("compte")
-
-        // Masquer le menu facture pour le compte 2
-        if (compte == "compte2")
-        {
-            val menu: Menu = bottomNavigationView.menu
-            val menuItem: MenuItem? = menu.findItem(R.id.factures)
-            menuItem?.isVisible = false
-        }
 
         // Vérifier si la permission appel est déjà accordée
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
@@ -324,15 +315,14 @@ class MainActivity : AppCompatActivity() {
             MenuPopupCompte1Assistant(this).show()
         }else if (compte == "compte2"){
             MenuPopupCompte2Assistant(this).show()
-        }else{
-            MenuPopupAssistant(this).show()
         }
     }
 
-    fun account() : Boolean{
+    fun account() : Boolean {
         return compte == "compte1"
     }
 
+    // POUR LES RESEAUX MOOV, MTN, WAVE, TRESOR
     fun bottomNavBlocked(mont: String, num: String) {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         if (mont.isNotEmpty() || num.isNotEmpty())
@@ -343,6 +333,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // POUR LES RESEAUX MOOV, MTN, WAVE, TRESOR
     fun bottomNavUnlock()
     {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)

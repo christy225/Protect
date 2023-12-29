@@ -108,13 +108,6 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_moov)
         val link2 = view.findViewById<ImageView>(R.id.assistant_link2_moov)
-        val link3 = view.findViewById<ImageView>(R.id.assistant_link3_moov)
-        val link4 = view.findViewById<ImageView>(R.id.assistant_link4_moov)
-
-        if (!context.account())
-        {
-            link4.visibility = View.VISIBLE
-        }
 
         // Empêcher l'utilisateur de quitter la fenêtre s'il a oublié d'enregistrer une transaction
         link1.setOnClickListener {
@@ -124,36 +117,12 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             }else {
                 context.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeFragment(context))
+                    .replace(R.id.fragment_container, OrangeCompte2Fragment(context))
                     .addToBackStack(null)
                     .commit()
             }
         }
         link2.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, MtnFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link3.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, WaveFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link4.setOnClickListener {
             if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
             {
                 Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
@@ -242,14 +211,9 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         checkBox.setOnClickListener {
             if (checkBox.isChecked)
             {
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 500
-                sectionUpload.layoutParams = params
+                sectionUpload.visibility = View.VISIBLE
             }else{
-                previewImage.setImageResource(0)
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 0
-                sectionUpload.layoutParams = params
+                sectionUpload.visibility = View.GONE
             }
         }
 
@@ -297,13 +261,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
 
-            // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-
-            typeOperation.setSelection(0)
+            sectionUpload.visibility = View.GONE
 
             context.bottomNavUnlock()
         }
@@ -336,7 +294,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
                         Handler(Looper.getMainLooper()).postDelayed({
                             buttonRegister.text = "enregistrer opération" // Remplacez "Nouveau Texte" par le texte que vous souhaitez afficher
-                        }, 2000)
+                        }, 3000)
 
                         // Bloquer le bottomNavigation si l'utilisateur a oublié d'enregistrer la transaction
                         context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())

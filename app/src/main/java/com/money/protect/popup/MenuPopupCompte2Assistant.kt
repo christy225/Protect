@@ -6,14 +6,9 @@ import android.view.Window
 import androidx.cardview.widget.CardView
 import com.money.protect.MainActivity
 import com.money.protect.R
-import com.money.protect.fragment_assistant.HomeFragment
 import com.money.protect.fragment_assistant.national.MoovFragment
-import com.money.protect.fragment_assistant.national.MtnFragment
 import com.money.protect.fragment_assistant.national.OrangeCompte2Fragment
-import com.money.protect.fragment_assistant.national.OrangeFragment
-import com.money.protect.fragment_assistant.national.TresorCompte2Fragment
 import com.money.protect.fragment_assistant.national.TresorFragment
-import com.money.protect.fragment_assistant.national.WaveFragment
 
 class MenuPopupCompte2Assistant(
     private val context: MainActivity,
@@ -25,6 +20,18 @@ class MenuPopupCompte2Assistant(
 
         openOrange()
         openTresor()
+        openMoov()
+    }
+
+    private fun openMoov() {
+        val btn = findViewById<CardView>(R.id.linkTo_moov_popup_compte2)
+        btn.setOnClickListener {
+            context.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, MoovFragment(context))
+                .addToBackStack(null)
+                .commit()
+            this.dismiss()
+        }
     }
 
     private fun openOrange() {
@@ -41,7 +48,7 @@ class MenuPopupCompte2Assistant(
         val btn = findViewById<CardView>(R.id.linkTo_tresor_popup_compte2)
         btn.setOnClickListener {
             context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, TresorCompte2Fragment(context))
+                .replace(R.id.fragment_container, TresorFragment(context))
                 .addToBackStack(null)
                 .commit()
             this.dismiss()

@@ -58,6 +58,7 @@
     <string name="login_button_default_text">Se connecter</string>
 
     <!-- TEXT BUTTON OPERATION TRANSACTION -->
+    <string name="launch_operation">Effectuer la transaction</string>
     <string name="register_operation">enregistrer opération</string>
     <!-- LOADING BUTTON -->
     <string name="button_loading">Veuillez patienter…</string>

@@ -9,6 +9,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -109,14 +111,6 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
         textMontant.addTextChangedListener(textWatcher)
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_wave)
-        val link2 = view.findViewById<ImageView>(R.id.assistant_link2_wave)
-        val link3 = view.findViewById<ImageView>(R.id.assistant_link3_wave)
-        val link4 = view.findViewById<ImageView>(R.id.assistant_link4_wave)
-
-        if (!context.account())
-        {
-            link4.visibility = View.VISIBLE
-        }
 
         link1.setOnClickListener {
             if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
@@ -125,43 +119,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
             }else{
                 context.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link2.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
                     .replace(R.id.fragment_container, MtnFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link3.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, MoovFragment(context))
-                    .addToBackStack(null)
-                    .commit()
-            }
-        }
-        link4.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
-            {
-                Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
-            }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, TresorFragment(context))
                     .addToBackStack(null)
                     .commit()
             }
@@ -216,21 +174,12 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
 
         progressBar.visibility = View.INVISIBLE
 
-        // ON MASQUE LA SECTION DE L'UPLOAD
-        val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-        params.height = 0
-
         checkBox.setOnClickListener {
            if (checkBox.isChecked)
             {
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 500
-                sectionUpload.layoutParams = params
+                sectionUpload.visibility = View.VISIBLE
             }else{
-                previewImage.setImageResource(0)
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 0
-                sectionUpload.layoutParams = params
+               sectionUpload.visibility = View.GONE
             }
         }
 
@@ -277,13 +226,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
 
-            // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-
-            typeOperation.setSelection(0)
+            sectionUpload.visibility = View.GONE
 
             checkBox.isChecked = false
 
@@ -315,7 +258,9 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                         intent.component = ComponentName(packageName, className)
                         try {
                             startActivity(intent)
-                            buttonRegister.text = "enregistrer opération"
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                buttonRegister.text = "enregistrer opération" // Remplacez "Nouveau Texte" par le texte que vous souhaitez afficher
+                            }, 3000)
 
                             // Bloquer le bottomNavigation si l'utilisateur a oublié d'enregistrer la transaction
                             context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
