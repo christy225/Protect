@@ -118,7 +118,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
             }else {
                 context.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeCompte2Fragment(context))
+                    .replace(R.id.fragment_container, OrangeFragment(context))
                     .addToBackStack(null)
                     .commit()
             }

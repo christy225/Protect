@@ -49,25 +49,23 @@ import java.util.UUID
 
 class MtnFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
-    lateinit var auth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth
     private lateinit var textTelephone: EditText
     private lateinit var textMontant: EditText
     private lateinit var typeOperation: Spinner
-    private lateinit var checkBox: CheckBox
-    private lateinit var previewImage: ImageView
     private lateinit var buttonRegister: AppCompatButton
     private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    private lateinit var sectionUpload: CardView
+    private lateinit var stateInfo: TextView
 
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
-    lateinit var uri: Uri
+    private var uri: Uri? = null
     var uploaded: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,9 +80,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
         textMontant = view.findViewById(R.id.montant_input_mtn)
         typeOperation = view.findViewById(R.id.type_op_spinner_mtn)
 
-        previewImage = view.findViewById(R.id.image_preview_mtn)
-        checkBox = view.findViewById(R.id.checkBoxMtn)
-        sectionUpload = view.findViewById(R.id.section_upload_input_mtn)
+        stateInfo = view.findViewById(R.id.stateInfoMtn)
         buttonUpload = view.findViewById(R.id.uploadPhotoMtn)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_mtn)
@@ -183,16 +179,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             SmsMtn(context, this).show()
         }
 
-        progressBar.visibility = View.INVISIBLE
+        progressBar.visibility = View.GONE
 
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked)
-            {
-                sectionUpload.visibility = View.VISIBLE
-            }else{
-                sectionUpload.visibility = View.GONE
-            }
-        }
 
         // Upload Photo
         buttonUpload.setOnClickListener {
@@ -237,11 +225,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
-
-            sectionUpload.visibility = View.GONE
-
-            checkBox.isChecked = false
-
+            uri = null
             context.bottomNavUnlock()
         }
 
@@ -273,7 +257,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             startActivity(callIntent)
                             Handler(Looper.getMainLooper()).postDelayed({
                                 buttonRegister.text = "enregistrer opération" // Remplacez "Nouveau Texte" par le texte que vous souhaitez afficher
-                            }, 3000)
+                            }, 5000)
 
                             // Bloquer le bottomNavigation si l'utilisateur a oublié d'enregistrer la transaction
                             context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
@@ -317,10 +301,10 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                         if (uploaded == true)
                         {
                             storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                                .putFile(uri)
+                                .putFile(uri!!)
                                 .addOnSuccessListener { task->
                                     task.metadata!!.reference!!.downloadUrl
-                                        .addOnSuccessListener {it->
+                                        .addOnSuccessListener {it ->
                                             //formater le montant
                                             val theAmount = montantInput.toString()
                                             val caractere = ','
@@ -336,7 +320,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                                 "montant" to theNewAmount,
                                                 "typeoperation" to typeSpinner,
                                                 "statut" to true,
-                                                "url" to "null",
+                                                "url" to it.toString(),
                                                 "idDoc" to uid
                                             )
 
@@ -345,10 +329,10 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
                                             tel.clear()
                                             amount.clear()
-                                            progressBar.visibility = View.INVISIBLE
+                                            progressBar.visibility = View.GONE
                                             buttonRegister.text = "effectuer la transaction"
-                                            previewImage.setImageResource(0)
                                             typeOperation.setSelection(0)
+                                            stateInfo.visibility = View.GONE
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                                             db.collection("operation")
@@ -402,7 +386,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             amount.clear()
                             progressBar.visibility = View.INVISIBLE
                             buttonRegister.text = "effectuer la transaction"
-                            previewImage.setImageResource(0)
                             typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
@@ -455,7 +438,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             //Image Uri will not be null for RESULT_OK
             var it: Uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
-            previewImage.setImageURI(it)
+            stateInfo.visibility = View.VISIBLE
             uri = it
             uploaded = true
         } else if (resultCode == ImagePicker.RESULT_ERROR) {

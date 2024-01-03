@@ -14,13 +14,12 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.money.protect.MainActivity
 import com.money.protect.R
-import com.money.protect.adapter.SmsOrangeAdapter
-import com.money.protect.fragment_assistant.national.OrangeCompte2Fragment
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -32,10 +31,12 @@ class OrangePopup(
 ) : Dialog(context) {
     private val db = Firebase.firestore
     private val auth = FirebaseAuth.getInstance()
-    var radio: String? = null
+    private var radio: String? = null
     private var textWatcher: TextWatcher? = null
     private lateinit var montant: EditText
     private lateinit var numero: EditText
+    private lateinit var buttonUpload: Button
+    private lateinit var stateInfo: TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -46,6 +47,8 @@ class OrangePopup(
         val radioButton = findViewById<RadioGroup>(R.id.radioGroupOrangePopup)
         numero = findViewById(R.id.numeroOrangePopup)
         montant = findViewById(R.id.montantOrangePopup)
+        buttonUpload = findViewById(R.id.uploadPhotoOrangeCompte2)
+        stateInfo = findViewById(R.id.stateUploadPhotoOrangeCompte)
         val button = findViewById<Button>(R.id.buttonRegisterOrangePopup)
 
         // BLOQUER LE NOMBRE DE CARACTERES DE SAISIE
@@ -114,6 +117,15 @@ class OrangePopup(
             radio = selectedValue
         }
 
+        buttonUpload.setOnClickListener {
+            ImagePicker.with(context)
+                .crop()
+                .cameraOnly()    			//Crop image(Optional), Check Customization for more option
+                .compress(100)			//Final image size will be less than 1 MB(Optional)
+                .maxResultSize(480, 450)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .start()
+        }
+
         button.setOnClickListener {
             // Générer la date
             val current = LocalDateTime.now()
@@ -177,4 +189,5 @@ class OrangePopup(
             }
         }
     }
+
 }
