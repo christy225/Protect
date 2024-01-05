@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         val intent: Intent = intent
         compte = intent.getStringExtra("compte")
 
+
         // Vérifier si la permission appel est déjà accordée
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
             // La permission est déjà accordée, vous pouvez effectuer des appels ici
@@ -316,6 +317,11 @@ class MainActivity : AppCompatActivity() {
         }else if (compte == "compte2"){
             MenuPopupCompte2Assistant(this).show()
         }
+    }
+
+    // Pour Afficher/Masquer le réseau en fonction du compte 1 ou 2
+    fun comptePourFacture() : String{
+        return compte!!
     }
 
     fun account() : Boolean {

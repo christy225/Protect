@@ -235,83 +235,28 @@
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <CheckBox
-                            android:id="@+id/checkBoxTresor"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ajouter une image"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/checkBoxTresor"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/section_upload_input_tresor"
-                        android:layout_width="match_parent"
+                    <Button
+                        android:id="@+id/uploadPhotoTresor"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="0dp"
+                        android:text="Prendre une photo"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="15dp"
+                        android:textColor="#0084C1"
+                        android:textStyle="bold"
+                        android:backgroundTint="#FFFFFF"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/stateInfoTresor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:visibility="gone"
-                        android:layout_marginTop="10dp"
-                        app:layout_constraintTop_toBottomOf="@+id/checkBoxtresor"
-                        tools:layout_editor_absoluteX="15dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-
-                                <Button
-                                    android:id="@+id/uploadPhotoTresor"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Prendre un photo"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                                <androidx.cardview.widget.CardView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="28dp"
-                                    android:layout_marginBottom="20dp"
-                                    app:cardCornerRadius="15dp"
-                                    app:cardElevation="10dp"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@+id/uploadPhotoTresor">
-
-                                    <ImageView
-                                        android:id="@+id/image_preview_tresor"
-                                        android:layout_width="250dp"
-                                        android:layout_height="150dp"
-                                        android:layout_gravity="center"
-                                        android:background="@drawable/background_square"
-                                        android:scaleType="centerCrop" />
-                                </androidx.cardview.widget.CardView>
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                        android:textColor="#02B715"
+                        android:text="Photo téléchargée avec succès !"/>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_register_input_tresor"

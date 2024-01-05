@@ -52,18 +52,17 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
     private lateinit var textTelephone: EditText
     private lateinit var textMontant: EditText
     private lateinit var typeOperation: Spinner
-    private lateinit var checkBox: CheckBox
-    private lateinit var previewImage: ImageView
     lateinit var buttonRegister: AppCompatButton
     private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    private lateinit var sectionUpload: CardView
 
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
     lateinit var uri: Uri
     private var uploaded: Boolean = false
+
+    private lateinit var stateInfo: TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -80,10 +79,8 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         textTelephone = view.findViewById(R.id.tel_input_moov)
         textMontant = view.findViewById(R.id.montant_input_moov)
         typeOperation = view.findViewById(R.id.type_op_spinner_moov)
+        stateInfo = view.findViewById(R.id.stateInfoMoov)
 
-        previewImage = view.findViewById(R.id.image_preview_moov)
-        checkBox = view.findViewById(R.id.checkBoxMoov)
-        sectionUpload = view.findViewById(R.id.section_upload_input_moov)
         buttonUpload = view.findViewById(R.id.uploadPhotoMoov)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_moov)
@@ -204,19 +201,6 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
         progressBar.visibility = View.INVISIBLE
 
-        // ON MASQUE LA SECTION DE L'UPLOAD
-        val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-        params.height = 0
-
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked)
-            {
-                sectionUpload.visibility = View.VISIBLE
-            }else{
-                sectionUpload.visibility = View.GONE
-            }
-        }
-
         // Upload Photo
         buttonUpload.setOnClickListener {
             ImagePicker.with(this)
@@ -260,9 +244,8 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
-
-            sectionUpload.visibility = View.GONE
-
+            uploaded = false
+            stateInfo.visibility = View.GONE
             context.bottomNavUnlock()
         }
 
@@ -300,14 +283,16 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                         context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
 
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Dépôt"){
-
+                        buttonRegister.isEnabled = false
                         envoi()
+                        stateInfo.visibility = View.GONE
                         typeOperation.setSelection(0)
                         buttonRegister.text = "effectuer la transaction"
                         context.bottomNavUnlock()
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Retrait"){
-
+                        buttonRegister.isEnabled = false
                         envoi()
+                        stateInfo.visibility = View.GONE
                         typeOperation.setSelection(0)
                         buttonRegister.text = "effectuer la transaction"
                         context.bottomNavUnlock()
@@ -384,18 +369,18 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                                 "idDoc" to uid
                             )
 
-                            telInput.clear()
-                            montantInput.clear()
-                            progressBar.visibility = View.INVISIBLE
-                            buttonRegister.text = "effectuer la transaction"
-                            previewImage.setImageResource(0)
-                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
                             db.collection("operation")
                                 .document(uid)
                                 .set(operationMap)
                                 .addOnCompleteListener {
-                                //Ne rien faire ici
+                                if (it.isSuccessful) {
+                                    telInput.clear()
+                                    montantInput.clear()
+                                    buttonRegister.isEnabled = true
+                                    progressBar.visibility = View.INVISIBLE
+                                    buttonRegister.text = "effectuer la transaction"
+                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                }
 
                             }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(context)
@@ -436,18 +421,18 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                 "idDoc" to uid
             )
 
-            telInput.clear()
-            montantInput.clear()
-            progressBar.visibility = View.INVISIBLE
-            buttonRegister.text = "effectuer la transaction"
-            previewImage.setImageResource(0)
-            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
             db.collection("operation")
                 .document(uid)
                 .set(operationMap)
                 .addOnCompleteListener {
-                // Ne rien faire ici
+                if (it.isSuccessful){
+                    buttonRegister.isEnabled = true
+                    telInput.clear()
+                    montantInput.clear()
+                    progressBar.visibility = View.INVISIBLE
+                    buttonRegister.text = "effectuer la transaction"
+                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                }
             }.addOnFailureListener {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Alerte")
@@ -465,7 +450,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             //Image Uri will not be null for RESULT_OK
             val it: Uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
-            previewImage.setImageURI(it)
+            stateInfo.visibility = View.VISIBLE
             uri = it
             uploaded = true
         } else if (resultCode == ImagePicker.RESULT_ERROR) {

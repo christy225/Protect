@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -32,6 +33,13 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import android.content.ContentValues
+import android.os.Handler
+import android.os.Looper
+import android.widget.CheckBox
+import android.widget.ProgressBar
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import java.util.Locale
 import java.util.UUID
 
@@ -45,9 +53,13 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
     private lateinit var montant: TextView
     private lateinit var idTransaction: TextView
     private lateinit var newSolde: TextView
+    private lateinit var checkBox: CheckBox
+    private lateinit var radioGroup: RadioGroup
+    private var radio: String? = null
     private lateinit var buttonUpload: Button
     private lateinit var stateInfo: TextView
     private lateinit var button: Button
+    private lateinit var progressBar: ProgressBar
 
     private var storageRef = Firebase.storage
     private var uri: Uri? = null
@@ -74,7 +86,28 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         newSolde = view.findViewById(R.id.soldeOrange)
         button = view.findViewById(R.id.btn_register_orange)
         buttonUpload = view.findViewById(R.id.uploadPhotoOrange)
+        checkBox = view.findViewById(R.id.checkBoxOrange_syntaxe)
+        radioGroup = view.findViewById(R.id.radioGroupOrange)
         stateInfo = view.findViewById(R.id.stateInfoOrange)
+        progressBar = view.findViewById(R.id.progressBarOrange)
+
+        checkBox.setOnClickListener {
+            if (checkBox.isChecked)
+            {
+                button.text = "effectuer la transaction"
+                radioGroup.visibility = View.VISIBLE
+            }else{
+                button.text = "enregistrer opération"
+                radioGroup.visibility = View.GONE
+                radio = null
+            }
+        }
+
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
+            val selectedValue = selectedRadioButton.text.toString()
+            radio = selectedValue
+        }
 
         if (ContextCompat.checkSelfPermission(
                 context,
@@ -88,6 +121,26 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                 arrayOf(android.Manifest.permission.READ_SMS), READ_SMS_PERMISSION_REQUEST)
         }
 
+        val link1 = view.findViewById<ImageView>(R.id.assistant_link_tresor_compte2)
+        val link2 = view.findViewById<ImageView>(R.id.assistant_link_moov_compte2)
+
+        // Empêcher l'utilisateur de quitter la fenêtre s'il a oublié d'enregistrer une transaction
+        link1.setOnClickListener {
+            context.supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, TresorFragment(context))
+                .addToBackStack(null)
+                .commit()
+        }
+        link2.setOnClickListener {
+            context.supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, MoovFragment(context))
+                .addToBackStack(null)
+                .commit()
+        }
+
+
         buttonUpload.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -98,11 +151,60 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         }
 
         button.setOnClickListener {
-            register()
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
-                .addToBackStack(null)
-                .commit()
+            if (operation.text.isEmpty() || numero.text.isEmpty() || montant.text.isEmpty()) {
+                Toast.makeText(context, "Aucune donnée à enregistrer", Toast.LENGTH_SHORT).show()
+            }else{
+                if (button.text == "effectuer la transaction"){
+                    if (radio.isNullOrBlank()) {
+                        val builder = AlertDialog.Builder(context)
+                        builder.setMessage("Veuillez sélectionner le type d'opération (Dépôt/Retrait)")
+                        builder.show()
+
+                    }else{
+                        if (radio.toString() == "Dépôt") {
+                            val syntaxe = Uri.encode("#") + "145*1" +  Uri.encode("#")
+                            val callIntent = Intent(Intent.ACTION_CALL)
+                            typeOp = "Dépôt"
+                            callIntent.data = Uri.parse("tel:$syntaxe")
+                            startActivity(callIntent)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                button.text = "enregistrer opération" // Remplacez "Nouveau Texte" par le texte que vous souhaitez afficher
+                            }, 5000)
+                        }else if (radio.toString() == "Retrait"){
+                            val syntaxe = Uri.encode("#") + "145*2" +  Uri.encode("#")
+                            val callIntent = Intent(Intent.ACTION_CALL)
+                            typeOp = "Retrait"
+                            callIntent.data = Uri.parse("tel:$syntaxe")
+                            startActivity(callIntent)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                button.text = "enregistrer opération" // Remplacez "Nouveau Texte" par le texte que vous souhaitez afficher
+                            }, 5000)
+                        }
+                    }
+                }else if (button.text == "enregistrer opération"){
+                    if (!checkBox.isChecked && radio.isNullOrBlank()) {
+                        if (textSMS.text.contains("depot"))
+                        {
+                            typeOp = "Dépôt"
+                        }else if (textSMS.text.contains("Retrait")){
+                            typeOp = "Retrait"
+                        }
+                    }
+                    button.isEnabled = false
+                    progressBar.visibility = View.VISIBLE
+                    register()
+                    context.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+        }
+
+        val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationOrange)
+        btnCancel.setOnClickListener {
+            uploaded = false
+            stateInfo.visibility = View.GONE
         }
 
         return view
@@ -113,7 +215,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
     private fun readLastUnreadSMS() {
         val resolver: ContentResolver = context.contentResolver
         val uri: Uri = Telephony.Sms.Inbox.CONTENT_URI
-        val selection = "${Telephony.Sms.Inbox.READ} = 1 AND ${Telephony.Sms.Inbox.ADDRESS} = '+2250747033014'"
+        val selection = "${Telephony.Sms.Inbox.READ} = 0 AND ${Telephony.Sms.Inbox.ADDRESS} = '+2250554957574'"
         val cursor = resolver.query(
             uri,
             null,
@@ -124,10 +226,13 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
 
         cursor?.use {
             if (it.moveToFirst()) {
+                val id = it.getLong(it.getColumnIndex(Telephony.Sms.Inbox.ADDRESS))
                 val sender = it.getString(it.getColumnIndex(Telephony.Sms.Inbox.ADDRESS))
                 val message = it.getString(it.getColumnIndex(Telephony.Sms.Inbox.BODY))
 
                 textSMS.text = "From: $sender\nMessage: $message"
+
+                markSmsAsRead(id)
 
                 if (textSMS.text.contains("depot"))
                 {
@@ -220,13 +325,6 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
         val hourFormatted = current.format(formatterHour)
 
-        if (textSMS.text.contains("depot"))
-        {
-            typeOp = "Dépôt"
-        }else if (textSMS.text.contains("Retrait")){
-            typeOp = "Retrait"
-        }
-
         // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
         if (uploaded == true)
         {
@@ -256,12 +354,16 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                 .addOnCompleteListener {
                                     if (it.isSuccessful)
                                     {
+                                        progressBar.visibility = View.GONE
                                         stateInfo.visibility = View.GONE
+                                        button.isEnabled = true
                                         Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                                        context.supportFragmentManager.beginTransaction()
-                                            .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
-                                            .addToBackStack(null)
-                                            .commit()
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            context.supportFragmentManager.beginTransaction()
+                                                .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
+                                                .addToBackStack(null)
+                                                .commit()
+                                        }, 4000)
                                     }
 
                                 }.addOnFailureListener {
@@ -304,12 +406,16 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                 .addOnCompleteListener {
                     if (it.isSuccessful)
                     {
+                        progressBar.visibility = View.GONE
                         stateInfo.visibility = View.GONE
+                        button.isEnabled = true
                         Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                        context.supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
-                            .addToBackStack(null)
-                            .commit()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            context.supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
+                                .addToBackStack(null)
+                                .commit()
+                        }, 4000)
                     }
 
                 }.addOnFailureListener {
@@ -335,6 +441,18 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
             "$partieEntiere.$nouvellePartieDecimale"
         }
     }
+
+    fun markSmsAsRead(smsId: Long) {
+        val contentValues = ContentValues()
+        contentValues.put("read", true) // Marque le SMS comme "vu"
+
+        val uri = Uri.parse("content://sms")
+        val selection = "_id=?"
+        val selectionArgs = arrayOf(smsId.toString())
+
+        context.contentResolver.update(uri, contentValues, selection, selectionArgs)
+    }
+
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

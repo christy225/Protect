@@ -225,7 +225,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
-            uri = null
+            uploaded = false
+            stateInfo.visibility = View.GONE
             context.bottomNavUnlock()
         }
 
@@ -281,6 +282,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                     }else if (buttonRegister.text === "enregistrer opération") {
                         progressBar.visibility = View.VISIBLE
                         buttonRegister.text = "effectuer la transaction"
+                        buttonRegister.isEnabled = false
                         context.bottomNavUnlock()
 
                         // Générer la date
@@ -330,6 +332,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                             tel.clear()
                                             amount.clear()
                                             progressBar.visibility = View.GONE
+                                            buttonRegister.isEnabled = true
                                             buttonRegister.text = "effectuer la transaction"
                                             typeOperation.setSelection(0)
                                             stateInfo.visibility = View.GONE
@@ -384,6 +387,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
                             tel.clear()
                             amount.clear()
+                            buttonRegister.isEnabled = true
+                            stateInfo.visibility = View.GONE
                             progressBar.visibility = View.INVISIBLE
                             buttonRegister.text = "effectuer la transaction"
                             typeOperation.setSelection(0)

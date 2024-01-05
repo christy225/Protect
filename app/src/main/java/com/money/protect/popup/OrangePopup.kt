@@ -110,7 +110,6 @@ class OrangePopup(
         }
         montant.addTextChangedListener(textWatcher)
 
-
         radioButton.setOnCheckedChangeListener { group, checkedId ->
             val selectedRadioButton = findViewById<RadioButton>(checkedId)
             val selectedValue = selectedRadioButton.text.toString()
@@ -127,48 +126,54 @@ class OrangePopup(
         }
 
         button.setOnClickListener {
-            // Générer la date
-            val current = LocalDateTime.now()
-            val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-            val dateFormatted = current.format(formatterDate)
+            if (montant.text.isEmpty() || numero.text.isEmpty() || radio.isNullOrBlank()) {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("Veuillez saisir tous les champs SVP")
+                builder.show()
+            }else{
+                // Générer la date
+                val current = LocalDateTime.now()
+                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
+                val dateFormatted = current.format(formatterDate)
 
-            // Générer l'heure
-            val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
-            val hourFormatted = current.format(formatterHour)
+                // Générer l'heure
+                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
+                val hourFormatted = current.format(formatterHour)
 
-            //formater le montant
-            val theAmount = montant.text.toString()
-            val caractere = ','
-            val theNewAmount = theAmount.filter { it != caractere }
+                //formater le montant
+                val theAmount = montant.text.toString()
+                val caractere = ','
+                val theNewAmount = theAmount.filter { it != caractere }
 
-            val uid = UUID.randomUUID().toString()
+                val uid = UUID.randomUUID().toString()
 
-            val operationMap = hashMapOf(
-                "id" to auth.currentUser?.uid,
-                "date" to dateFormatted,
-                "heure" to hourFormatted,
-                "operateur" to "orange",
-                "telephone" to numero.text.toString(),
-                "montant" to theNewAmount,
-                "typeoperation" to radio.toString(),
-                "statut" to true,
-                "url" to "null",
-                "idDoc" to uid
-            )
-            db.collection("operation")
-                .document(uid)
-                .set(operationMap)
-                .addOnCompleteListener {
-                    if (it.isSuccessful){
-                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                        dismiss()
+                val operationMap = hashMapOf(
+                    "id" to auth.currentUser?.uid,
+                    "date" to dateFormatted,
+                    "heure" to hourFormatted,
+                    "operateur" to "orange",
+                    "telephone" to numero.text.toString(),
+                    "montant" to theNewAmount,
+                    "typeoperation" to radio.toString(),
+                    "statut" to true,
+                    "url" to "null",
+                    "idDoc" to uid
+                )
+                db.collection("operation")
+                    .document(uid)
+                    .set(operationMap)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful){
+                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                            dismiss()
+                        }
+                    }.addOnFailureListener {
+                        val builder = AlertDialog.Builder(context)
+                        builder.setTitle("Alerte")
+                        builder.setMessage(R.string.onFailureText)
+                        builder.show()
                     }
-                }.addOnFailureListener {
-                    val builder = AlertDialog.Builder(context)
-                    builder.setTitle("Alerte")
-                    builder.setMessage(R.string.onFailureText)
-                    builder.show()
-                }
+            }
         }
     }
 

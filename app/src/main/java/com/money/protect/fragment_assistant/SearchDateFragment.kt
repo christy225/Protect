@@ -16,6 +16,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.money.protect.MainActivity
 import com.money.protect.R
 import com.money.protect.models.TransactionModel
@@ -30,9 +31,10 @@ import java.util.Locale
 
 class SearchDateFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
-    lateinit var datePicker: EditText
+    private lateinit var auth : FirebaseAuth
+    private lateinit var datePicker: EditText
     lateinit var button: AppCompatImageButton
-    lateinit var transactionArrayList: ArrayList<TransactionModel>
+    private lateinit var transactionArrayList: ArrayList<TransactionModel>
     lateinit var adapter: OperationAdapter
     lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
@@ -44,6 +46,8 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_search_date, container, false)
+        auth = FirebaseAuth.getInstance()
+
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
         }
@@ -102,7 +106,8 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
         {
             val filteredList = ArrayList<TransactionModel>()
             progressBar.visibility = View.VISIBLE
-            for (i in transactionArrayList)
+            val searchArrayList = transactionArrayList.filter { it.id == auth.currentUser?.uid }
+            for (i in searchArrayList)
             {
                 if (i.date.lowercase(Locale.ROOT).contains(query))
                 {

@@ -49,6 +49,12 @@ class FactureFragment(private val context: MainActivity) : Fragment() {
         moov = view.findViewById(R.id.lienMoovFacture)
         tikerama = view.findViewById(R.id.lienTikeramaFacture)
 
+        if (context.comptePourFacture() == "compte1") {
+            moov.visibility = View.GONE
+        }else if (context.comptePourFacture() == "compte2"){
+            mtn.visibility = View.GONE
+        }
+
         mtn.setOnClickListener{
             val syntaxe = "*188" + Uri.encode("#")
             val callIntent = Intent(Intent.ACTION_CALL)

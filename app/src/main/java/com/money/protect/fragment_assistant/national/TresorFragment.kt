@@ -54,18 +54,17 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
     lateinit var textTelephone: EditText
     lateinit var textMontant: EditText
     lateinit var typeOperation: Spinner
-    lateinit var checkBox: CheckBox
-    lateinit var previewImage: ImageView
     lateinit var buttonRegister: AppCompatButton
     lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    lateinit var sectionUpload: CardView
 
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
     lateinit var uri: Uri
     var uploaded: Boolean = false
+
+    private lateinit var stateInfo: TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -82,10 +81,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
         textTelephone = view.findViewById(R.id.tel_input_tresor)
         textMontant = view.findViewById(R.id.montant_input_tresor)
         typeOperation = view.findViewById(R.id.type_op_spinner_tresor)
+        stateInfo = view.findViewById(R.id.stateInfoTresor)
 
-        previewImage = view.findViewById(R.id.image_preview_tresor)
-        checkBox = view.findViewById(R.id.checkBoxTresor)
-        sectionUpload = view.findViewById(R.id.section_upload_input_tresor)
         buttonUpload = view.findViewById(R.id.uploadPhotoTresor)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_tresor)
@@ -186,14 +183,6 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
 
         progressBar.visibility = View.INVISIBLE
 
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked)
-            {
-                sectionUpload.visibility = View.VISIBLE
-            }else{
-                sectionUpload.visibility = View.GONE
-            }
-        }
 
         // Upload Photo
         buttonUpload.setOnClickListener {
@@ -237,11 +226,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
-
-            sectionUpload.visibility = View.GONE
-
-            checkBox.isChecked = false
-
+            uploaded = false
+            stateInfo.visibility = View.GONE
             context.bottomNavUnlock()
         }
 
@@ -289,6 +275,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                         buttonRegister.text = "effectuer la transaction"
                         context.bottomNavUnlock()
 
+                        buttonRegister.isEnabled = false
+
                         // Générer la date
                         val current = LocalDateTime.now()
                         val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
@@ -332,20 +320,20 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                             val tel = textTelephone.text
                                             val amount = textMontant.text
 
-                                            tel.clear()
-                                            amount.clear()
-                                            progressBar.visibility = View.INVISIBLE
-                                            buttonRegister.text = "effectuer la transaction"
-                                            previewImage.setImageResource(0)
-                                            typeOperation.setSelection(0)
-                                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
                                             db.collection("operation")
                                                 .document(uid)
                                                 .set(operationMap)
                                                 .addOnCompleteListener {
-                                                // Ne rien faire ici
-
+                                                if (it.isSuccessful){
+                                                    buttonRegister.isEnabled = true
+                                                    tel.clear()
+                                                    amount.clear()
+                                                    stateInfo.visibility = View.GONE
+                                                    progressBar.visibility = View.INVISIBLE
+                                                    buttonRegister.text = "effectuer la transaction"
+                                                    typeOperation.setSelection(0)
+                                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                }
                                             }.addOnFailureListener {
                                                 val builder = AlertDialog.Builder(context)
                                                 builder.setTitle("Alerte")
@@ -387,19 +375,20 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                             val tel = textTelephone.text
                             val amount = textMontant.text
 
-                            tel.clear()
-                            amount.clear()
-                            progressBar.visibility = View.INVISIBLE
-                            buttonRegister.text = "effectuer la transaction"
-                            previewImage.setImageResource(0)
-                            typeOperation.setSelection(0)
-                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
                             db.collection("operation")
                                 .document(uid)
                                 .set(operationMap)
                                 .addOnCompleteListener {
-                                // ne rien faire ici
+                                if (it.isSuccessful) {
+                                    buttonRegister.isEnabled = true
+                                    tel.clear()
+                                    amount.clear()
+                                    stateInfo.visibility = View.GONE
+                                    progressBar.visibility = View.INVISIBLE
+                                    buttonRegister.text = "effectuer la transaction"
+                                    typeOperation.setSelection(0)
+                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                }
                             }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(context)
                                 builder.setTitle("Alerte")
@@ -444,7 +433,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
             //Image Uri will not be null for RESULT_OK
             val it: Uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
-            previewImage.setImageURI(it)
+            stateInfo.visibility = View.VISIBLE
             uri = it
             uploaded = true
         } else if (resultCode == ImagePicker.RESULT_ERROR) {

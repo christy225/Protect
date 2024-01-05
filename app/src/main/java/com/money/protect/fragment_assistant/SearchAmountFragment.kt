@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -33,6 +34,7 @@ import java.util.Locale
 
 class SearchAmountFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
+    private lateinit var auth : FirebaseAuth
     private lateinit var searchAmount: EditText
     private lateinit var adapter: OperationAdapter
     private lateinit var recyclerView: RecyclerView
@@ -47,7 +49,7 @@ class SearchAmountFragment(private val context: MainActivity) : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_assistant_search_amount, container, false)
-
+        auth = FirebaseAuth.getInstance()
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
         }
@@ -104,7 +106,8 @@ class SearchAmountFragment(private val context: MainActivity) : Fragment() {
         {
             val filteredList = ArrayList<TransactionModel>()
             progressBar.visibility = View.VISIBLE
-            for (i in resultArrayList)
+            val searchArrayList = resultArrayList.filter { it.id == auth.currentUser?.uid }
+            for (i in searchArrayList)
             {
                 if (i.montant.startsWith(query))
                 {
