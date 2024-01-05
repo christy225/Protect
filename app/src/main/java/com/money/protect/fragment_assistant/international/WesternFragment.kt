@@ -41,18 +41,16 @@ import java.util.UUID
 class WesternFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var textTelephone: EditText
-    lateinit var typeOperation: Spinner
-    lateinit var checkBox: CheckBox
-    lateinit var previewImage: ImageView
-    lateinit var buttonRegister: AppCompatButton
-    lateinit var buttonUpload: Button
+    private lateinit var textTelephone: EditText
+    private lateinit var typeOperation: Spinner
+    private lateinit var buttonRegister: AppCompatButton
+    private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    lateinit var sectionUpload: CardView
+    private lateinit var stateInfo: TextView
 
     private var storageRef = Firebase.storage
     lateinit var uri: Uri
-    var uploaded: Boolean = false
+    private var uploaded: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -70,10 +68,8 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
 
         textTelephone = view.findViewById(R.id.tel_input_western)
         typeOperation = view.findViewById(R.id.type_op_spinner_western)
+        stateInfo = view.findViewById(R.id.stateInfoWestern)
 
-        previewImage = view.findViewById(R.id.image_preview_western)
-        checkBox = view.findViewById(R.id.checkBoxWestern)
-        sectionUpload = view.findViewById(R.id.section_upload_input_western)
         buttonUpload = view.findViewById(R.id.uploadPhotoWestern)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_western)
@@ -134,34 +130,12 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
 
             // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-            checkBox.isChecked = false
+            uploaded = false
+            stateInfo.visibility = View.GONE
         }
 
         progressBar.visibility = View.INVISIBLE
 
-
-        // ON MASQUE LA SECTION DE L'UPLOAD
-        val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-        params.height = 0
-
-
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked)
-            {
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 500
-                sectionUpload.layoutParams = params
-            }else{
-                previewImage.setImageResource(0)
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 0
-                sectionUpload.layoutParams = params
-            }
-        }
 
         // Upload Photo
         buttonUpload.setOnClickListener {
@@ -230,8 +204,8 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
 
                                             tel.clear()
                                             progressBar.visibility = View.INVISIBLE
+                                            stateInfo.visibility = View.INVISIBLE
                                             buttonRegister.isEnabled = true
-                                            previewImage.setImageResource(0)
                                             typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
@@ -277,7 +251,6 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
                             tel.clear()
                             progressBar.visibility = View.INVISIBLE
                             buttonRegister.isEnabled = true
-                            previewImage.setImageResource(0)
                             typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
@@ -305,7 +278,7 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
             //Image Uri will not be null for RESULT_OK
             val it: Uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
-            previewImage.setImageURI(it)
+            stateInfo.visibility = View.VISIBLE
             uri = it
             uploaded = true
         } else if (resultCode == ImagePicker.RESULT_ERROR) {

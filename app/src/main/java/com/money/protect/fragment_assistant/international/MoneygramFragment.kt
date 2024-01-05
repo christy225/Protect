@@ -42,18 +42,16 @@ import java.util.UUID
 class MoneygramFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var textTelephone: EditText
-    lateinit var typeOperation: Spinner
-    lateinit var checkBox: CheckBox
-    lateinit var previewImage: ImageView
-    lateinit var buttonRegister: AppCompatButton
-    lateinit var buttonUpload: Button
+    private lateinit var textTelephone: EditText
+    private lateinit var typeOperation: Spinner
+    private lateinit var buttonRegister: AppCompatButton
+    private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-    lateinit var sectionUpload: CardView
+    private lateinit var stateInfo: TextView
 
     private var storageRef = Firebase.storage
     lateinit var uri: Uri
-    var uploaded: Boolean = false
+    private var uploaded: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -72,10 +70,8 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
         textTelephone = view.findViewById(R.id.tel_input_moneygram)
         typeOperation = view.findViewById(R.id.type_op_spinner_moneygram)
 
-        previewImage = view.findViewById(R.id.image_preview_moneygram)
-        checkBox = view.findViewById(R.id.checkBoxMoneygram)
-        sectionUpload = view.findViewById(R.id.section_upload_input_moneygram)
-        buttonUpload = view.findViewById(R.id.uploadPhotoMoneyGram)
+        buttonUpload = view.findViewById(R.id.uploadPhotoMoneygram)
+        stateInfo = view.findViewById(R.id.stateInfoMoneygram)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_moneygram)
         progressBar = view.findViewById(R.id.progressBar_input_moneygram)
@@ -136,31 +132,12 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
 
             // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-            checkBox.isChecked = false
+            uploaded = false
+            stateInfo.visibility = View.GONE
         }
 
         progressBar.visibility = View.INVISIBLE
 
-        val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-        params.height = 0
-
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked)
-            {
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 500
-                sectionUpload.layoutParams = params
-            }else{
-                previewImage.setImageResource(0)
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 0
-                sectionUpload.layoutParams = params
-            }
-        }
 
         // Upload Photo
         buttonUpload.setOnClickListener {
@@ -231,7 +208,7 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
 
                                             tel.clear()
                                             progressBar.visibility = View.INVISIBLE
-                                            previewImage.setImageResource(0)
+                                            stateInfo.visibility = View.INVISIBLE
                                             buttonRegister.isEnabled = true
                                             typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
@@ -277,7 +254,6 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
 
                             tel.clear()
                             progressBar.visibility = View.INVISIBLE
-                            previewImage.setImageResource(0)
                             typeOperation.setSelection(0)
                             buttonRegister.isEnabled = true
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
@@ -306,7 +282,7 @@ class MoneygramFragment(private val context: MainActivity) : Fragment() {
             //Image Uri will not be null for RESULT_OK
             val it: Uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
-            previewImage.setImageURI(it)
+            stateInfo.visibility = View.VISIBLE
             uri = it
             uploaded = true
         } else if (resultCode == ImagePicker.RESULT_ERROR) {

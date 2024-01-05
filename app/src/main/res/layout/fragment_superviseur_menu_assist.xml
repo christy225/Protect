@@ -72,21 +72,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/view5"
                 app:layout_constraintTop_toBottomOf="@+id/popupCapital" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/popupDoubleCompte"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/button_menu_superviseur"
-                android:drawableEnd="@drawable/baseline_navigate_next_24"
-                android:text="COMPTE ANNEXE"
-                android:textColor="#FFF"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/view5"
-                app:layout_constraintTop_toBottomOf="@+id/popupTransaction" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

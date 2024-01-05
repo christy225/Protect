@@ -81,20 +81,6 @@ class MenuAssistSuperviseur(private val context: SuperviseurActivity, ) : Fragme
                 .commit()
         }
 
-        val buttonAnnexe = view.findViewById<Button>(R.id.popupDoubleCompte)
-        val annexeFragment = AnnexeCompteFragment(context)
-        buttonAnnexe.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("id", id)
-            bundle.putString("nom", nom)
-            bundle.putString("module", assignation)
-            annexeFragment.arguments = bundle
-            context.supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container_superviseur, annexeFragment)
-                .addToBackStack(null)
-                .commit()
-        }
         return view
     }
 

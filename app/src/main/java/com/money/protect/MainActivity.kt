@@ -324,9 +324,6 @@ class MainActivity : AppCompatActivity() {
         return compte!!
     }
 
-    fun account() : Boolean {
-        return compte == "compte1"
-    }
 
     // POUR LES RESEAUX MOOV, MTN, WAVE, TRESOR
     fun bottomNavBlocked(mont: String, num: String) {

@@ -41,18 +41,16 @@ import java.util.UUID
 class RiaFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var textTelephone: EditText
-    lateinit var typeOperation: Spinner
-    lateinit var checkBox: CheckBox
-    lateinit var previewImage: ImageView
-    lateinit var buttonRegister: AppCompatButton
-    lateinit var buttonUpload: Button
-    lateinit var progressBar: ProgressBar
-    lateinit var sectionUpload: CardView
+    private lateinit var textTelephone: EditText
+    private lateinit var typeOperation: Spinner
+    private lateinit var buttonRegister: AppCompatButton
+    private lateinit var buttonUpload: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var stateInfo: TextView
 
     private var storageRef = Firebase.storage
     lateinit var uri: Uri
-    var uploaded: Boolean = false
+    private var uploaded: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -71,9 +69,6 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
         textTelephone = view.findViewById(R.id.tel_input_ria)
         typeOperation = view.findViewById(R.id.type_op_spinner_ria)
 
-        previewImage = view.findViewById(R.id.image_preview_ria)
-        checkBox = view.findViewById(R.id.checkBoxRia)
-        sectionUpload = view.findViewById(R.id.section_upload_input_ria)
         buttonUpload = view.findViewById(R.id.uploadPhotoRia)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_ria)
@@ -134,33 +129,11 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
 
             // Masquer le block
-            previewImage.setImageResource(0)
-            val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-            params.height = 0
-            sectionUpload.layoutParams = params
-            checkBox.isChecked = false
+            uploaded = false
+            stateInfo.visibility = View.GONE
         }
 
         progressBar.visibility = View.INVISIBLE
-
-
-        val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-        params.height = 0
-
-
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked)
-            {
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 500
-                sectionUpload.layoutParams = params
-            }else{
-                previewImage.setImageResource(0)
-                val params = sectionUpload.layoutParams as LinearLayout.LayoutParams
-                params.height = 0
-                sectionUpload.layoutParams = params
-            }
-        }
 
         // Upload Photo
         buttonUpload.setOnClickListener {
@@ -233,7 +206,7 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
                                             tel.clear()
                                             progressBar.visibility = View.INVISIBLE
                                             buttonRegister.isEnabled = true
-                                            previewImage.setImageResource(0)
+                                            stateInfo.visibility = View.GONE
                                             typeOperation.setSelection(0)
                                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
@@ -280,7 +253,6 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
                             tel.clear()
                             progressBar.visibility = View.INVISIBLE
                             buttonRegister.isEnabled = true
-                            previewImage.setImageResource(0)
                             typeOperation.setSelection(0)
                             Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
@@ -309,7 +281,7 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
             //Image Uri will not be null for RESULT_OK
             val it: Uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
-            previewImage.setImageURI(it)
+            stateInfo.visibility = View.VISIBLE
             uri = it
             uploaded = true
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
