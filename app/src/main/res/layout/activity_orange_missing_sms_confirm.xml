@@ -2,8 +2,8 @@
 <LinearLayout android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/background_color"
-    android:layout_width="270dp"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginVertical="20dp"
         style="@style/TitleFont"
         android:text="Transaction"/>
 
@@ -44,6 +44,7 @@
         <EditText
             android:id="@+id/numeroOrangePopup"
             android:hint="Numéro"
+            android:inputType="phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -58,6 +59,7 @@
         <EditText
             android:id="@+id/montantOrangePopup"
             android:hint="Montant"
+            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -113,9 +115,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
+        android:textStyle="bold"
         android:layout_marginBottom="20dp"
         android:textColor="@color/white"
         android:backgroundTint="@color/black"
         android:text="Enregistrer"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarOrangePopup"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

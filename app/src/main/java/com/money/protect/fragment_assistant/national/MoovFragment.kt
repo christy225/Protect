@@ -26,6 +26,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
@@ -182,11 +183,15 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             }
         })
 
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
+        }
+
         // Empêcher le retour en arrière si les champs ne sont pas vide
         context.blockBackNavigation(buttonRegister)
 
         // L'historique des transferts
-        val btnHistory = view.findViewById<TextView>(R.id.historiqueMoov)
+        val btnHistory = view.findViewById<Button>(R.id.historiqueMoov)
         btnHistory.setOnClickListener {
             val syntaxe = "*155*6" + Uri.encode("#")
             val callIntent = Intent(Intent.ACTION_CALL)
@@ -194,7 +199,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             startActivity(callIntent)
         }
 
-        val readSMS = view.findViewById<TextView>(R.id.openSMSMoov)
+        val readSMS = view.findViewById<Button>(R.id.openSMSMoov)
         readSMS.setOnClickListener {
             SmsMoov(context, this).show()
         }

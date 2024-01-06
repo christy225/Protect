@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
@@ -44,10 +45,14 @@ class FactureFragment(private val context: MainActivity) : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        titleFacture = view.findViewById<TextView>(R.id.titleFacture)
+        titleFacture = view.findViewById(R.id.titleFacture)
         mtn = view.findViewById(R.id.lienMTNFacture)
         moov = view.findViewById(R.id.lienMoovFacture)
         tikerama = view.findViewById(R.id.lienTikeramaFacture)
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
+        }
 
         if (context.comptePourFacture() == "compte1") {
             moov.visibility = View.GONE

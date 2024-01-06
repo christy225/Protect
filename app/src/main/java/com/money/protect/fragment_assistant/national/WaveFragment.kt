@@ -28,6 +28,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
@@ -88,6 +89,10 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister = view.findViewById(R.id.btn_register_input_wave)
         progressBar = view.findViewById(R.id.progressBar_input_wave)
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
+        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{

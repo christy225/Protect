@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -29,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.money.protect.DoubleAccountActivity
 import com.money.protect.popup.SearchPopup
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -62,6 +64,16 @@ class HomeFragment(private val context: MainActivity) : Fragment() {
 
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
+
+        val accueil = view.findViewById<ImageView>(R.id.assistant_home_accueil)
+        accueil.setOnClickListener {
+            val intent = Intent(context, DoubleAccountActivity::class.java)
+            startActivity(intent)
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
         }
 
         nomCom = view.findViewById(R.id.assistant_home_nomCommercial)

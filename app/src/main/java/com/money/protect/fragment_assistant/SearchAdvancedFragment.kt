@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +52,10 @@ class SearchAdvancedFragment(private val context: MainActivity) : Fragment() {
         auth = FirebaseAuth.getInstance()
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
         }
 
         db = FirebaseFirestore.getInstance()

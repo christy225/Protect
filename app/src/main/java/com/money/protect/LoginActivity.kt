@@ -197,40 +197,12 @@ class LoginActivity : AppCompatActivity() {
                             if (!checkForInternet(this)) {
                                 Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                             }
-                            db.collection("annexe")
-                                .get()
-                                .addOnSuccessListener { documents->
-                                    if (!documents.isEmpty) {
-                                        for (donne in documents)
-                                        {
-                                            progressBar.visibility = View.INVISIBLE
-                                            val mainprofil = donne.data["mainprofil"].toString().toBoolean()
 
-                                            if (mainprofil)
-                                            {
-                                                // Vérifier si le double-compte est activé et rediriger
-                                                val intent = Intent(this, DoubleAccountActivity::class.java)
-                                                startActivity(intent)
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }else{
-                                                // Vérifier si le double-compte est activé et rediriger
-                                                val intent = Intent(this, MainActivity::class.java)
-                                                startActivity(intent)
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }
-                                        }
-                                    }else{
-                                        // Vérifier si le double-compte est activé et rediriger
-                                        val intent = Intent(this, MainActivity::class.java)
-                                        startActivity(intent)
-                                        button.isEnabled = true
-                                        button.setText(R.string.login_button_default_text)
-                                    }
-                                }.addOnFailureListener {
-                                    Toast.makeText(applicationContext, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-                                }
+                            val intent = Intent(this, DoubleAccountActivity::class.java)
+                            startActivity(intent)
+                            button.isEnabled = true
+                            button.setText(R.string.login_button_default_text)
+
                         }else if (role == "superviseur"){
                             val intent2 = Intent(this, SuperviseurActivity::class.java)
                             startActivity(intent2)

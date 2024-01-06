@@ -21,6 +21,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
@@ -62,6 +63,10 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_assistant_operation_western, container, false)
 
         context.blockScreenShot()
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
+        }
 
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()

@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import com.money.protect.MainActivity
@@ -65,6 +66,10 @@ class PointFragment(private val context: MainActivity) : Fragment() {
 
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
         }
 
         // Récupère les données émises par l'utilisateur

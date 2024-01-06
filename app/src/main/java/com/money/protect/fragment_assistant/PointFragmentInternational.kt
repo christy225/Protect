@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
@@ -34,14 +35,14 @@ import java.time.temporal.ChronoUnit
 class PointFragmentInternational(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var retraitInter: EditText
-    lateinit var envoiInter: EditText
-    lateinit var pointArrayList: ArrayList<PointModel>
+    private lateinit var retraitInter: EditText
+    private lateinit var envoiInter: EditText
+    private lateinit var pointArrayList: ArrayList<PointModel>
     lateinit var button: AppCompatButton
     lateinit var progressBar: ProgressBar
-    lateinit var superviseurId: String
-    lateinit var warning: TextView
-    lateinit var especes: EditText
+    private lateinit var superviseurId: String
+    private lateinit var warning: TextView
+    private lateinit var especes: EditText
     lateinit var divers: EditText
     private var envoiTxt: Int = 0
     private var diversTxt: Int = 0
@@ -59,6 +60,10 @@ class PointFragmentInternational(private val context: MainActivity) : Fragment()
 
         if (!checkForInternet(context)) {
             Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
         }
 
         // Récupère les données émises par l'utilisateur

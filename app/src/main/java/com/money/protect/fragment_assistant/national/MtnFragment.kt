@@ -26,6 +26,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
@@ -62,7 +63,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
     private var storageRef = Firebase.storage
     private var uri: Uri? = null
-    var uploaded: Boolean = false
+    private var uploaded: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId", "SetTextI18n")
@@ -85,6 +86,10 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
         buttonRegister = view.findViewById(R.id.btn_register_input_mtn)
         progressBar = view.findViewById(R.id.progressBar_input_mtn)
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
+        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -166,7 +171,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
         // Empêcher le retour en arrière si les champs ne sont pas vide
         context.blockBackNavigation(buttonRegister)
 
-        val btnHistory = view.findViewById<TextView>(R.id.historiqueMtn)
+        val btnHistory = view.findViewById<Button>(R.id.historiqueMtn)
         btnHistory.setOnClickListener {
             val syntaxe = "*133" + Uri.encode("#")
             val callApp = Intent(Intent.ACTION_CALL)
@@ -174,7 +179,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             startActivity(callApp)
         }
 
-        val readSMS = view.findViewById<TextView>(R.id.openSMSMtn)
+        val readSMS = view.findViewById<Button>(R.id.openSMSMtn)
         readSMS.setOnClickListener {
             SmsMtn(context, this).show()
         }
@@ -300,7 +305,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
 
                         // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
-                        if (uploaded == true)
+                        if (uploaded)
                         {
                             storageRef.getReference("images").child(System.currentTimeMillis().toString())
                                 .putFile(uri!!)

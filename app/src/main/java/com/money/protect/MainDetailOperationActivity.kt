@@ -27,12 +27,14 @@ class MainDetailOperationActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private var database = Firebase.firestore
     private lateinit var intents: Intent
+    private lateinit var buttonAffiche: Button
     private lateinit var buttonCancel: Button
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_main_detail_operation)
+        buttonAffiche = findViewById(R.id.afficher_image_details)
         auth = FirebaseAuth.getInstance()
         database = FirebaseFirestore.getInstance()
 
@@ -106,8 +108,8 @@ class MainDetailOperationActivity : AppCompatActivity() {
         {
             info.visibility = View.VISIBLE
         }else{
-            textAfficher.text = "Afficher l'image"
-            textAfficher.setOnClickListener {
+            buttonAffiche.visibility = View.VISIBLE
+            buttonAffiche.setOnClickListener {
                 AfficheIdentite(this).show()
             }
         }

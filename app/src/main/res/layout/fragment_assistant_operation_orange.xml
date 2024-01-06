@@ -86,22 +86,43 @@
                     android:orientation="vertical"
                     android:padding="10dp">
 
-                    <TextView
-                        style="@style/TitleFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Dernière transaction"
-                        android:textSize="18sp" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Veuillez vérifier la transaction"
-                        android:textColor="@color/gray_color" />
+                        <TextView
+                            android:id="@+id/textView4"
+                            style="@style/TitleFont"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Dernière transaction"
+                            android:textSize="18sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Veuillez vérifier la transaction"
+                            android:textColor="@color/gray_color"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+                        <Button
+                            android:id="@+id/popupSMSOrange"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lire SMS"
+                            android:textStyle="bold"
+                            android:textColor="#0091FF"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/contentSMSInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp">
@@ -244,35 +265,11 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <CheckBox
-                        android:id="@+id/checkBoxOrange_syntaxe"
+                    <TextView
+                        android:id="@+id/orangeTextSMS"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:text="Utiliser la syntaxe Orange Money"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <RadioGroup
-                        android:id="@+id/radioGroupOrange"
-                        android:layout_marginVertical="10dp"
-                        android:visibility="gone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <RadioButton
-                            android:id="@+id/radioOpt1"
-                            android:text="Dépôt"
-                            android:textStyle="bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                        <RadioButton
-                            android:id="@+id/radioOpt2"
-                            android:text="Retrait"
-                            android:textStyle="bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </RadioGroup>
+                        android:visibility="invisible"
+                        android:layout_height="5dp"/>
 
                     <Button
                         android:id="@+id/uploadPhotoOrange"
@@ -298,13 +295,6 @@
                         android:textColor="#02B715"
                         android:text="Photo téléchargée avec succès !"/>
 
-                    <TextView
-                        android:id="@+id/orangeTextSMS"
-                        android:layout_width="wrap_content"
-                        android:layout_height="5dp"
-                        android:visibility="invisible"
-                        android:text="iohoihoi"/>
-
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_register_orange"
                         android:layout_width="match_parent"
@@ -327,6 +317,7 @@
 
                     <androidx.cardview.widget.CardView
                         app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
@@ -342,6 +333,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="5dp"
                                 android:paddingHorizontal="10dp"
+                                android:textAlignment="center"
                                 android:text="Si vous ne récevez pas de message (SMS de confirmation dépôt/retrait) de l'opération que vous venez d'effectuer, veuillez enregistrer manuellement la transaction"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"

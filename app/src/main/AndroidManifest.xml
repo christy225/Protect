@@ -28,6 +28,10 @@
         android:theme="@style/Theme.Protect"
         tools:targetApi="31">
         <activity
+            android:name=".OrangeMissingSmsConfirmActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".TikeramaActivity"
             android:exported="false" />
         <activity

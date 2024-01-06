@@ -40,6 +40,10 @@ import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.activity.addCallback
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.money.protect.OrangeMissingSmsConfirmActivity
+import com.money.protect.popup.SmsOrange
 import java.util.Locale
 import java.util.UUID
 
@@ -54,7 +58,6 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
     private lateinit var idTransaction: TextView
     private lateinit var newSolde: TextView
     private lateinit var checkBox: CheckBox
-    private lateinit var radioGroup: RadioGroup
     private var radio: String? = null
     private lateinit var buttonUpload: Button
     private lateinit var stateInfo: TextView
@@ -63,10 +66,10 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
 
     private var storageRef = Firebase.storage
     private var uri: Uri? = null
-    var uploaded: Boolean = false
+    private var uploaded: Boolean = false
 
-    var typeOp: String? = null
-    var montantDB: String? = null
+    private var typeOp: String? = null
+    private var montantDB: String? = null
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -86,27 +89,11 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         newSolde = view.findViewById(R.id.soldeOrange)
         button = view.findViewById(R.id.btn_register_orange)
         buttonUpload = view.findViewById(R.id.uploadPhotoOrange)
-        checkBox = view.findViewById(R.id.checkBoxOrange_syntaxe)
-        radioGroup = view.findViewById(R.id.radioGroupOrange)
         stateInfo = view.findViewById(R.id.stateInfoOrange)
         progressBar = view.findViewById(R.id.progressBarOrange)
 
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked)
-            {
-                button.text = "effectuer la transaction"
-                radioGroup.visibility = View.VISIBLE
-            }else{
-                button.text = "enregistrer opération"
-                radioGroup.visibility = View.GONE
-                radio = null
-            }
-        }
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
 
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
-            val selectedValue = selectedRadioButton.text.toString()
-            radio = selectedValue
         }
 
         if (ContextCompat.checkSelfPermission(
@@ -119,6 +106,11 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
             ActivityCompat.requestPermissions(
                 context,
                 arrayOf(android.Manifest.permission.READ_SMS), READ_SMS_PERMISSION_REQUEST)
+        }
+
+        val linkToPopup = view.findViewById<Button>(R.id.popupSMSOrange)
+        linkToPopup.setOnClickListener {
+            SmsOrange(context, this@OrangeFragment).show()
         }
 
         val link1 = view.findViewById<ImageView>(R.id.assistant_link_tresor_compte2)
@@ -140,6 +132,11 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                 .commit()
         }
 
+        val linkToOrangePopup = view.findViewById<Button>(R.id.openOrangePopup)
+        linkToOrangePopup.setOnClickListener {
+            val intent = Intent(context, OrangeMissingSmsConfirmActivity::class.java)
+            startActivity(intent)
+        }
 
         buttonUpload.setOnClickListener {
             ImagePicker.with(this)
@@ -151,7 +148,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
         }
 
         button.setOnClickListener {
-            if (operation.text.isEmpty() || numero.text.isEmpty() || montant.text.isEmpty()) {
+            if (operation.text.isEmpty() && numero.text.isEmpty() && montant.text.isEmpty()) {
                 Toast.makeText(context, "Aucune donnée à enregistrer", Toast.LENGTH_SHORT).show()
             }else{
                 if (button.text == "effectuer la transaction"){
@@ -215,7 +212,7 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
     private fun readLastUnreadSMS() {
         val resolver: ContentResolver = context.contentResolver
         val uri: Uri = Telephony.Sms.Inbox.CONTENT_URI
-        val selection = "${Telephony.Sms.Inbox.READ} = 0 AND ${Telephony.Sms.Inbox.ADDRESS} = '+2250554957574'"
+        val selection = "${Telephony.Sms.Inbox.READ} = 0 AND ${Telephony.Sms.Inbox.ADDRESS} = '+454'"
         val cursor = resolver.query(
             uri,
             null,
@@ -358,12 +355,14 @@ class OrangeFragment(private val context: MainActivity) : Fragment() {
                                         stateInfo.visibility = View.GONE
                                         button.isEnabled = true
                                         Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            context.supportFragmentManager.beginTransaction()
-                                                .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
-                                                .addToBackStack(null)
-                                                .commit()
-                                        }, 4000)
+                                        if (!checkBox.isChecked){
+                                            Handler(Looper.getMainLooper()).postDelayed({
+                                                context.supportFragmentManager.beginTransaction()
+                                                    .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
+                                                    .addToBackStack(null)
+                                                    .commit()
+                                            }, 4000)
+                                        }
                                     }
 
                                 }.addOnFailureListener {

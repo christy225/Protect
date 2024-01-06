@@ -21,6 +21,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
@@ -65,6 +66,10 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
+
+        requireActivity().onBackPressedDispatcher.addCallback(context) {
+
+        }
 
         textTelephone = view.findViewById(R.id.tel_input_ria)
         typeOperation = view.findViewById(R.id.type_op_spinner_ria)
