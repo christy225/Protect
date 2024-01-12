@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -12,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardOrange"
+                android:id="@+id/cardOrangeRedirection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="10dp"
@@ -31,6 +32,8 @@
                         android:layout_marginTop="15dp"
                         android:layout_gravity="center"
                         android:textSize="16sp"
+                        android:textAlignment="center"
+                        android:layout_marginHorizontal="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Procéder à une transaction Orange Money" />
@@ -55,7 +58,7 @@
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardOrange">
+                app:layout_constraintTop_toBottomOf="@+id/cardOrangeRedirection">
 
                 <CheckBox
                     android:id="@+id/checkBoxOrange_syntaxe"
@@ -140,7 +143,7 @@
                             android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
                             android:hint="Téléphone"
-                            android:inputType="number"
+                            android:inputType="phone"
                             android:paddingStart="30dp"
                             style="@style/inputFont"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -232,7 +235,6 @@
                         android:background="@drawable/backgroundgradientbluebutton"
                         android:textColor="@color/white"
                         android:textStyle="bold"
-                        android:text="enregistrer opération"
                         android:layout_marginHorizontal="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

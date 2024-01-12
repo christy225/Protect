@@ -47,8 +47,6 @@ class MainDetailOperationActivity : AppCompatActivity() {
         }
 
         intents = intent
-        val textAfficher = findViewById<TextView>(R.id.affiche_image_DetailTransactionVw)
-
         val operateurX = findViewById<TextView>(R.id.operateurDetailTransactionVw)
         val telX = findViewById<TextView>(R.id.phoneDetailTransactionVw)
         val typeX = findViewById<TextView>(R.id.typeOpDetailTransactionVw)

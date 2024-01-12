@@ -1,17 +1,12 @@
 package com.money.protect.popup
 
-import android.app.AlertDialog
 import android.app.Dialog
-import android.content.ActivityNotFoundException
-import android.content.ComponentName
-import android.content.Intent
 import android.os.Bundle
 import android.view.Window
 import androidx.cardview.widget.CardView
 import com.money.protect.MainActivity
 import com.money.protect.R
 import com.money.protect.fragment_assistant.national.MoovFragment
-import com.money.protect.fragment_assistant.national.OrangeFragment
 import com.money.protect.fragment_assistant.national.OrangeRedirectionFragment
 import com.money.protect.fragment_assistant.national.TresorFragment
 

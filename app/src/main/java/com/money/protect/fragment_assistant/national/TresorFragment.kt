@@ -27,6 +27,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
@@ -93,6 +94,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
 
         }
 
+
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -120,7 +122,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
             }else {
                 context.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeFragment(context))
+                    .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
                     .addToBackStack(null)
                     .commit()
             }

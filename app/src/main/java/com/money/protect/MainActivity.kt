@@ -4,19 +4,14 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +31,8 @@ import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.FactureFragment
 import com.money.protect.fragment_assistant.HomeFragment
 import com.money.protect.fragment_assistant.SettingsFragment
+import com.money.protect.fragment_assistant.national.MoovFragment
+import com.money.protect.fragment_assistant.national.TresorFragment
 import com.money.protect.popup.MenuPopupCompte1Assistant
 import com.money.protect.popup.MenuPopupCompte2Assistant
 import kotlinx.coroutines.delay
@@ -47,10 +44,6 @@ import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        const val REQUEST_CALL_PERMISSION = 456
-        var module = ""
-    }
 
     private lateinit var appUpdateManager: AppUpdateManager
     private val updateType = AppUpdateType.FLEXIBLE
@@ -58,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
     private var compte: String? = null
+    private var module: String? = null
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,14 +85,6 @@ class MainActivity : AppCompatActivity() {
         val intent: Intent = intent
         compte = intent.getStringExtra("compte")
 
-
-        // Vérifier si la permission appel est déjà accordée
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            // La permission est déjà accordée, vous pouvez effectuer des appels ici
-        } else {
-            // La permission n'est pas accordée, demandez-la à l'utilisateur
-            requestCallPermission()
-        }
 
         // RECHERCHER LE COMPTE ASSISTANT POUR RECUPERER L'ID SUPERVISEUR
 
@@ -189,7 +175,15 @@ class MainActivity : AppCompatActivity() {
                 builder.setMessage("Une erreur s'est produite.")
                 builder.show()
             }
+    }
 
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        this.supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, HomeFragment(this))
+            .addToBackStack(null)
+            .commit()
     }
 
     fun blockBackNavigation(query: Button){
@@ -206,24 +200,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-    }
-
-    private fun requestCallPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CALL_PHONE), REQUEST_CALL_PERMISSION)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_CALL_PERMISSION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // La permission d'appel a été accordée, vous pouvez maintenant effectuer des appels
-                } else {
-                    // La permission d'appel a été refusée, informez l'utilisateur ou prenez des mesures alternatives
-                }
-            }
-            // Gérer d'autres demandes de permissions si nécessaire
-        }
     }
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state->

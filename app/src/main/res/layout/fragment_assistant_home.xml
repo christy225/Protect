@@ -111,8 +111,8 @@
 
                 <ImageView
                     android:id="@+id/ic1"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="7dp"
                     android:src="@drawable/baseline_cloud_sync_24"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -123,8 +123,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="International"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
+                    android:ellipsize="end"
                     android:layout_marginBottom="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -144,8 +145,8 @@
 
                 <ImageView
                     android:id="@+id/ic2"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="7dp"
                     android:src="@drawable/baseline_place_24"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -156,8 +157,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="National"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
+                    android:ellipsize="end"
                     android:layout_marginBottom="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -177,8 +179,8 @@
 
                 <ImageView
                     android:id="@+id/ic3"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="7dp"
                     android:src="@drawable/baseline_calculate_24"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -188,16 +190,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Comptabilité"
-                    android:textSize="12sp"
+                    android:text="Caisse"
+                    android:textSize="13sp"
                     android:textStyle="bold"
+                    android:ellipsize="end"
                     android:layout_marginBottom="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ic3" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -226,7 +228,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="Exp. Abonnement: "
+            android:text="Fin Abonnement: "
             android:textColor="#979898"
             android:textStyle="bold" />
 
@@ -270,8 +272,9 @@
 
     <TextView
         android:id="@+id/assistant_home_failed_retrieve_data"
-        android:layout_width="191dp"
-        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
         android:text="@string/home_page_text_loader"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@+id/assistant_home_recyclerView"

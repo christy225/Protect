@@ -6,17 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background_color"
     tools:context=".DoubleAccountActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/lienCompte1"
-        android:layout_margin="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginHorizontal="20dp"
         app:cardElevation="20dp"
-        app:cardCornerRadius="10dp"
-        android:backgroundTint="@color/gray_color_border"
+        app:cardCornerRadius="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@drawable/backgroundlinkdoubleaccount"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -28,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Compte 1"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -58,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
                     app:cardCornerRadius="5dp"
-                    app:cardElevation="5dp">
+                    app:cardElevation="0dp">
 
                     <ImageView
                         android:layout_width="50dp"
@@ -71,13 +74,15 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/lienCompte2"
-        android:layout_margin="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="20dp"
         app:cardElevation="20dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="5dp"
         android:backgroundTint="@color/gray_color_border"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@drawable/backgroundlinkdoubleaccount"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -89,6 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Compte 2"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -132,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
                     app:cardCornerRadius="5dp"
-                    app:cardElevation="5dp">
+                    app:cardElevation="0dp">
 
                     <ImageView
                         android:layout_width="50dp"

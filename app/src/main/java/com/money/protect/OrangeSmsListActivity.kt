@@ -1,54 +1,54 @@
-package com.money.protect.popup
+package com.money.protect
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.pm.PackageManager
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Telephony
+import android.widget.Button
 import android.widget.ImageView
-import androidx.annotation.RequiresPermission
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.money.protect.MainActivity
-import com.money.protect.R
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.money.protect.adapter.SmsAdapter
-import com.money.protect.OrangeSaveActivity
+import com.money.protect.adapter.SmsOrangeAdapter
 
-class SmsOrange(
-    private val Contexte: OrangeSaveActivity) : Dialog(Contexte) {
-    // Déclarez une liste pour stocker les SMS.
+class OrangeSmsListActivity : AppCompatActivity() {
     private lateinit var smsList: ArrayList<String>
-
-    private val SMS_PERMISSION_REQUEST_CODE = 123
     private lateinit var recyclerView: RecyclerView
-    private lateinit var smsAdapter: SmsAdapter
-    @SuppressLint("MissingInflatedId", "MissingPermission")
+    private lateinit var smsAdapter: SmsOrangeAdapter
+    @SuppressLint("MissingInflatedId", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_sms_orange)
+        setContentView(R.layout.activity_orange_sms_list)
 
-        val backButton = findViewById<ImageView>(R.id.backSmsHomeOrange)
-        backButton.setOnClickListener{
-            dismiss()
-        }
+        val context = MainActivity()
 
         smsList = arrayListOf()
-        recyclerView = findViewById(R.id.recyclerViewSmsOrange)
-        val context = MainActivity()
-        smsAdapter = SmsAdapter(context, smsList)
+        recyclerView = findViewById(R.id.recyclerViewListSmsOrange)
+        smsAdapter = SmsOrangeAdapter(this, smsList)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = smsAdapter
+
+        val btn = findViewById<Button>(R.id.buttonRefresh)
+
+        btn.setOnClickListener {
+            smsList = arrayListOf()
+            recyclerView = findViewById(R.id.recyclerViewListSmsOrange)
+            smsAdapter = SmsOrangeAdapter(this, smsList)
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            recyclerView.adapter = smsAdapter
+            readSms()
+        }
 
         readSms()
     }
 
-    @SuppressLint("SupportAnnotationUsage", "NotifyDataSetChanged")
-    @RequiresPermission(android.Manifest.permission.READ_SMS)
+    @SuppressLint("NotifyDataSetChanged")
     private fun readSms() {
-        val contentResolver = context.contentResolver
+        val contentResolver = contentResolver
 
         val selection = "${Telephony.Sms.ADDRESS} = ?" // Sélectionnez les SMS avec l'adresse spécifique
         val selectionArgs = arrayOf("+454")
@@ -66,4 +66,5 @@ class SmsOrange(
             smsAdapter.notifyDataSetChanged() // Notifiez l'adaptateur que les données ont changé.
         }
     }
+
 }

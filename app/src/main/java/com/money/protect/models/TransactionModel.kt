@@ -10,5 +10,6 @@ data class TransactionModel(
     val typeoperation: String = "",
     val statut: Boolean = false,
     val url: String = "",
-    val idDoc: String = ""
+    val idDoc: String = "",
+    val idTransac: String = ""
 )

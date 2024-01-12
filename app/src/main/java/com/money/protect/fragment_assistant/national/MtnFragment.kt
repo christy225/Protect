@@ -26,6 +26,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
@@ -87,10 +88,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
         buttonRegister = view.findViewById(R.id.btn_register_input_mtn)
         progressBar = view.findViewById(R.id.progressBar_input_mtn)
 
-        requireActivity().onBackPressedDispatcher.addCallback(context) {
-
-        }
-
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -122,7 +119,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                     .commit()
             }
         }
-
 
         // BLOQUER LE NOMBRE DE CARACTERES DE SAISIE
         textTelephone.addTextChangedListener(object : TextWatcher {

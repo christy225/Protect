@@ -26,6 +26,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
@@ -115,7 +116,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             }else {
                 context.supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeFragment(context))
+                    .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
                     .addToBackStack(null)
                     .commit()
             }
