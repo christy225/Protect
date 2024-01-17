@@ -28,10 +28,10 @@
         android:theme="@style/Theme.Protect"
         tools:targetApi="31">
         <activity
-            android:name=".OrangeSaveActivity"
+            android:name=".OrangeRedirectionActivity"
             android:exported="false" />
         <activity
-            android:name=".OrangeActivity"
+            android:name=".OrangeSaveActivity"
             android:exported="false" />
         <activity
             android:name=".OrangeSmsListActivity"

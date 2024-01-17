@@ -32,6 +32,11 @@ class OrangeSmsListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = smsAdapter
 
+        val backButton = findViewById<ImageView>(R.id.backButtonTolauncherApps)
+        backButton.setOnClickListener {
+            startActivity(Intent(this, OrangeRedirectionActivity::class.java))
+        }
+
         val btn = findViewById<Button>(R.id.buttonRefresh)
 
         btn.setOnClickListener {

@@ -41,6 +41,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.money.protect.OrangeRedirectionActivity
 import com.money.protect.popup.SmsMoov
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -114,11 +115,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             {
                 Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
             }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
-                    .addToBackStack(null)
-                    .commit()
+                context.startActivity(Intent(context, OrangeRedirectionActivity::class.java))
             }
         }
         link2.setOnClickListener {

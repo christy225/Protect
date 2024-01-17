@@ -1,4 +1,4 @@
-package com.money.protect.fragment_assistant.national
+package com.money.protect
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,14 +8,13 @@ import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -26,28 +25,23 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
-import androidx.core.view.isEmpty
-import androidx.fragment.app.Fragment
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.money.protect.MainActivity
-import com.money.protect.OrangeSmsListActivity
-import com.money.protect.R
+import com.money.protect.fragment_assistant.national.MoovFragment
+import com.money.protect.fragment_assistant.national.TresorFragment
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
 
-class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() {
+class OrangeRedirectionActivity : AppCompatActivity() {
     private lateinit var button: Button
     private lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
@@ -67,41 +61,46 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
     private var uploaded: Boolean = false
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_assistant_orange_redirection, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_orange_redirection)
+
         auth = FirebaseAuth.getInstance()
-        button = view.findViewById(R.id.buttonLaunchOrange)
-        telephone = view.findViewById(R.id.tel_input_orangeRedirection)
-        montant = view.findViewById(R.id.montant_input_orangeRedirection)
-        buttonRegister = view.findViewById(R.id.btn_register_input_orangeRedirection)
-        card = view.findViewById(R.id.cardTransactionOrange)
-        checkBox = view.findViewById(R.id.checkBoxOrange_syntaxe)
-        stateInfo = view.findViewById(R.id.stateInfo_orangeRedirection)
-        buttonUpload = view.findViewById(R.id.uploadPhoto_OrangeRedirection)
-        progressBar = view.findViewById(R.id.progressBar_orangeRedirection)
+        button = findViewById(R.id.buttonLaunchOrange)
+        telephone = findViewById(R.id.tel_input_orangeRedirection)
+        montant = findViewById(R.id.montant_input_orangeRedirection)
+        buttonRegister = findViewById(R.id.btn_register_input_orangeRedirection)
+        card = findViewById(R.id.cardTransactionOrange)
+        checkBox = findViewById(R.id.checkBoxOrange_syntaxe)
+        stateInfo = findViewById(R.id.stateInfo_orangeRedirection)
+        buttonUpload = findViewById(R.id.uploadPhoto_OrangeRedirection)
+        progressBar = findViewById(R.id.progressBar_orangeRedirection)
 
 
-        val link1 = view.findViewById<ImageView>(R.id.assistant_link_tresor_redirection)
+        val link1 = findViewById<ImageView>(R.id.assistant_link_tresor_redirection)
         link1.setOnClickListener {
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, TresorFragment(context))
-                .addToBackStack(null)
-                .commit()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fragment_to_show", "tresor")
+            intent.putExtra("compte", "compte2")
+            startActivity(intent)
         }
-        val link2 = view.findViewById<ImageView>(R.id.assistant_link_moov_redirection)
+        val link2 = findViewById<ImageView>(R.id.assistant_link_moov_redirection)
         link2.setOnClickListener {
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, MoovFragment(context))
-                .addToBackStack(null)
-                .commit()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fragment_to_show", "moov")
+            intent.putExtra("compte", "compte2")
+            startActivity(intent)
+        }
+
+        val homeButton = findViewById<ImageView>(R.id.backButtonToHome)
+        homeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("compte", "compte2")
+            startActivity(intent)
         }
 
         button.setOnClickListener {
-            val intent1 = Intent(context, OrangeSmsListActivity::class.java)
+            val intent1 = Intent(this, OrangeSmsListActivity::class.java)
             startActivity(intent1)
 
             val packageName = "com.orange.ci.ompdv"  // Package name de Facebook
@@ -110,10 +109,10 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
             val intent = Intent()
             intent.component = ComponentName(packageName, className)
             try {
-                context.startActivity(intent)
+                this.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 // Gérez le cas où L'Application WAVE Agent n'est pas installé ou ne permet pas d'ouvrir cette activité
-                val intent = AlertDialog.Builder(context)
+                val intent = AlertDialog.Builder(this)
                 intent.setTitle("Infos")
                 intent.setMessage("Veuillez installer l'application Wave Agent")
                 intent.show()
@@ -129,7 +128,7 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
                 .start()
         }
 
-        val cardLaunchApps = view.findViewById<CardView>(R.id.cardOrangeRedirection)
+        val cardLaunchApps = findViewById<CardView>(R.id.cardOrangeRedirection)
 
         checkBox.setOnClickListener {
             if (checkBox.isChecked) {
@@ -194,15 +193,15 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
             }
 
             override fun afterTextChanged(s: Editable?) {
-                this@OrangeRedirectionFragment.formatEditext(s)
+                this@OrangeRedirectionActivity.formatEditext(s)
             }
 
         }
         montant.addTextChangedListener(textWatcher)
 
-        val radioButton = view.findViewById<RadioGroup>(R.id.radioGroup_orangeRedirection)
+        val radioButton = findViewById<RadioGroup>(R.id.radioGroup_orangeRedirection)
         radioButton.setOnCheckedChangeListener { group, checkedId ->
-            val selectedRadioButton = view.findViewById<RadioButton>(checkedId)
+            val selectedRadioButton = findViewById<RadioButton>(checkedId)
             val selectedValue = selectedRadioButton.text.toString()
             radio = selectedValue
         }
@@ -212,7 +211,7 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
         buttonRegister.setOnClickListener {
             if (telephone.text.isEmpty() || montant.text.isEmpty() || radio.isNullOrBlank())
             {
-                Toast.makeText(context, "Veuillez saisir tous les champs SVP", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Veuillez saisir tous les champs SVP", Toast.LENGTH_SHORT).show()
             }else{
                 if (buttonRegister.text == "effectuer la transaction") {
                     if (radio == "Dépôt") {
@@ -282,22 +281,22 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
                                                     progressBar.visibility = View.GONE
                                                     stateInfo.visibility = View.GONE
                                                     button.isEnabled = true
-                                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
                                                 }
 
                                             }.addOnFailureListener {
-                                                val builder = AlertDialog.Builder(context)
+                                                val builder = AlertDialog.Builder(this)
                                                 builder.setTitle("Alerte")
                                                 builder.setMessage(R.string.onFailureText)
                                                 builder.show()
                                             }
                                     }.addOnFailureListener {
-                                        val builer = AlertDialog.Builder(context)
+                                        val builer = AlertDialog.Builder(this)
                                         builer.setMessage(R.string.onFailureText)
                                         builer.show()
                                     }
                             }.addOnFailureListener{
-                                val builer = AlertDialog.Builder(context)
+                                val builer = AlertDialog.Builder(this)
                                 builer.setMessage("Erreur pendant le téléchargement de l'image.")
                                 builer.show()
                             }
@@ -334,11 +333,11 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
                                     progressBar.visibility = View.GONE
                                     stateInfo.visibility = View.GONE
                                     button.isEnabled = true
-                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
                                 }
 
                             }.addOnFailureListener {
-                                val builder = AlertDialog.Builder(context)
+                                val builder = AlertDialog.Builder(this)
                                 builder.setTitle("Alerte")
                                 builder.setMessage(R.string.onFailureText)
                                 builder.show()
@@ -347,8 +346,16 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
                 }
             }
         }
+    }
 
-        return view
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        val back = false
+        if (!back) {
+            // ne rien faire
+        }else{
+            super.onBackPressed()
+        }
     }
 
     // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
@@ -381,9 +388,9 @@ class OrangeRedirectionFragment(private val context: MainActivity) : Fragment() 
             uri = it
             uploaded = true
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
-            Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context, "Prise annulée", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Prise annulée", Toast.LENGTH_SHORT).show()
         }
     }
 }

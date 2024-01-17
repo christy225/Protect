@@ -43,6 +43,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.money.protect.OrangeRedirectionActivity
 import com.money.protect.fragment_assistant.HomeFragment
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -53,9 +54,9 @@ import java.util.UUID
 class TresorFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var textTelephone: EditText
-    lateinit var textMontant: EditText
-    lateinit var typeOperation: Spinner
+    private lateinit var textTelephone: EditText
+    private lateinit var textMontant: EditText
+    private lateinit var typeOperation: Spinner
     lateinit var buttonRegister: AppCompatButton
     lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
@@ -120,11 +121,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
             {
                 Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
             }else {
-                context.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, OrangeRedirectionFragment(context))
-                    .addToBackStack(null)
-                    .commit()
+                context.startActivity(Intent(context, OrangeRedirectionActivity::class.java))
             }
         }
         link2.setOnClickListener {

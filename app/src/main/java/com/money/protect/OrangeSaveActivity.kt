@@ -15,16 +15,13 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.money.protect.fragment_assistant.national.OrangeRedirectionFragment
 import com.money.protect.popup.SmsOrange
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -52,10 +49,8 @@ class OrangeSaveActivity : AppCompatActivity() {
 
     private var typeOp: String? = null
     private var montantDB: String? = null
-    private var smsLastRead: String? = null
     private var idT: String? = null
 
-    private val contex = MainActivity()
     @SuppressLint("CutPasteId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,8 +95,6 @@ class OrangeSaveActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
-
         buttonUpload.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -115,11 +108,14 @@ class OrangeSaveActivity : AppCompatActivity() {
             if (operation.text.isEmpty() ||
                 numero.text.isEmpty() ||
                 montant.text.isEmpty() ||
-                idTransaction.text == "null" ||
-                numero.text == "null" ||
-                numero.text == "sms en attente..." ||
-                montant.text == "sms en attente..." ||
-                idTransaction.text == "sms en attente...") {
+                idTransaction.text.toString() == "null" ||
+                montant.text.toString() == "null" ||
+                numero.text.toString() == "null" ||
+                montantDB.toString() == "null" ||
+                idTransaction.text.toString() == "sms en attente..." ||
+                numero.text.toString() == "sms en attente..." ||
+                montant.text.toString() == "sms en attente..." ||
+                idTransaction.text.toString() == "sms en attente...") {
                 Toast.makeText(this, "Aucune donnée à enregistrer", Toast.LENGTH_SHORT).show()
             }else if (button.text == "enregistrer opération"){
                 button.isEnabled = false
@@ -163,26 +159,34 @@ class OrangeSaveActivity : AppCompatActivity() {
                         montant.text = "sms en attente..."
                         idTransaction.text = "sms en attente..."
                         newSolde.text = "sms en attente..."
+                        button.visibility = View.GONE
                     }else{
-                        val dep = "Dépôt"
-                        val num: String = motNumero.toString()
-                        val mont: String = motMontant.toString()
-                        val mId: String = motId.toString()
-                        val sold: String = motSolde.toString()
-                        if (numero.text == "null" || montant.text == "null" || idTransaction.text == "null" || newSolde.text == "null")
+                        if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
                         {
                             operation.text = "sms en attente..."
                             numero.text = "sms en attente..."
                             montant.text = "sms en attente..."
                             idTransaction.text = "sms en attente..."
                             newSolde.text = "sms en attente..."
+                            button.visibility = View.GONE
                         }else{
+                            val dep = "Dépôt"
+                            val num: String = motNumero.toString()
+                            val mont: String = motMontant.toString()
+                            val mId: String = motId.toString()
+                            val sold: String = motSolde.toString()
+
                             operation.text = dep
                             numero.text = num
                             montant.text =  mont
                             montantDB = supprimerZerosApresPoint(mont)
                             idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
                             newSolde.text = sold
+                            button.visibility = View.VISIBLE
+                            if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
+                                numero.text = num
+                                montantDB = supprimerZerosApresPoint(mont)
+                            }
                         }
                     }
                 }.addOnFailureListener {
@@ -227,14 +231,16 @@ class OrangeSaveActivity : AppCompatActivity() {
                         montant.text = "sms en attente..."
                         idTransaction.text = "sms en attente..."
                         newSolde.text = "sms en attente..."
+                        button.visibility = View.GONE
                     }else{
-                        if (numero.text == "null" || montant.text == "null" || idTransaction.text == "null" || newSolde.text == "null")
+                        if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
                         {
                             operation.text = "sms en attente..."
                             numero.text = "sms en attente..."
                             montant.text = "sms en attente..."
                             idTransaction.text = "sms en attente..."
                             newSolde.text = "sms en attente..."
+                            button.visibility = View.GONE
                         }else{
                             val ret = "Retrait"
                             val num: String = motNumero.toString()
@@ -245,9 +251,14 @@ class OrangeSaveActivity : AppCompatActivity() {
                             operation.text = ret
                             numero.text = num
                             montant.text =  mont
-                            montantDB = supprimerZerosApresPoint(mont)
+                            montantDB = mont.toBigDecimal().toString()
                             idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
                             newSolde.text = sold
+                            button.visibility = View.VISIBLE
+                            if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
+                                numero.text = num
+                                montantDB = supprimerZerosApresPoint(mont)
+                            }
                         }
                     }
                 }.addOnFailureListener {
@@ -255,6 +266,21 @@ class OrangeSaveActivity : AppCompatActivity() {
                     builder.setMessage(R.string.onFailureText)
                     builder.show()
                 }
+        }
+    }
+
+    private fun supprimerZerosApresPoint(chaine: String): String {
+        val partieEntiere = chaine.substringBefore('.')
+        val partieDecimale = chaine.substringAfter('.', "")
+
+        // Supprimer les zéros en trop
+        val nouvellePartieDecimale = partieDecimale.trimEnd('0')
+
+        // Reconstruire la chaîne avec ou sans partie décimale
+        return if (nouvellePartieDecimale.isEmpty()) {
+            partieEntiere
+        } else {
+            "$partieEntiere.$nouvellePartieDecimale"
         }
     }
 
@@ -334,13 +360,10 @@ class OrangeSaveActivity : AppCompatActivity() {
                                         Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                                         Handler(Looper.getMainLooper()).postDelayed({
-                                            supportFragmentManager.beginTransaction()
-                                                .replace(R.id.fragment_container, OrangeRedirectionFragment(contex))
-                                                .addToBackStack(null)
-                                                .commit()
+                                            val intent = Intent(this, OrangeRedirectionActivity::class.java)
+                                            startActivity(intent)
                                         }, 1000)
                                     }
-
                                 }.addOnFailureListener {
                                     val builder = AlertDialog.Builder(this)
                                     builder.setTitle("Alerte")
@@ -358,16 +381,15 @@ class OrangeSaveActivity : AppCompatActivity() {
                     builer.show()
                 }
         }else{
-
-            // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
-            if (smsLastRead!!.contains("Depot"))
+            val sms1 = intents.getStringExtra("sms")
+            if (sms1!!.contains("Depot"))
             {
                 typeOp = "Dépôt"
-            }else if (smsLastRead!!.contains("Retrait")){
+            }else if (sms1.contains("Retrait")){
                 typeOp = "Retrait"
             }
-
             val uid = UUID.randomUUID().toString()
+            val caractereASupprimer = ','
             val operationMap = hashMapOf(
                 "id" to auth.currentUser?.uid,
                 "date" to dateFormatted,
@@ -379,9 +401,8 @@ class OrangeSaveActivity : AppCompatActivity() {
                 "statut" to true,
                 "url" to "null",
                 "idDoc" to uid,
-                "idTransac" to idTransaction.text.toString()
+                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
             )
-
             db.collection("operation")
                 .document(uid)
                 .set(operationMap)
@@ -391,15 +412,13 @@ class OrangeSaveActivity : AppCompatActivity() {
                         progressBar.visibility = View.GONE
                         stateInfo.visibility = View.GONE
                         button.isEnabled = true
-                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_container, OrangeRedirectionFragment(contex))
-                                .addToBackStack(null)
-                                .commit()
-                        }, 1000)
-                    }
 
+                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                    }
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        val intent = Intent(this, OrangeRedirectionActivity::class.java)
+                        startActivity(intent)
+                    }, 1000)
                 }.addOnFailureListener {
                     val builder = AlertDialog.Builder(this)
                     builder.setTitle("Alerte")
@@ -408,22 +427,6 @@ class OrangeSaveActivity : AppCompatActivity() {
                 }
         }
     }
-
-    fun supprimerZerosApresPoint(chaine: String): String {
-        val partieEntiere = chaine.substringBefore('.')
-        val partieDecimale = chaine.substringAfter('.', "")
-
-        // Supprimer les zéros en trop
-        val nouvellePartieDecimale = partieDecimale.trimEnd('0')
-
-        // Reconstruire la chaîne avec ou sans partie décimale
-        return if (nouvellePartieDecimale.isEmpty()) {
-            partieEntiere
-        } else {
-            "$partieEntiere.$nouvellePartieDecimale"
-        }
-    }
-
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

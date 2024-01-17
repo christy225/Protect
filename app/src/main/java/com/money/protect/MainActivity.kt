@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,8 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -85,6 +88,21 @@ class MainActivity : AppCompatActivity() {
         val intent: Intent = intent
         compte = intent.getStringExtra("compte")
 
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS),
+                DoubleAccountActivity.READ_SMS_PERMISSION_REQUEST
+            )
+        }
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CALL_PHONE),
+                DoubleAccountActivity.REQUEST_CALL_PERMISSION
+            )
+        }
 
         // RECHERCHER LE COMPTE ASSISTANT POUR RECUPERER L'ID SUPERVISEUR
 
@@ -124,8 +142,16 @@ class MainActivity : AppCompatActivity() {
 
                                 if (dureeAutorisee.toLong() >= jourEcoules)
                                 {
-                                    loadFragment(HomeFragment(this))
+                                    // Dans ActivityB.onCreate
+                                    val fragmentId = intent.getStringExtra("fragment_to_show")
 
+                                    if (fragmentId == "tresor") {
+                                        loadFragment(TresorFragment(this))
+                                    } else if (fragmentId == "moov") {
+                                        loadFragment(MoovFragment(this))
+                                    }else{
+                                        loadFragment(HomeFragment(this))
+                                    }
                                     bottomNavigationView.setOnItemSelectedListener {
                                             when(it.itemId)
                                             {

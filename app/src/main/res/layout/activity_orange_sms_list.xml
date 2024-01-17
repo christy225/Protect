@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".OrangeSmsListActivity">
 
+    <ImageView
+        android:id="@+id/backButtonTolauncherApps"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/baseline_arrow_back_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
@@ -15,7 +24,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/backButtonTolauncherApps" />
 
     <TextView
         android:id="@+id/textView9990"
