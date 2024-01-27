@@ -50,7 +50,7 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
     private lateinit var stateInfo: TextView
 
     private var storageRef = Firebase.storage
-    lateinit var uri: Uri
+    private var uri: Uri? = null
     private var uploaded: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -146,8 +146,8 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
         buttonUpload.setOnClickListener {
             ImagePicker.with(this)
                 .cameraOnly()    			//Crop image(Optional), Check Customization for more option
-                .compress(100)			//Final image size will be less than 1 MB(Optional)
-                .maxResultSize(480, 450)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .maxResultSize(540, 540)	//Final image resolution will be less than 1080 x 1080(Optional)
                 .start()
         }
 
@@ -180,91 +180,95 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
                     val typeSpinner = typeOperation.selectedItem.toString()
 
                     // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
-                    if (uploaded == true)
-                    {
-                        storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                            .putFile(uri)
-                            .addOnSuccessListener { task->
-                                task.metadata!!.reference!!.downloadUrl
-                                    .addOnSuccessListener {
-                                        val uid = UUID.randomUUID().toString()
-                                        val operationMap = hashMapOf(
-                                            "id" to auth.currentUser?.uid,
-                                            "date" to dateFormatted,
-                                            "heure" to hourFormatted,
-                                            "operateur" to "western union",
-                                            "telephone" to telInput.toString(),
-                                            "montant" to "N/A",
-                                            "typeoperation" to typeSpinner,
-                                            "statut" to true,
-                                            "url" to "null",
-                                            "idDoc" to uid
-                                        )
+                    if (checkForInternet(context)) {
+                        if (uploaded)
+                        {
+                            storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                .putFile(uri!!)
+                                .addOnSuccessListener { task->
+                                    task.metadata!!.reference!!.downloadUrl
+                                        .addOnSuccessListener {
+                                            val uid = UUID.randomUUID().toString()
+                                            val operationMap = hashMapOf(
+                                                "id" to auth.currentUser?.uid,
+                                                "date" to dateFormatted,
+                                                "heure" to hourFormatted,
+                                                "operateur" to "western union",
+                                                "telephone" to telInput.toString(),
+                                                "montant" to "N/A",
+                                                "typeoperation" to typeSpinner,
+                                                "statut" to true,
+                                                "url" to it.toString(),
+                                                "idDoc" to uid
+                                            )
 
-                                        db.collection("operation")
-                                            .document(uid)
-                                            .set(operationMap)
-                                            .addOnCompleteListener {
-                                            val tel = textTelephone.text
+                                            db.collection("operation")
+                                                .document(uid)
+                                                .set(operationMap)
+                                                .addOnCompleteListener {
+                                                    val tel = textTelephone.text
 
-                                            tel.clear()
-                                            progressBar.visibility = View.INVISIBLE
-                                            stateInfo.visibility = View.INVISIBLE
-                                            buttonRegister.isEnabled = true
-                                            typeOperation.setSelection(0)
-                                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                    tel.clear()
+                                                    progressBar.visibility = View.INVISIBLE
+                                                    stateInfo.visibility = View.INVISIBLE
+                                                    buttonRegister.isEnabled = true
+                                                    typeOperation.setSelection(0)
+                                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
+                                                }.addOnFailureListener {
+                                                    val builder = AlertDialog.Builder(context)
+                                                    builder.setTitle("Alerte")
+                                                    builder.setMessage(R.string.onFailureText)
+                                                    builder.show()
+                                                }
                                         }.addOnFailureListener {
-                                            val builder = AlertDialog.Builder(context)
-                                            builder.setTitle("Alerte")
-                                            builder.setMessage(R.string.onFailureText)
-                                            builder.show()
+                                            val builer = AlertDialog.Builder(context)
+                                            builer.setMessage(R.string.onFailureText)
+                                            builer.show()
                                         }
-                                    }.addOnFailureListener {
-                                        val builer = AlertDialog.Builder(context)
-                                        builer.setMessage(R.string.onFailureText)
-                                        builer.show()
-                                    }
-                            }.addOnFailureListener{
-                                val builer = AlertDialog.Builder(context)
-                                builer.setMessage("Erreur pendant le téléchargement de l'image.")
-                                builer.show()
-                            }
-                    }else{
+                                }.addOnFailureListener{
+                                    val builer = AlertDialog.Builder(context)
+                                    builer.setMessage("Erreur pendant le téléchargement de l'image.")
+                                    builer.show()
+                                }
+                        }else{
 
-                        // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
-                        val uid = UUID.randomUUID().toString()
-                        val operationMap = hashMapOf(
-                            "id" to auth.currentUser?.uid,
-                            "date" to dateFormatted,
-                            "heure" to hourFormatted,
-                            "operateur" to "western union",
-                            "telephone" to telInput.toString(),
-                            "montant" to "N/A",
-                            "typeoperation" to typeSpinner,
-                            "statut" to true,
-                            "url" to "null",
-                            "idDoc" to uid
-                        )
+                            // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                            val uid = UUID.randomUUID().toString()
+                            val operationMap = hashMapOf(
+                                "id" to auth.currentUser?.uid,
+                                "date" to dateFormatted,
+                                "heure" to hourFormatted,
+                                "operateur" to "western union",
+                                "telephone" to telInput.toString(),
+                                "montant" to "N/A",
+                                "typeoperation" to typeSpinner,
+                                "statut" to true,
+                                "url" to "null",
+                                "idDoc" to uid
+                            )
 
-                        db.collection("operation")
-                            .document(uid)
-                            .set(operationMap)
-                            .addOnCompleteListener {
-                            val tel = textTelephone.text
+                            db.collection("operation")
+                                .document(uid)
+                                .set(operationMap)
+                                .addOnCompleteListener {
+                                    val tel = textTelephone.text
 
-                            tel.clear()
-                            progressBar.visibility = View.INVISIBLE
-                            buttonRegister.isEnabled = true
-                            typeOperation.setSelection(0)
-                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                    tel.clear()
+                                    progressBar.visibility = View.INVISIBLE
+                                    buttonRegister.isEnabled = true
+                                    typeOperation.setSelection(0)
+                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                        }.addOnFailureListener {
-                            val builder = AlertDialog.Builder(context)
-                            builder.setTitle("Alerte")
-                            builder.setMessage(R.string.onFailureText)
-                            builder.show()
+                                }.addOnFailureListener {
+                                    val builder = AlertDialog.Builder(context)
+                                    builder.setTitle("Alerte")
+                                    builder.setMessage(R.string.onFailureText)
+                                    builder.show()
+                                }
                         }
+                    }else{
+                        Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                     }
 
                 }

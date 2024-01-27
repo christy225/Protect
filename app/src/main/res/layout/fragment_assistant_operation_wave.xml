@@ -104,7 +104,7 @@
                         android:padding="2dp"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="55dp">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="wrap_content"
@@ -140,53 +140,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                    <TextView
-                        android:layout_marginTop="5dp"
-                        android:textSize="15sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Téléphone"/>
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:background="@drawable/background_circular"
-                        android:padding="2dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="43dp">
 
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            app:cardCornerRadius="50dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <ImageView
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:scaleType="centerCrop"
-                                android:padding="5dp"
-                                android:src="@drawable/baseline_phone_24"
-                                android:background="@color/background_color"
-                                app:tint="@color/black"/>
-                        </androidx.cardview.widget.CardView>
-
-                        <EditText
-                            android:id="@+id/tel_input_wave"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:background="@color/white"
-                            android:layout_marginHorizontal="20dp"
-                            android:hint="Téléphone"
-                            android:inputType="number"
-                            android:paddingStart="30dp"
-                            style="@style/inputFont"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
                     <TextView
                         android:layout_marginTop="5dp"
                         android:textSize="15sp"
@@ -198,7 +152,7 @@
                         android:padding="2dp"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="43dp">
+                        android:layout_height="55dp">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="wrap_content"
@@ -226,6 +180,65 @@
                             android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
                             android:hint="Montant"
+                            android:inputType="number"
+                            android:paddingStart="30dp"
+                            style="@style/inputFont"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <CheckBox
+                        android:id="@+id/checkboxAfficheNumeroEdt"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ajouter numéro de téléphone"/>
+
+                    <TextView
+                        android:id="@+id/txt_tel"
+                        android:layout_marginTop="5dp"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Téléphone"/>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/edt_tel"
+                        android:background="@drawable/background_circular"
+                        android:padding="2dp"
+                        android:visibility="gone"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            app:cardCornerRadius="50dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:scaleType="centerCrop"
+                                android:padding="5dp"
+                                android:src="@drawable/baseline_phone_24"
+                                android:background="@color/background_color"
+                                app:tint="@color/black"/>
+                        </androidx.cardview.widget.CardView>
+
+                        <EditText
+                            android:id="@+id/tel_input_wave"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:background="@color/white"
+                            android:layout_marginHorizontal="20dp"
+                            android:hint="Téléphone"
                             android:inputType="number"
                             android:paddingStart="30dp"
                             style="@style/inputFont"

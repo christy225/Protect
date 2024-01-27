@@ -37,7 +37,6 @@ class LoginActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_login)
 
-
         // Récupère la dernière page visitée
         val sharedPreferences = getSharedPreferences("my_app_preferences", Context.MODE_PRIVATE)
         val lastPage = sharedPreferences.getString("last_page", null)
@@ -67,88 +66,91 @@ class LoginActivity : AppCompatActivity() {
                     val emailTel = "ci-" + email + "@mail.com"
                     if (!checkForInternet(this)) {
                         Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
-                    }
-                    auth.signInWithEmailAndPassword(emailTel, password).addOnSuccessListener {
-                        query.whereEqualTo("id", auth.currentUser!!.uid)
-                            .get().addOnSuccessListener { document->
-                                for (data in document)
-                                {
-                                    val role = data.data["role"].toString()
-                                    val statut = data.data["statut"].toString().toBoolean()
+                        button.isEnabled = true
+                        button.setText(R.string.login_button_default_text)
+                    }else{
+                        auth.signInWithEmailAndPassword(emailTel, password).addOnSuccessListener {
+                            query.whereEqualTo("id", auth.currentUser!!.uid)
+                                .get().addOnSuccessListener { document->
+                                    for (data in document)
+                                    {
+                                        val role = data.data["role"].toString()
+                                        val statut = data.data["statut"].toString().toBoolean()
 
-                                    if (role == "superviseur") {
-                                        if (statut)
-                                        {
-                                            val intent = Intent(this, SuperviseurActivity::class.java)
-                                            startActivity(intent)
-                                            button.isEnabled = true
-                                            button.setText(R.string.login_button_default_text)
-                                        }else{
-                                            val builder = AlertDialog.Builder(this)
-                                            builder.setMessage("Votre abonnement a expiré.")
-                                            builder.show()
-                                            button.isEnabled = true
-                                            button.setText(R.string.login_button_default_text)
-                                        }
-                                    } else if (role == "assistant") {
-                                        if (statut)
-                                        {
-                                            // Historique de connexion
+                                        if (role == "superviseur") {
+                                            if (statut)
+                                            {
+                                                val intent = Intent(this, SuperviseurActivity::class.java)
+                                                startActivity(intent)
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
+                                            }else{
+                                                val builder = AlertDialog.Builder(this)
+                                                builder.setMessage("Votre abonnement a expiré.")
+                                                builder.show()
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
+                                            }
+                                        } else if (role == "assistant") {
+                                            if (statut)
+                                            {
+                                                // Historique de connexion
 
-                                            // Générer la date
-                                            val current = LocalDateTime.now()
-                                            val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-                                            val dateFormatted = current.format(formatterDate)
+                                                // Générer la date
+                                                val current = LocalDateTime.now()
+                                                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
+                                                val dateFormatted = current.format(formatterDate)
 
-                                            // Générer l'heure
-                                            val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
-                                            val hourFormatted = current.format(formatterHour)
+                                                // Générer l'heure
+                                                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
+                                                val hourFormatted = current.format(formatterHour)
 
-                                            val connexionMap = hashMapOf(
-                                                "id" to auth.currentUser!!.uid,
-                                                "statut" to "connexion",
-                                                "date" to dateFormatted,
-                                                "heure" to hourFormatted
-                                            )
+                                                val connexionMap = hashMapOf(
+                                                    "id" to auth.currentUser!!.uid,
+                                                    "statut" to "connexion",
+                                                    "date" to dateFormatted,
+                                                    "heure" to hourFormatted
+                                                )
 
-                                            database.collection("connexion")
-                                                .add(connexionMap)
-                                                .addOnCompleteListener {
-                                                    // Ne rien faire
+                                                database.collection("connexion")
+                                                    .add(connexionMap)
+                                                    .addOnCompleteListener {
+                                                        // Ne rien faire
+                                                    }
+
+                                                if (!checkForInternet(this)) {
+                                                    Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                                                 }
 
-                                            if (!checkForInternet(this)) {
-                                                Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                                                val intent = Intent(this, DoubleAccountActivity::class.java)
+                                                startActivity(intent)
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
+
+
+                                            }else{
+                                                val builder = AlertDialog.Builder(this)
+                                                builder.setMessage("Votre compte a été désactivé par votre superviseur.")
+                                                builder.show()
+                                                button.isEnabled = true
+                                                button.setText(R.string.login_button_default_text)
                                             }
-                                            
-                                            val intent = Intent(this, DoubleAccountActivity::class.java)
-                                            startActivity(intent)
-                                            button.isEnabled = true
-                                            button.setText(R.string.login_button_default_text)
-
-
-                                        }else{
-                                            val builder = AlertDialog.Builder(this)
-                                            builder.setMessage("Votre compte a été désactivé par votre superviseur.")
-                                            builder.show()
-                                            button.isEnabled = true
-                                            button.setText(R.string.login_button_default_text)
                                         }
                                     }
+                                }.addOnFailureListener {
+                                    val builder = AlertDialog.Builder(this)
+                                    builder.setMessage("Une erreur s'est produite")
+                                    builder.show()
+                                    button.isEnabled = true
+                                    button.setText(R.string.login_button_default_text)
                                 }
-                            }.addOnFailureListener {
+                        }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(this)
-                                builder.setMessage("Une erreur s'est produite")
+                                builder.setMessage("Identifiants incorrects")
                                 builder.show()
                                 button.isEnabled = true
                                 button.setText(R.string.login_button_default_text)
                             }
-                    }.addOnFailureListener {
-                        val builder = AlertDialog.Builder(this)
-                        builder.setMessage("Identifiants incorrects")
-                        builder.show()
-                        button.isEnabled = true
-                        button.setText(R.string.login_button_default_text)
                     }
                 }else{
                     val builder = AlertDialog.Builder(this)
@@ -185,30 +187,36 @@ class LoginActivity : AppCompatActivity() {
         {
             if (!checkForInternet(this)) {
                 Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
-            }
-            db.collection("account").whereEqualTo("id", auth.currentUser!!.uid)
-                .get()
-                .addOnSuccessListener { document->
-                    for (donnee in document)
-                    {
-                        val role = donnee.data["role"].toString()
-                        if (role == "assistant")
+                progressBar.visibility = View.INVISIBLE
+                button.isEnabled = true
+                button.setText(R.string.login_button_default_text)
+            }else{
+                db.collection("account").whereEqualTo("id", auth.currentUser!!.uid)
+                    .get()
+                    .addOnSuccessListener { document->
+                        for (donnee in document)
                         {
-                            if (!checkForInternet(this)) {
-                                Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                            val role = donnee.data["role"].toString()
+                            if (role == "assistant")
+                            {
+                                if (!checkForInternet(this)) {
+                                    Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                                }
+
+                                val intent = Intent(this, DoubleAccountActivity::class.java)
+                                startActivity(intent)
+                                button.isEnabled = true
+                                button.setText(R.string.login_button_default_text)
+
+                            }else if (role == "superviseur"){
+                                val intent2 = Intent(this, SuperviseurActivity::class.java)
+                                startActivity(intent2)
                             }
-
-                            val intent = Intent(this, DoubleAccountActivity::class.java)
-                            startActivity(intent)
-                            button.isEnabled = true
-                            button.setText(R.string.login_button_default_text)
-
-                        }else if (role == "superviseur"){
-                            val intent2 = Intent(this, SuperviseurActivity::class.java)
-                            startActivity(intent2)
                         }
+                    }.addOnFailureListener {
+                        Toast.makeText(this, R.string.onFailureText, Toast.LENGTH_SHORT).show()
                     }
-                }
+            }
         }else{
             progressBar.visibility = View.INVISIBLE
         }

@@ -62,7 +62,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
-    lateinit var uri: Uri
+    private var uri: Uri? = null
     private var uploaded: Boolean = false
 
     private lateinit var stateInfo: TextView
@@ -209,8 +209,8 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
             ImagePicker.with(this)
                 .crop()
                 .cameraOnly()    			//Crop image(Optional), Check Customization for more option
-                .compress(100)			//Final image size will be less than 1 MB(Optional)
-                .maxResultSize(480, 450)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .maxResultSize(540, 540)	//Final image resolution will be less than 1080 x 1080(Optional)
                 .start()
         }
 
@@ -286,19 +286,27 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                         context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
 
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Dépôt"){
-                        buttonRegister.isEnabled = false
-                        envoi()
-                        stateInfo.visibility = View.GONE
-                        typeOperation.setSelection(0)
-                        buttonRegister.text = "effectuer la transaction"
-                        context.bottomNavUnlock()
+                        if (checkForInternet(context)) {
+                            buttonRegister.isEnabled = false
+                            envoi()
+                            stateInfo.visibility = View.GONE
+                            typeOperation.setSelection(0)
+                            buttonRegister.text = "effectuer la transaction"
+                            context.bottomNavUnlock()
+                        }else{
+                            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                        }
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Retrait"){
-                        buttonRegister.isEnabled = false
-                        envoi()
-                        stateInfo.visibility = View.GONE
-                        typeOperation.setSelection(0)
-                        buttonRegister.text = "effectuer la transaction"
-                        context.bottomNavUnlock()
+                        if (checkForInternet(context)) {
+                            buttonRegister.isEnabled = false
+                            envoi()
+                            stateInfo.visibility = View.GONE
+                            typeOperation.setSelection(0)
+                            buttonRegister.text = "effectuer la transaction"
+                            context.bottomNavUnlock()
+                        }else{
+                            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }else{
@@ -349,7 +357,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         if (uploaded == true)
         {
             storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                .putFile(uri)
+                .putFile(uri!!)
                 .addOnSuccessListener { task->
                     task.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { it->

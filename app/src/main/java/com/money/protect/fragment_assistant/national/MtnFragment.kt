@@ -188,8 +188,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             ImagePicker.with(this)
                 .crop()
                 .cameraOnly()    			//Crop image(Optional), Check Customization for more option
-                .compress(100)			//Final image size will be less than 1 MB(Optional)
-                .maxResultSize(480, 450)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .maxResultSize(540, 540)	//Final image resolution will be less than 1080 x 1080(Optional)
                 .start()
         }
 
@@ -299,114 +299,117 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                         val montantInput = textMontant.text
                         val typeSpinner = typeOperation.selectedItem.toString()
 
-
                         // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
-                        if (uploaded)
-                        {
-                            storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                                .putFile(uri!!)
-                                .addOnSuccessListener { task->
-                                    task.metadata!!.reference!!.downloadUrl
-                                        .addOnSuccessListener {it ->
-                                            //formater le montant
-                                            val theAmount = montantInput.toString()
-                                            val caractere = ','
-                                            val theNewAmount = theAmount.filter { it != caractere }
+                        if (checkForInternet(context)) {
+                            if (uploaded)
+                            {
+                                storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                    .putFile(uri!!)
+                                    .addOnSuccessListener { task->
+                                        task.metadata!!.reference!!.downloadUrl
+                                            .addOnSuccessListener {it ->
+                                                //formater le montant
+                                                val theAmount = montantInput.toString()
+                                                val caractere = ','
+                                                val theNewAmount = theAmount.filter { it != caractere }
 
-                                            val uid = UUID.randomUUID().toString()
-                                            val operationMap = hashMapOf(
-                                                "id" to auth.currentUser?.uid,
-                                                "date" to dateFormatted,
-                                                "heure" to hourFormatted,
-                                                "operateur" to "mtn",
-                                                "telephone" to telInput.toString(),
-                                                "montant" to theNewAmount,
-                                                "typeoperation" to typeSpinner,
-                                                "statut" to true,
-                                                "url" to it.toString(),
-                                                "idDoc" to uid
-                                            )
+                                                val uid = UUID.randomUUID().toString()
+                                                val operationMap = hashMapOf(
+                                                    "id" to auth.currentUser?.uid,
+                                                    "date" to dateFormatted,
+                                                    "heure" to hourFormatted,
+                                                    "operateur" to "mtn",
+                                                    "telephone" to telInput.toString(),
+                                                    "montant" to theNewAmount,
+                                                    "typeoperation" to typeSpinner,
+                                                    "statut" to true,
+                                                    "url" to it.toString(),
+                                                    "idDoc" to uid
+                                                )
 
-                                            val tel = textTelephone.text
-                                            val amount = textMontant.text
+                                                val tel = textTelephone.text
+                                                val amount = textMontant.text
 
-                                            tel.clear()
-                                            amount.clear()
-                                            progressBar.visibility = View.GONE
-                                            buttonRegister.isEnabled = true
-                                            buttonRegister.text = "effectuer la transaction"
-                                            typeOperation.setSelection(0)
-                                            stateInfo.visibility = View.GONE
-                                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                tel.clear()
+                                                amount.clear()
+                                                progressBar.visibility = View.GONE
+                                                buttonRegister.isEnabled = true
+                                                buttonRegister.text = "effectuer la transaction"
+                                                typeOperation.setSelection(0)
+                                                stateInfo.visibility = View.GONE
+                                                Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                                            db.collection("operation")
-                                                .document(uid)
-                                                .set(operationMap)
-                                                .addOnCompleteListener {
-                                                // Ne rien faire ici
+                                                db.collection("operation")
+                                                    .document(uid)
+                                                    .set(operationMap)
+                                                    .addOnCompleteListener {
+                                                        // Ne rien faire ici
 
+                                                    }.addOnFailureListener {
+                                                        val builder = AlertDialog.Builder(context)
+                                                        builder.setTitle("Alerte")
+                                                        builder.setMessage(R.string.onFailureText)
+                                                        builder.show()
+                                                    }
                                             }.addOnFailureListener {
-                                                val builder = AlertDialog.Builder(context)
-                                                builder.setTitle("Alerte")
-                                                builder.setMessage(R.string.onFailureText)
-                                                builder.show()
+                                                val builer = AlertDialog.Builder(context)
+                                                builer.setMessage(R.string.onFailureText)
+                                                builer.show()
                                             }
-                                        }.addOnFailureListener {
-                                            val builer = AlertDialog.Builder(context)
-                                            builer.setMessage(R.string.onFailureText)
-                                            builer.show()
-                                        }
-                                }.addOnFailureListener{
-                                    val builer = AlertDialog.Builder(context)
-                                    builer.setMessage("Erreur pendant le téléchargement de l'image.")
-                                    builer.show()
-                                }
-                        }else{
+                                    }.addOnFailureListener{
+                                        val builer = AlertDialog.Builder(context)
+                                        builer.setMessage("Erreur pendant le téléchargement de l'image.")
+                                        builer.show()
+                                    }
+                            }else{
 
-                            // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
-                            //formater le montant
-                            val theAmount = montantInput.toString()
-                            val caractere = ','
-                            val theNewAmount = theAmount.filter { it != caractere }
+                                // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                                //formater le montant
+                                val theAmount = montantInput.toString()
+                                val caractere = ','
+                                val theNewAmount = theAmount.filter { it != caractere }
 
-                            val uid = UUID.randomUUID().toString()
-                            val operationMap = hashMapOf(
-                                "id" to auth.currentUser?.uid,
-                                "date" to dateFormatted,
-                                "heure" to hourFormatted,
-                                "operateur" to "mtn",
-                                "telephone" to telInput.toString(),
-                                "montant" to theNewAmount,
-                                "typeoperation" to typeSpinner,
-                                "statut" to true,
-                                "url" to "null",
-                                "idDoc" to uid
-                            )
+                                val uid = UUID.randomUUID().toString()
+                                val operationMap = hashMapOf(
+                                    "id" to auth.currentUser?.uid,
+                                    "date" to dateFormatted,
+                                    "heure" to hourFormatted,
+                                    "operateur" to "mtn",
+                                    "telephone" to telInput.toString(),
+                                    "montant" to theNewAmount,
+                                    "typeoperation" to typeSpinner,
+                                    "statut" to true,
+                                    "url" to "null",
+                                    "idDoc" to uid
+                                )
 
-                            val tel = textTelephone.text
-                            val amount = textMontant.text
+                                val tel = textTelephone.text
+                                val amount = textMontant.text
 
-                            tel.clear()
-                            amount.clear()
-                            buttonRegister.isEnabled = true
-                            stateInfo.visibility = View.GONE
-                            progressBar.visibility = View.INVISIBLE
-                            buttonRegister.text = "effectuer la transaction"
-                            typeOperation.setSelection(0)
-                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                tel.clear()
+                                amount.clear()
+                                buttonRegister.isEnabled = true
+                                stateInfo.visibility = View.GONE
+                                progressBar.visibility = View.INVISIBLE
+                                buttonRegister.text = "effectuer la transaction"
+                                typeOperation.setSelection(0)
+                                Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                            db.collection("operation")
-                                .document(uid)
-                                .set(operationMap)
-                                .addOnCompleteListener {
-                                // Ne rien faire ici
+                                db.collection("operation")
+                                    .document(uid)
+                                    .set(operationMap)
+                                    .addOnCompleteListener {
+                                        // Ne rien faire ici
 
-                            }.addOnFailureListener {
-                                val builder = AlertDialog.Builder(context)
-                                builder.setTitle("Alerte")
-                                builder.setMessage(R.string.onFailureText)
-                                builder.show()
+                                    }.addOnFailureListener {
+                                        val builder = AlertDialog.Builder(context)
+                                        builder.setTitle("Alerte")
+                                        builder.setMessage(R.string.onFailureText)
+                                        builder.show()
+                                    }
                             }
+                        }else{
+                            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                         }
                     }
 

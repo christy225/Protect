@@ -158,7 +158,7 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="43dp"
+                        android:layout_height="55dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="15dp"
                         android:background="@drawable/background_circular"
@@ -209,7 +209,7 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="43dp"
+                        android:layout_height="55dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="15dp"
                         android:background="@drawable/background_circular"
@@ -293,7 +293,7 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="43dp"
+                        android:layout_height="55dp"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"
                         android:padding="2dp">
@@ -342,7 +342,7 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="43dp"
+                        android:layout_height="55dp"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/background_circular"
                         android:padding="2dp">

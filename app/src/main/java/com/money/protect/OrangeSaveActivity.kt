@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.popup.SmsOrange
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -99,8 +100,8 @@ class OrangeSaveActivity : AppCompatActivity() {
             ImagePicker.with(this)
                 .crop()
                 .cameraOnly()    			//Crop image(Optional), Check Customization for more option
-                .compress(100)			//Final image size will be less than 1 MB(Optional)
-                .maxResultSize(480, 450)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .maxResultSize(530, 500)	//Final image resolution will be less than 1080 x 1080(Optional)
                 .start()
         }
 
@@ -251,7 +252,7 @@ class OrangeSaveActivity : AppCompatActivity() {
                             operation.text = ret
                             numero.text = num
                             montant.text =  mont
-                            montantDB = mont.toBigDecimal().toString()
+                            montantDB = supprimerZerosApresPoint(mont)
                             idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
                             newSolde.text = sold
                             button.visibility = View.VISIBLE
@@ -315,116 +316,120 @@ class OrangeSaveActivity : AppCompatActivity() {
         val hourFormatted = current.format(formatterHour)
 
         // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
-        if (uploaded)
-        {
-            storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                .putFile(uri!!)
-                .addOnSuccessListener { task->
-                    task.metadata!!.reference!!.downloadUrl
-                        .addOnSuccessListener {
-
-                            val sms = intents.getStringExtra("sms")
-                            if (sms!!.contains("Depot"))
-                            {
-                                typeOp = "Dépôt"
-                            }else if (sms.contains("Retrait")){
-                                typeOp = "Retrait"
-                            }
-
-                            val uid = UUID.randomUUID().toString()
-                            val caractereASupprimer = ','
-                            val operationMap = hashMapOf(
-                                "id" to auth.currentUser?.uid,
-                                "date" to dateFormatted,
-                                "heure" to hourFormatted,
-                                "operateur" to "orange",
-                                "telephone" to numero.text.toString(),
-                                "montant" to montantDB.toString(),
-                                "typeoperation" to typeOp,
-                                "statut" to true,
-                                "url" to it.toString(),
-                                "idDoc" to uid,
-                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
-                            )
-
-                            db.collection("operation")
-                                .document(uid)
-                                .set(operationMap)
-                                .addOnCompleteListener {
-                                    if (it.isSuccessful)
-                                    {
-                                        progressBar.visibility = View.GONE
-                                        stateInfo.visibility = View.GONE
-                                        button.isEnabled = true
-
-                                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            val intent = Intent(this, OrangeRedirectionActivity::class.java)
-                                            startActivity(intent)
-                                        }, 1000)
-                                    }
-                                }.addOnFailureListener {
-                                    val builder = AlertDialog.Builder(this)
-                                    builder.setTitle("Alerte")
-                                    builder.setMessage(R.string.onFailureText)
-                                    builder.show()
-                                }
-                        }.addOnFailureListener {
-                            val builer = AlertDialog.Builder(this)
-                            builer.setMessage(R.string.onFailureText)
-                            builer.show()
-                        }
-                }.addOnFailureListener{
-                    val builer = AlertDialog.Builder(this)
-                    builer.setMessage("Erreur pendant le téléchargement de l'image.")
-                    builer.show()
-                }
-        }else{
-            val sms1 = intents.getStringExtra("sms")
-            if (sms1!!.contains("Depot"))
+        if (checkForInternet(this)) {
+            if (uploaded)
             {
-                typeOp = "Dépôt"
-            }else if (sms1.contains("Retrait")){
-                typeOp = "Retrait"
-            }
-            val uid = UUID.randomUUID().toString()
-            val caractereASupprimer = ','
-            val operationMap = hashMapOf(
-                "id" to auth.currentUser?.uid,
-                "date" to dateFormatted,
-                "heure" to hourFormatted,
-                "operateur" to "orange",
-                "telephone" to numero.text.toString(),
-                "montant" to montantDB.toString(),
-                "typeoperation" to typeOp,
-                "statut" to true,
-                "url" to "null",
-                "idDoc" to uid,
-                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
-            )
-            db.collection("operation")
-                .document(uid)
-                .set(operationMap)
-                .addOnCompleteListener {
-                    if (it.isSuccessful)
-                    {
-                        progressBar.visibility = View.GONE
-                        stateInfo.visibility = View.GONE
-                        button.isEnabled = true
+                storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                    .putFile(uri!!)
+                    .addOnSuccessListener { task->
+                        task.metadata!!.reference!!.downloadUrl
+                            .addOnSuccessListener {
 
-                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                val sms = intents.getStringExtra("sms")
+                                if (sms!!.contains("Depot"))
+                                {
+                                    typeOp = "Dépôt"
+                                }else if (sms.contains("Retrait")){
+                                    typeOp = "Retrait"
+                                }
+
+                                val uid = UUID.randomUUID().toString()
+                                val caractereASupprimer = ','
+                                val operationMap = hashMapOf(
+                                    "id" to auth.currentUser?.uid,
+                                    "date" to dateFormatted,
+                                    "heure" to hourFormatted,
+                                    "operateur" to "orange",
+                                    "telephone" to numero.text.toString(),
+                                    "montant" to montantDB.toString(),
+                                    "typeoperation" to typeOp,
+                                    "statut" to true,
+                                    "url" to it.toString(),
+                                    "idDoc" to uid,
+                                    "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
+                                )
+
+                                db.collection("operation")
+                                    .document(uid)
+                                    .set(operationMap)
+                                    .addOnCompleteListener {
+                                        if (it.isSuccessful)
+                                        {
+                                            progressBar.visibility = View.GONE
+                                            stateInfo.visibility = View.GONE
+                                            button.isEnabled = true
+
+                                            Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+
+                                            Handler(Looper.getMainLooper()).postDelayed({
+                                                val intent = Intent(this, OrangeRedirectionActivity::class.java)
+                                                startActivity(intent)
+                                            }, 1000)
+                                        }
+                                    }.addOnFailureListener {
+                                        val builder = AlertDialog.Builder(this)
+                                        builder.setTitle("Alerte")
+                                        builder.setMessage(R.string.onFailureText)
+                                        builder.show()
+                                    }
+                            }.addOnFailureListener {
+                                val builer = AlertDialog.Builder(this)
+                                builer.setMessage(R.string.onFailureText)
+                                builer.show()
+                            }
+                    }.addOnFailureListener{
+                        val builer = AlertDialog.Builder(this)
+                        builer.setMessage("Erreur pendant le téléchargement de l'image.")
+                        builer.show()
                     }
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val intent = Intent(this, OrangeRedirectionActivity::class.java)
-                        startActivity(intent)
-                    }, 1000)
-                }.addOnFailureListener {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Alerte")
-                    builder.setMessage(R.string.onFailureText)
-                    builder.show()
+            }else{
+                val sms1 = intents.getStringExtra("sms")
+                if (sms1!!.contains("Depot"))
+                {
+                    typeOp = "Dépôt"
+                }else if (sms1.contains("Retrait")){
+                    typeOp = "Retrait"
                 }
+                val uid = UUID.randomUUID().toString()
+                val caractereASupprimer = ','
+                val operationMap = hashMapOf(
+                    "id" to auth.currentUser?.uid,
+                    "date" to dateFormatted,
+                    "heure" to hourFormatted,
+                    "operateur" to "orange",
+                    "telephone" to numero.text.toString(),
+                    "montant" to montantDB.toString(),
+                    "typeoperation" to typeOp,
+                    "statut" to true,
+                    "url" to "null",
+                    "idDoc" to uid,
+                    "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
+                )
+                db.collection("operation")
+                    .document(uid)
+                    .set(operationMap)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful)
+                        {
+                            progressBar.visibility = View.GONE
+                            stateInfo.visibility = View.GONE
+                            button.isEnabled = true
+
+                            Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                        }
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            val intent = Intent(this, OrangeRedirectionActivity::class.java)
+                            startActivity(intent)
+                        }, 1000)
+                    }.addOnFailureListener {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Alerte")
+                        builder.setMessage(R.string.onFailureText)
+                        builder.show()
+                    }
+            }
+        }else{
+            Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
         }
     }
 
