@@ -354,7 +354,7 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
 
 
         // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
-        if (uploaded == true)
+        if (uploaded)
         {
             storageRef.getReference("images").child(System.currentTimeMillis().toString())
                 .putFile(uri!!)

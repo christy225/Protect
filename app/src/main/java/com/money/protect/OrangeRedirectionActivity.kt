@@ -148,6 +148,7 @@ class OrangeRedirectionActivity : AppCompatActivity() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -168,6 +169,7 @@ class OrangeRedirectionActivity : AppCompatActivity() {
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 // Pendant que le texte change
+                buttonRegister.text = "effectuer la transaction"
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -204,6 +206,7 @@ class OrangeRedirectionActivity : AppCompatActivity() {
             val selectedRadioButton = findViewById<RadioButton>(checkedId)
             val selectedValue = selectedRadioButton.text.toString()
             radio = selectedValue
+            buttonRegister.text = "effectuer la transaction"
         }
 
         buttonRegister.text = "effectuer la transaction"
@@ -281,6 +284,7 @@ class OrangeRedirectionActivity : AppCompatActivity() {
                                                         telephone.text.clear()
                                                         progressBar.visibility = View.GONE
                                                         stateInfo.visibility = View.GONE
+                                                        buttonRegister.text = "effectuer la transaction"
                                                         button.isEnabled = true
                                                         Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
                                                     }
@@ -334,6 +338,7 @@ class OrangeRedirectionActivity : AppCompatActivity() {
                                         progressBar.visibility = View.GONE
                                         stateInfo.visibility = View.GONE
                                         button.isEnabled = true
+                                        buttonRegister.text = "effectuer la transaction"
                                         Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
                                     }
 

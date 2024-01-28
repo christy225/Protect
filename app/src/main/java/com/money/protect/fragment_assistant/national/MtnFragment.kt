@@ -220,7 +220,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
-
         val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMtn)
         btnCancel.setOnClickListener {
             textTelephone.text.clear()
