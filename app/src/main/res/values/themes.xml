@@ -5,6 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:spinnerDropDownItemStyle">@style/inputFont</item>
+        <item name="android:spinnerItemStyle">@style/inputFont</item>
         <item name="android:textColor">@color/black</item>
     </style>
 

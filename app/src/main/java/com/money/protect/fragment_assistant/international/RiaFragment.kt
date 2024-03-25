@@ -178,100 +178,108 @@ class RiaFragment(private val context: MainActivity) : Fragment() {
                     val telInput = textTelephone.text
                     val typeSpinner = typeOperation.selectedItem.toString()
 
-                    // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
-                    if (checkForInternet(context)) {
-                        if (uploaded)
-                        {
-                            storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                                .putFile(uri!!)
-                                .addOnSuccessListener { task->
-                                    task.metadata!!.reference!!.downloadUrl
-                                        .addOnSuccessListener {
+                    val builder = AlertDialog.Builder(context)
+                    builder.setMessage("Enregistrer la transaction ?")
+                    builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                        // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
+                        if (checkForInternet(context)) {
+                            if (uploaded)
+                            {
+                                storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                    .putFile(uri!!)
+                                    .addOnSuccessListener { task->
+                                        task.metadata!!.reference!!.downloadUrl
+                                            .addOnSuccessListener {
 
-                                            val uid = UUID.randomUUID().toString()
-                                            val operationMap = hashMapOf(
-                                                "id" to auth.currentUser?.uid,
-                                                "date" to dateFormatted,
-                                                "heure" to hourFormatted,
-                                                "operateur" to "ria",
-                                                "telephone" to telInput.toString(),
-                                                "montant" to "N/A",
-                                                "typeoperation" to typeSpinner,
-                                                "statut" to true,
-                                                "url" to it.toString(),
-                                                "idDoc" to uid
-                                            )
+                                                val uid = UUID.randomUUID().toString()
+                                                val operationMap = hashMapOf(
+                                                    "id" to auth.currentUser?.uid,
+                                                    "date" to dateFormatted,
+                                                    "heure" to hourFormatted,
+                                                    "operateur" to "ria",
+                                                    "telephone" to telInput.toString(),
+                                                    "montant" to "N/A",
+                                                    "typeoperation" to typeSpinner,
+                                                    "statut" to true,
+                                                    "url" to it.toString(),
+                                                    "idDoc" to uid
+                                                )
 
 
-                                            db.collection("operation")
-                                                .document(uid)
-                                                .set(operationMap)
-                                                .addOnCompleteListener {
-                                                    val tel = textTelephone.text
+                                                db.collection("operation")
+                                                    .document(uid)
+                                                    .set(operationMap)
+                                                    .addOnCompleteListener {
+                                                        val tel = textTelephone.text
 
-                                                    tel.clear()
-                                                    progressBar.visibility = View.INVISIBLE
-                                                    buttonRegister.isEnabled = true
-                                                    stateInfo.visibility = View.GONE
-                                                    typeOperation.setSelection(0)
-                                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                        tel.clear()
+                                                        progressBar.visibility = View.INVISIBLE
+                                                        buttonRegister.isEnabled = true
+                                                        stateInfo.visibility = View.GONE
+                                                        typeOperation.setSelection(0)
+                                                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                                                }.addOnFailureListener {
-                                                    val builder = AlertDialog.Builder(context)
-                                                    builder.setTitle("Alerte")
-                                                    builder.setMessage(R.string.onFailureText)
-                                                    builder.show()
-                                                }
-                                        }.addOnFailureListener {
-                                            val builer = AlertDialog.Builder(context)
-                                            builer.setMessage(R.string.onFailureText)
-                                            builer.show()
-                                        }
-                                }.addOnFailureListener{
-                                    val builer = AlertDialog.Builder(context)
-                                    builer.setMessage("Erreur pendant le téléchargement de l'image.")
-                                    builer.show()
-                                }
+                                                    }.addOnFailureListener {
+                                                        val builder = AlertDialog.Builder(context)
+                                                        builder.setTitle("Alerte")
+                                                        builder.setMessage(R.string.onFailureText)
+                                                        builder.show()
+                                                    }
+                                            }.addOnFailureListener {
+                                                val builer = AlertDialog.Builder(context)
+                                                builer.setMessage(R.string.onFailureText)
+                                                builer.show()
+                                            }
+                                    }.addOnFailureListener{
+                                        val builer = AlertDialog.Builder(context)
+                                        builer.setMessage("Erreur pendant le téléchargement de l'image.")
+                                        builer.show()
+                                    }
+                            }else{
+
+                                // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                                val uid = UUID.randomUUID().toString()
+                                val operationMap = hashMapOf(
+                                    "id" to auth.currentUser?.uid,
+                                    "date" to dateFormatted,
+                                    "heure" to hourFormatted,
+                                    "operateur" to "ria",
+                                    "telephone" to telInput.toString(),
+                                    "montant" to "N/A",
+                                    "typeoperation" to typeSpinner,
+                                    "statut" to true,
+                                    "url" to "null",
+                                    "idDoc" to uid
+                                )
+
+
+                                db.collection("operation")
+                                    .document(uid)
+                                    .set(operationMap)
+                                    .addOnCompleteListener {
+                                        val tel = textTelephone.text
+
+                                        tel.clear()
+                                        progressBar.visibility = View.INVISIBLE
+                                        buttonRegister.isEnabled = true
+                                        typeOperation.setSelection(0)
+                                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+
+                                    }.addOnFailureListener {
+                                        val builder = AlertDialog.Builder(context)
+                                        builder.setTitle("Alerte")
+                                        builder.setMessage(R.string.onFailureText)
+                                        builder.show()
+                                    }
+                            }
                         }else{
-
-                            // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
-                            val uid = UUID.randomUUID().toString()
-                            val operationMap = hashMapOf(
-                                "id" to auth.currentUser?.uid,
-                                "date" to dateFormatted,
-                                "heure" to hourFormatted,
-                                "operateur" to "ria",
-                                "telephone" to telInput.toString(),
-                                "montant" to "N/A",
-                                "typeoperation" to typeSpinner,
-                                "statut" to true,
-                                "url" to "null",
-                                "idDoc" to uid
-                            )
-
-
-                            db.collection("operation")
-                                .document(uid)
-                                .set(operationMap)
-                                .addOnCompleteListener {
-                                    val tel = textTelephone.text
-
-                                    tel.clear()
-                                    progressBar.visibility = View.INVISIBLE
-                                    buttonRegister.isEnabled = true
-                                    typeOperation.setSelection(0)
-                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
-                                }.addOnFailureListener {
-                                    val builder = AlertDialog.Builder(context)
-                                    builder.setTitle("Alerte")
-                                    builder.setMessage(R.string.onFailureText)
-                                    builder.show()
-                                }
+                            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                         }
-                    }else{
-                        Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                     }
+                    builder.setNegativeButton(android.R.string.no){ dialog, which->
+                        // Ne rien faire
+                    }
+                    builder.show()
 
                 }
             }else{

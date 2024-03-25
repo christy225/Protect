@@ -67,4 +67,72 @@
     <string name="title_activity_abonnement">AbonnementActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
 
+    <string name="cgu_txt">Date d\'entrée en vigueur : 05 Novembre 2023
+        \nBienvenue dans l\'application Protect Money. Les présentes conditions d\'utilisation régissent votre
+        utilisation de notre site et décrivent les termes et conditions auxquels vous devez vous conformer lors de l\'accès à notre
+        site et de son utilisation. Veuillez lire attentivement ces conditions avant de continuer à utiliser notre site.
+        \n<b>1. Acceptation des conditions :</b>
+        \nEn accédant à notre application, vous acceptez d\'être lié par les présentes conditions d\'utilisation.
+        Si vous n\'acceptez pas ces conditions, veuillez ne pas utiliser notre application.
+        \n<b>2. Utilisation de l\'application Protect Money :</b>
+        \n- Notre application est destinée à enregistrer les transactions, les informations des clients et faire la comptabilité des
+        agences mobile money utilisant l\'application Protect Money.
+        \n- Les informations collectées et traitées par l\'application sont destinées à être utilisées en cas de litige ou d\'enquêtes
+        policières, dans le but de faciliter les investigations et de permettre au gérant de l\'agence mobile money de faire ressortir
+        des informations liées à une transaction.
+        \n<b>3. Responsabilités de l\'utilisateur :</b>
+        \n- Vous êtes tenu de respecter toutes les lois et réglementations applicables lors de l\'utilisation de l\'application Protect Money.
+        \n- Vous êtes responsable de la confidentialité de votre compte et des informations d\'identification associées. Ne partagez pas ces
+        informations avec d\'autres personnes.
+        \n<b>4. Collecte et utilisation des données :</b>
+        \n- Les informations collectées par l\'application Protect Money sont soumises à notre politique de confidentialité.
+        \nEn utilisant notre application, vous acceptez les pratiques de collecte et d\'utilisation de données décrites dans
+        cette politique de confidentialité.
+        \n<b>5. Etat de la caisse (Comptabilité):</b>
+        \n- L\'application permet de faire l\'état de la caisse qui sera transmis automatiquement au propriétaire de l\'agence mobile money,
+        fournissant des informations sur d\'éventuels écarts, pertes ou surplus, ou indiquant si le compte de la journée est en équilibre.
+        \n<b>6. Modifications des conditions d\'utilisation :</b>
+        \n- Nous nous réservons le droit de modifier ces conditions d\'utilisation à tout moment. Les modifications seront publiées sur notre
+        site et notre application, et il vous incombe de les consulter régulièrement pour rester informé des éventuelles mises à jour.
+        \n<b>7. Contact :</b>
+        \n- Si vous avez des questions concernant ces conditions d\'utilisation, veuillez nous contacter à l\'adresse suivante :
+        contact@protect-money.net.
+    </string>
+
+    <string name="confidentialite_txt">Date d\'entrée en vigueur : 05 Novembre 2023
+        \nBienvenue dans l\'application Protect Money. Cette politique de confidentialité a pour but de vous informer sur la
+        manière dont nous collectons, utilisons et protégeons les informations personnelles que vous partagez avec nous.
+        Nous prenons très au sérieux la confidentialité de vos données et nous nous engageons à les protéger.
+        Veuillez lire attentivement ces règles de confidentialité pour comprendre comment nous traitons vos informations.
+        \n<b>1. Collecte des informations personnelles :</b>
+        \n- L\'application Protect Money collecte des informations personnelles, telles que le nom, le(s) prénom(s),
+        le numéro de téléphone et d\'autres données d\'identification, uniquement dans le but de faciliter les enquêtes policières
+        liées aux transactions effectuées dans les agences mobiles utilisant notre application.
+        \n<b>2. Utilisation des informations :</b>
+        \n- Les informations personnelles collectées seront utilisées exclusivement pour aider les autorités policières dans leurs
+        enquêtes criminelles.
+        \n- Nous n\'utilisons pas ces informations à des fins commerciales, de marketing ou publicitaires.
+        \n<b>3. Partage des informations :</b>
+        \n- Les informations personnelles ne seront partagées qu\'avec les autorités compétentes, telles que les forces de l\'ordre,
+        dans le cadre d\'enquêtes criminelles.
+        \n<b>4. Sécurité des données :</b>
+        \n- Nous mettons en place des mesures de sécurité appropriées pour protéger vos informations personnelles contre tout accès
+        non autorisé, divulgation, altération ou destruction.
+        \n<b>5. Conservation des données :</b>
+        \n- Les informations personnelles collectées seront conservées aussi longtemps que nécessaire pour répondre aux exigences
+        légales et réglementaires.
+        \n<b>6. Vos droits :</b>
+        \n- Vous avez le droit de demander l\'accès, la correction ou la suppression de vos informations personnelles, conformément à la
+        loi applicable.
+        \n<b>7. Modifications de la politique de confidentialité :</b>
+        \n- Nous pouvons mettre à jour cette politique de confidentialité de temps à autre pour refléter les modifications légales ou
+        nos pratiques. Les utilisateurs seront informés de ces mises à jour par le biais de l\'application et du site internet.
+        \n<b>8. Contact :</b>
+        \n- Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter à l\'adresse suivante :
+        contact@protect-money.net.
+        \n\nEn utilisant l\'application Protect Money, vous consentez à la collecte et à l\'utilisation de vos informations personnelles
+        conformément à cette politique de confidentialité. Nous vous encourageons à la lire attentivement et à la consulter
+        régulièrement pour rester informé des éventuelles mises à jour.
+    </string>
+
 </resources>

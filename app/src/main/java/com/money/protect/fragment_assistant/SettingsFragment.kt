@@ -25,6 +25,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.UpdatePasswordActivity
+import com.money.protect.popup.cgu
+import com.money.protect.popup.confidentialite
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,7 +36,7 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
     var db = Firebase.firestore
     lateinit var auth : FirebaseAuth
     private val database = Firebase.firestore
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    @SuppressLint("UseSwitchCompatOrMaterialCode", "MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +57,18 @@ class SettingsFragment(private val context: MainActivity) : Fragment() {
         val numAbonnement = view.findViewById<TextView>(R.id.assistant_settings_num_abonnement)
         val identifiant = view.findViewById<TextView>(R.id.assistant_identifiant)
         val titleDoubleCompte = view.findViewById<TextView>(R.id.titleDoubleCompte)
+
+        val cgu = view.findViewById<TextView>(R.id.cgu_link)
+
+        cgu.setOnClickListener {
+            cgu(context).show()
+        }
+
+        val confidence = view.findViewById<TextView>(R.id.confidentialite_link)
+        confidence.setOnClickListener {
+            confidentialite(context).show()
+        }
+
 
         val linkReabonnement = view.findViewById<TextView>(R.id.assistant_settings_reabonnement_link)
 

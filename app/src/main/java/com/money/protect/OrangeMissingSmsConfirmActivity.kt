@@ -151,92 +151,100 @@ class OrangeMissingSmsConfirmActivity : AppCompatActivity() {
                 val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
                 val hourFormatted = current.format(formatterHour)
 
-                if (checkForInternet(this)) {
-                    if (uploaded) {
-                        storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                            .putFile(uri!!)
-                            .addOnSuccessListener { task ->
-                                task.metadata!!.reference!!.downloadUrl
-                                    .addOnSuccessListener { it->
-                                        //formater le montant
-                                        val theAmount = montant.text.toString()
-                                        val caractere = ','
-                                        val theNewAmount = theAmount.filter { it != caractere }
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Enregistrer la transaction ?")
+                builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                    if (checkForInternet(this)) {
+                        if (uploaded) {
+                            storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                .putFile(uri!!)
+                                .addOnSuccessListener { task ->
+                                    task.metadata!!.reference!!.downloadUrl
+                                        .addOnSuccessListener { it->
+                                            //formater le montant
+                                            val theAmount = montant.text.toString()
+                                            val caractere = ','
+                                            val theNewAmount = theAmount.filter { it != caractere }
 
-                                        val uid = UUID.randomUUID().toString()
+                                            val uid = UUID.randomUUID().toString()
 
-                                        val operationMap = hashMapOf(
-                                            "id" to auth.currentUser?.uid,
-                                            "date" to dateFormatted,
-                                            "heure" to hourFormatted,
-                                            "operateur" to "orange",
-                                            "telephone" to numero.text.toString(),
-                                            "montant" to theNewAmount,
-                                            "typeoperation" to radio.toString(),
-                                            "statut" to true,
-                                            "url" to it.toString(),
-                                            "idDoc" to uid
-                                        )
-                                        db.collection("operation")
-                                            .document(uid)
-                                            .set(operationMap)
-                                            .addOnCompleteListener {
-                                                if (it.isSuccessful){
-                                                    montant.text.clear()
-                                                    numero.text.clear()
-                                                    progressBar.visibility = View.GONE
-                                                    Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                                                    finish()
+                                            val operationMap = hashMapOf(
+                                                "id" to auth.currentUser?.uid,
+                                                "date" to dateFormatted,
+                                                "heure" to hourFormatted,
+                                                "operateur" to "orange",
+                                                "telephone" to numero.text.toString(),
+                                                "montant" to theNewAmount,
+                                                "typeoperation" to radio.toString(),
+                                                "statut" to true,
+                                                "url" to it.toString(),
+                                                "idDoc" to uid
+                                            )
+                                            db.collection("operation")
+                                                .document(uid)
+                                                .set(operationMap)
+                                                .addOnCompleteListener {
+                                                    if (it.isSuccessful){
+                                                        montant.text.clear()
+                                                        numero.text.clear()
+                                                        progressBar.visibility = View.GONE
+                                                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                        finish()
+                                                    }
+                                                }.addOnFailureListener {
+                                                    val builder = AlertDialog.Builder(this)
+                                                    builder.setTitle("Alerte")
+                                                    builder.setMessage(R.string.onFailureText)
+                                                    builder.show()
                                                 }
-                                            }.addOnFailureListener {
-                                                val builder = AlertDialog.Builder(this)
-                                                builder.setTitle("Alerte")
-                                                builder.setMessage(R.string.onFailureText)
-                                                builder.show()
-                                            }
-                                    }
-                            }
-                    }else{
-                        //formater le montant
-                        val theAmount = montant.text.toString()
-                        val caractere = ','
-                        val theNewAmount = theAmount.filter { it != caractere }
-
-                        val uid = UUID.randomUUID().toString()
-
-                        val operationMap = hashMapOf(
-                            "id" to auth.currentUser?.uid,
-                            "date" to dateFormatted,
-                            "heure" to hourFormatted,
-                            "operateur" to "orange",
-                            "telephone" to numero.text.toString(),
-                            "montant" to theNewAmount,
-                            "typeoperation" to radio.toString(),
-                            "statut" to true,
-                            "url" to "null",
-                            "idDoc" to uid
-                        )
-                        db.collection("operation")
-                            .document(uid)
-                            .set(operationMap)
-                            .addOnCompleteListener {
-                                if (it.isSuccessful){
-                                    montant.text.clear()
-                                    numero.text.clear()
-                                    progressBar.visibility = View.GONE
-                                    Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                                    finish()
+                                        }
                                 }
-                            }.addOnFailureListener {
-                                val builder = AlertDialog.Builder(this)
-                                builder.setTitle("Alerte")
-                                builder.setMessage(R.string.onFailureText)
-                                builder.show()
-                            }
+                        }else{
+                            //formater le montant
+                            val theAmount = montant.text.toString()
+                            val caractere = ','
+                            val theNewAmount = theAmount.filter { it != caractere }
+
+                            val uid = UUID.randomUUID().toString()
+
+                            val operationMap = hashMapOf(
+                                "id" to auth.currentUser?.uid,
+                                "date" to dateFormatted,
+                                "heure" to hourFormatted,
+                                "operateur" to "orange",
+                                "telephone" to numero.text.toString(),
+                                "montant" to theNewAmount,
+                                "typeoperation" to radio.toString(),
+                                "statut" to true,
+                                "url" to "null",
+                                "idDoc" to uid
+                            )
+                            db.collection("operation")
+                                .document(uid)
+                                .set(operationMap)
+                                .addOnCompleteListener {
+                                    if (it.isSuccessful){
+                                        montant.text.clear()
+                                        numero.text.clear()
+                                        progressBar.visibility = View.GONE
+                                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                        finish()
+                                    }
+                                }.addOnFailureListener {
+                                    val builder = AlertDialog.Builder(this)
+                                    builder.setTitle("Alerte")
+                                    builder.setMessage(R.string.onFailureText)
+                                    builder.show()
+                                }
+                        }
+                    }else{
+                        Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                     }
-                }else{
-                    Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                 }
+                builder.setNegativeButton(android.R.string.no){ dialog, which->
+                    // Ne rien faire
+                }
+                builder.show()
             }
         }
     }

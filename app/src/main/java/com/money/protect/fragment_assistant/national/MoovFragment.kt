@@ -286,27 +286,43 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                         context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
 
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Dépôt"){
-                        if (checkForInternet(context)) {
-                            buttonRegister.isEnabled = false
-                            envoi()
-                            stateInfo.visibility = View.GONE
-                            typeOperation.setSelection(0)
-                            buttonRegister.text = "effectuer la transaction"
-                            context.bottomNavUnlock()
-                        }else{
-                            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                        val builder = AlertDialog.Builder(context)
+                        builder.setMessage("Enregistrer la transaction ?")
+                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                            if (checkForInternet(context)) {
+                                buttonRegister.isEnabled = false
+                                envoi()
+                                stateInfo.visibility = View.GONE
+                                typeOperation.setSelection(0)
+                                buttonRegister.text = "effectuer la transaction"
+                                context.bottomNavUnlock()
+                            }else{
+                                Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                            }
                         }
+                        builder.setNegativeButton(android.R.string.no){ dialog, which->
+                            // Ne rien faire
+                        }
+                        builder.show()
                     }else if(buttonRegister.text == "enregistrer opération" && typeOperation.selectedItem.toString() == "Retrait"){
-                        if (checkForInternet(context)) {
-                            buttonRegister.isEnabled = false
-                            envoi()
-                            stateInfo.visibility = View.GONE
-                            typeOperation.setSelection(0)
-                            buttonRegister.text = "effectuer la transaction"
-                            context.bottomNavUnlock()
-                        }else{
-                            Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                        val builder = AlertDialog.Builder(context)
+                        builder.setMessage("Enregistrer la transaction ?")
+                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                            if (checkForInternet(context)) {
+                                buttonRegister.isEnabled = false
+                                envoi()
+                                stateInfo.visibility = View.GONE
+                                typeOperation.setSelection(0)
+                                buttonRegister.text = "effectuer la transaction"
+                                context.bottomNavUnlock()
+                            }else{
+                                Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                            }
                         }
+                        builder.setNegativeButton(android.R.string.no){ dialog, which->
+                            // Ne rien faire
+                        }
+                        builder.show()
                     }
                 }
             }else{
