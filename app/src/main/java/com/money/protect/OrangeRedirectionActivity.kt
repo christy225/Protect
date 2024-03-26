@@ -250,7 +250,7 @@ class OrangeRedirectionActivity : AppCompatActivity() {
                     if (checkForInternet(this)) {
                         if (uploaded)
                         {
-                            storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                            storageRef.getReference("earth").child(System.currentTimeMillis().toString())
                                 .putFile(uri!!)
                                 .addOnSuccessListener { task->
                                     //formater le montant

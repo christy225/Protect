@@ -27,6 +27,8 @@ import java.time.format.DateTimeFormatter
 class LoginActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
+    private lateinit var email: EditText
+    private lateinit var password: EditText
     private var database = Firebase.firestore
     private lateinit var progressBar: ProgressBar
     private lateinit var button: Button
@@ -52,24 +54,26 @@ class LoginActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         val query = db.collection("account")
+        email = findViewById(R.id.emailCnx)
+        password = findViewById(R.id.passwordCnx)
         button = findViewById<AppCompatButton>(R.id.button_login_user)
 
         button.setOnClickListener {
             if (checkForInternet(this)) {
                 button.isEnabled = false
-                val email = findViewById<EditText>(R.id.emailCnx).text.toString()
-                val password = findViewById<EditText>(R.id.passwordCnx).text.toString()
+                val mail = email.text.toString()
+                val pass = password.text.toString()
 
-                if (email.isNotEmpty() && password.isNotEmpty()){
+                if (mail.isNotEmpty() && pass.isNotEmpty()){
                     button.setText(R.string.button_loading)
                     // CONVERSION DU N° TELEPHONE EN MAIL
-                    val emailTel = "ci-" + email + "@mail.com"
+                    val emailTel = "ci-" + mail + "@mail.com"
                     if (!checkForInternet(this)) {
                         Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                         button.isEnabled = true
                         button.setText(R.string.login_button_default_text)
                     }else{
-                        auth.signInWithEmailAndPassword(emailTel, password).addOnSuccessListener {
+                        auth.signInWithEmailAndPassword(emailTel, pass).addOnSuccessListener {
                             query.whereEqualTo("id", auth.currentUser!!.uid)
                                 .get().addOnSuccessListener { document->
                                     for (data in document)
