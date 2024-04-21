@@ -232,10 +232,14 @@ class PointFragmentInternational(private val context: MainActivity) : Fragment()
                 if (envoiInter.text.isNotEmpty())
                 {
                     envoiTxt = envoiInter.text.toString().toInt()
+                }else{
+                    envoiTxt = 0
                 }
                 if (divers.text.isNotEmpty())
                 {
                     diversTxt = divers.text.toString().toInt()
+                }else{
+                    diversTxt = 0
                 }
 
                 // Calcul du total des données émises par l'utilisateur

@@ -247,26 +247,43 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                 if (wave.text.isNotEmpty())
                 {
                     waveTxt = wave.text.toString().toInt()
+                }else{
+                    waveTxt = 0
                 }
+
                 if (moov.text.isNotEmpty())
                 {
                     moovTxt = moov.text.toString().toInt()
+                }else{
+                    moovTxt = 0
                 }
+
                 if (tresor.text.isNotEmpty())
                 {
                     tresorTxt = tresor.text.toString().toInt()
+                }else{
+                    tresorTxt = 0
                 }
+
                 if (divers.text.isNotEmpty())
                 {
                     diversTxt = divers.text.toString().toInt()
+                }else{
+                    diversTxt = 0
                 }
+
                 if (retraitInter.text.isNotEmpty())
                 {
                     retraitTxt = retraitInter.text.toString().toInt()
+                }else{
+                    retraitTxt = 0
                 }
+
                 if (envoiInter.text.isNotEmpty())
                 {
                     envoiTxt = envoiInter.text.toString().toInt()
+                }else{
+                    envoiTxt = 0
                 }
 
                 // Calcul du total des données émises par l'utilisateur

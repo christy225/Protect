@@ -25,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
-import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 

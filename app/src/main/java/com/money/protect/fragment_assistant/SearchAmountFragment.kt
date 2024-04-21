@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
@@ -28,10 +27,7 @@ import com.money.protect.R
 import com.money.protect.adapter.OperationAdapter
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.models.TransactionModel
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import java.util.ArrayList
-import java.util.Locale
 
 class SearchAmountFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore

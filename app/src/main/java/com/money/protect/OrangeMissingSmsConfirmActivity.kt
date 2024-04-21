@@ -23,7 +23,6 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.ktx.storage
 import com.google.firebase.storage.storage
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import java.text.NumberFormat

@@ -6,7 +6,6 @@ import android.view.Window
 import androidx.cardview.widget.CardView
 import com.money.protect.MainActivity
 import com.money.protect.R
-import com.money.protect.fragment_assistant.HomeFragment
 import com.money.protect.fragment_assistant.international.MoneygramFragment
 import com.money.protect.fragment_assistant.international.RiaFragment
 import com.money.protect.fragment_assistant.international.WesternFragment

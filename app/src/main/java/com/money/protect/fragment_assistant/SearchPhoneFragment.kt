@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi

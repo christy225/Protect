@@ -23,7 +23,7 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private lateinit var resultat: TextView
     private lateinit var backButton: ImageView
-
+    private lateinit var progressBar : ProgressBar
     private lateinit var succes: ImageView
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n", "ResourceAsColor", "MissingInflatedId")
@@ -41,7 +41,7 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
 
         succes = findViewById(R.id.successPoint)
         resultat = findViewById(R.id.superviseur_detail_point_resultat_all)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar_superviseur_point_all)
+        progressBar = findViewById(R.id.progressBar_superviseur_point_all)
         progressBar.visibility = View.VISIBLE
 
         val intent: Intent = getIntent()
@@ -118,7 +118,6 @@ class SuperviseurDetailPointActivity : AppCompatActivity() {
                 builder.setMessage("Une erreur s'est produite")
                 builder.show()
             }
-
     }
 
     override fun onStart() {

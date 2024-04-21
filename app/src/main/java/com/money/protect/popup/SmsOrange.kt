@@ -1,15 +1,11 @@
 package com.money.protect.popup
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Telephony
 import android.widget.ImageView
 import androidx.annotation.RequiresPermission
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.money.protect.MainActivity

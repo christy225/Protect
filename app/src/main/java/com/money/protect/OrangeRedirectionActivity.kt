@@ -34,8 +34,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
-import com.money.protect.fragment_assistant.national.MoovFragment
-import com.money.protect.fragment_assistant.national.TresorFragment
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

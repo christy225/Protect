@@ -2,12 +2,15 @@ package com.money.protect
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.nfc.Tag
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -21,6 +24,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -178,6 +186,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        Log.e(TAG, "Une erreur s'est produite :")
+
 
     }
 
@@ -187,42 +197,46 @@ class LoginActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBarLogin)
 
         progressBar.visibility = View.VISIBLE
-        if (auth.currentUser != null)
-        {
-            if (!checkForInternet(this)) {
-                Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
-                progressBar.visibility = View.INVISIBLE
-                button.isEnabled = true
-                button.setText(R.string.login_button_default_text)
-            }else{
-                db.collection("account").whereEqualTo("id", auth.currentUser!!.uid)
-                    .get()
-                    .addOnSuccessListener { document->
-                        for (donnee in document)
-                        {
-                            val role = donnee.data["role"].toString()
-                            if (role == "assistant")
-                            {
-                                if (!checkForInternet(this)) {
-                                    Toast.makeText(this, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+        CoroutineScope(Dispatchers.IO).launch {
+            if (auth.currentUser != null)
+            {
+                if (!checkForInternet(this@LoginActivity)) {
+                    Toast.makeText(this@LoginActivity, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.INVISIBLE
+                    button.isEnabled = true
+                    button.setText(R.string.login_button_default_text)
+                }else{
+                    withContext(Dispatchers.Main){
+                        db.collection("account").whereEqualTo("id", auth.currentUser!!.uid)
+                            .get()
+                            .addOnSuccessListener { document->
+                                for (donnee in document)
+                                {
+                                    val role = donnee.data["role"].toString()
+                                    if (role == "assistant")
+                                    {
+                                        if (!checkForInternet(this@LoginActivity)) {
+                                            Toast.makeText(this@LoginActivity, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
+                                        }
+
+                                        val intent = Intent(this@LoginActivity, DoubleAccountActivity::class.java)
+                                        startActivity(intent)
+                                        button.isEnabled = true
+                                        button.setText(R.string.login_button_default_text)
+
+                                    }else if (role == "superviseur"){
+                                        val intent2 = Intent(this@LoginActivity, SuperviseurActivity::class.java)
+                                        startActivity(intent2)
+                                    }
                                 }
-
-                                val intent = Intent(this, DoubleAccountActivity::class.java)
-                                startActivity(intent)
-                                button.isEnabled = true
-                                button.setText(R.string.login_button_default_text)
-
-                            }else if (role == "superviseur"){
-                                val intent2 = Intent(this, SuperviseurActivity::class.java)
-                                startActivity(intent2)
+                            }.addOnFailureListener {
+                                Toast.makeText(this@LoginActivity, R.string.onFailureText, Toast.LENGTH_SHORT).show()
                             }
-                        }
-                    }.addOnFailureListener {
-                        Toast.makeText(this, R.string.onFailureText, Toast.LENGTH_SHORT).show()
                     }
+                }
+            }else{
+                progressBar.visibility = View.INVISIBLE
             }
-        }else{
-            progressBar.visibility = View.INVISIBLE
         }
     }
 }

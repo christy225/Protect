@@ -3,11 +3,9 @@ package com.money.protect
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
-import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 
 class TikeramaActivity : AppCompatActivity() {

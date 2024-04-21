@@ -18,7 +18,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
+import java.text.DecimalFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,6 +46,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
 
     private lateinit var adapter: LePointAdapter
 
+    private lateinit var currencyLib: TextView
     private lateinit var capitalArrayList: ArrayList<String>
     private lateinit var retrieveArrayList: ArrayList<String>
 
@@ -73,6 +74,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
 
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
+        currencyLib = view.findViewById(R.id.currencyLib)
 
         val data = arguments
         val id = data?.getString("id")
@@ -240,6 +242,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
                 builder.setMessage("Vous n'avez pas encore défini le capital.")
                 builder.show()
             }else{
+                currencyLib.textSize = 10f
                 main()
             }
         }
@@ -333,14 +336,16 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
 
         if (totalCaisse > 0)
         {
-            resultat.text = totalCaisse.toString()
+
+            resultat.text = DecimalFormat("#,###").format(totalCaisse)
             verdict!!.text = "Perte"
         }else if (totalCaisse < 0)
         {
-            resultat.text = (-1 * totalCaisse).toString()
+            val res = -1 * totalCaisse
+            resultat.text = DecimalFormat("#,###").format(res)
             verdict!!.text = "Surplus"
         }else{
-            resultat.text = totalCaisse.toString()
+            resultat.text = DecimalFormat("#,###").format(totalCaisse)
             verdict!!.text = "Compte OK"
         }
     }

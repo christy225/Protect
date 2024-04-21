@@ -1,9 +1,6 @@
 package com.money.protect.fragment_assistant
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.ActivityNotFoundException
-import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -13,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView

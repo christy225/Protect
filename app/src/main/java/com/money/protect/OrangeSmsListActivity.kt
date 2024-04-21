@@ -4,16 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.provider.Telephony
 import android.widget.Button
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.money.protect.adapter.SmsAdapter
 import com.money.protect.adapter.SmsOrangeAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class OrangeSmsListActivity : AppCompatActivity() {
     private lateinit var smsList: ArrayList<String>
@@ -45,30 +46,37 @@ class OrangeSmsListActivity : AppCompatActivity() {
             smsAdapter = SmsOrangeAdapter(this, smsList)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = smsAdapter
-            readSms()
+            retrieveSms()
         }
 
-        readSms()
+        retrieveSms()
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun readSms() {
-        val contentResolver = contentResolver
+    private fun retrieveSms() {
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(2000)
+            val contentResolver = contentResolver
 
-        val selection = "${Telephony.Sms.ADDRESS} = ?" // Sélectionnez les SMS avec l'adresse spécifique
-        val selectionArgs = arrayOf("+454")
+            val selection = "${Telephony.Sms.ADDRESS} = ?" // Sélectionnez les SMS avec l'adresse spécifique
+            val selectionArgs = arrayOf("+454")
 
-        val uri = Telephony.Sms.Inbox.CONTENT_URI
-        val cursor = contentResolver.query(uri, null, selection, selectionArgs, null)
+            val uri = Telephony.Sms.Inbox.CONTENT_URI
+            val cursor = contentResolver.query(uri, null, selection, selectionArgs, null)
 
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val bodyIndex = cursor.getColumnIndex(Telephony.Sms.BODY)
-                val smsBody = cursor.getString(bodyIndex)
-                smsList.add(smsBody)
+            withContext(Dispatchers.Main){
+                smsList.clear()
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        val bodyIndex = cursor.getColumnIndex(Telephony.Sms.BODY)
+                        val smsBody = cursor.getString(bodyIndex)
+                        smsList.add(smsBody)
+                    }
+                    cursor.close()
+                    // Notifiez l'adaptateur que les données ont changé.
+                    smsAdapter.notifyDataSetChanged()
+                }
             }
-            cursor.close()
-            smsAdapter.notifyDataSetChanged() // Notifiez l'adaptateur que les données ont changé.
         }
     }
 

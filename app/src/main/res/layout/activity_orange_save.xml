@@ -117,7 +117,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Veuillez vérifier la transaction"
+                            android:text="Vérifier que ceci correspond à la dernière transaction effectuée"
                             android:textColor="@color/gray_color"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/textView4" />

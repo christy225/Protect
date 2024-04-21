@@ -45,7 +45,7 @@ class SettingsAdapterSuperviseur(
             {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Activation")
-                    .setMessage("Voulez-vous continuer le compte de cet Assistant ?")
+                    .setMessage("Voulez-vous activer le compte de cet Assistant ?")
                     .setPositiveButton("Oui"){ dialog, id->
                         currentAssistant.statut = !currentAssistant.statut
                         repo.updateStatut(currentAssistant)

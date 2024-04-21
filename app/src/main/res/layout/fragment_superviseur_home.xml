@@ -107,7 +107,7 @@
                         android:paddingHorizontal="15dp"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:text="AFFICHER LE POINT"
+                        android:text="AFFICHER POINT"
                         android:textAllCaps="false"
                         android:textColor="#FF9800"
                         android:textStyle="bold"
@@ -139,12 +139,12 @@
                         android:text="Résultat"
                         android:textStyle="bold"
                         android:textSize="17sp"
-                        app:layout_constraintBottom_toTopOf="@+id/textView25"
+                        app:layout_constraintBottom_toTopOf="@+id/currencyLib"
                         app:layout_constraintStart_toStartOf="@+id/superviseur_point_resultat_Vw"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/textView25"
+                        android:id="@+id/currencyLib"
                         style="@style/TitleFont"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

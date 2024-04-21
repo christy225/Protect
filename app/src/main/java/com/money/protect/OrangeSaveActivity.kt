@@ -25,6 +25,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.popup.SmsOrange
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -267,146 +271,154 @@ class OrangeSaveActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    fun depot() {
-        val sms = intents.getStringExtra("sms")
+    private fun depot() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val sms = intents.getStringExtra("sms")
 
-        val chainesDeCaracteres = listOf(sms)
+            val chainesDeCaracteres = listOf(sms)
 
-        val positionDuMotNumero = 2
-        val positionDuMotMontant = 5
-        val positionDuMotId = 15
-        val positionDuMotSolde = 18
+            val positionDuMotNumero = 2
+            val positionDuMotMontant = 5
+            val positionDuMotId = 15
+            val positionDuMotSolde = 18
 
-        for (chaine in chainesDeCaracteres) {
-            val motNumero = obtenirMotALaPosition(chaine!!, positionDuMotNumero)
-            val motMontant = obtenirMotALaPosition(chaine, positionDuMotMontant)
-            val motId = obtenirMotALaPosition(chaine, positionDuMotId)
-            val motSolde = obtenirMotALaPosition(chaine, positionDuMotSolde)
+            for (chaine in chainesDeCaracteres) {
+                val motNumero = obtenirMotALaPosition(chaine!!, positionDuMotNumero)
+                val motMontant = obtenirMotALaPosition(chaine, positionDuMotMontant)
+                val motId = obtenirMotALaPosition(chaine, positionDuMotId)
+                val motSolde = obtenirMotALaPosition(chaine, positionDuMotSolde)
 
-            val caractereASupprimer = ','
-            idT = motId.toString().replace(caractereASupprimer.toString(),"")
+                val caractereASupprimer = ','
+                idT = motId.toString().replace(caractereASupprimer.toString(),"")
 
-            db.collection("operation")
-                .whereEqualTo("idTransac", idT)
-                .get()
-                .addOnSuccessListener { documents->
-                    if (!documents.isEmpty)
-                    {
-                        val builder = AlertDialog.Builder(this)
-                        builder.setMessage("Cette transaction a déjà été enregistrée !")
-                        builder.show()
-                        operation.text = "sms en attente..."
-                        numero.text = "sms en attente..."
-                        montant.text = "sms en attente..."
-                        idTransaction.text = "sms en attente..."
-                        newSolde.text = "sms en attente..."
-                        button.visibility = View.GONE
-                    }else{
-                        if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
-                        {
-                            operation.text = "sms en attente..."
-                            numero.text = "sms en attente..."
-                            montant.text = "sms en attente..."
-                            idTransaction.text = "sms en attente..."
-                            newSolde.text = "sms en attente..."
-                            button.visibility = View.GONE
-                        }else{
-                            val dep = "Dépôt"
-                            val num: String = motNumero.toString()
-                            val mont: String = motMontant.toString()
-                            val mId: String = motId.toString()
-                            val sold: String = motSolde.toString()
+                withContext(Dispatchers.Main) {
+                    db.collection("operation")
+                        .whereEqualTo("idTransac", idT)
+                        .get()
+                        .addOnSuccessListener { documents->
+                            if (!documents.isEmpty)
+                            {
+                                val builder = AlertDialog.Builder(this@OrangeSaveActivity)
+                                builder.setMessage("Cette transaction a déjà été enregistrée !")
+                                builder.show()
+                                operation.text = "sms en attente..."
+                                numero.text = "sms en attente..."
+                                montant.text = "sms en attente..."
+                                idTransaction.text = "sms en attente..."
+                                newSolde.text = "sms en attente..."
+                                button.visibility = View.GONE
+                            }else{
+                                if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
+                                {
+                                    operation.text = "sms en attente..."
+                                    numero.text = "sms en attente..."
+                                    montant.text = "sms en attente..."
+                                    idTransaction.text = "sms en attente..."
+                                    newSolde.text = "sms en attente..."
+                                    button.visibility = View.GONE
+                                }else{
+                                    val dep = "Dépôt"
+                                    val num: String = motNumero.toString()
+                                    val mont: String = motMontant.toString()
+                                    val mId: String = motId.toString()
+                                    val sold: String = motSolde.toString()
 
-                            operation.text = dep
-                            numero.text = num
-                            montant.text =  mont
-                            montantDB = supprimerZerosApresPoint(mont)
-                            idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
-                            newSolde.text = sold
-                            button.visibility = View.VISIBLE
-                            if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
-                                numero.text = num
-                                montantDB = supprimerZerosApresPoint(mont)
+                                    operation.text = dep
+                                    numero.text = num
+                                    montant.text =  mont
+                                    montantDB = supprimerZerosApresPoint(mont)
+                                    idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
+                                    newSolde.text = sold
+                                    button.visibility = View.VISIBLE
+                                    if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
+                                        numero.text = num
+                                        montantDB = supprimerZerosApresPoint(mont)
+                                    }
+                                }
                             }
+                        }.addOnFailureListener {
+                            val builder = AlertDialog.Builder(this@OrangeSaveActivity)
+                            builder.setMessage(R.string.onFailureText)
+                            builder.show()
                         }
-                    }
-                }.addOnFailureListener {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setMessage(R.string.onFailureText)
-                    builder.show()
                 }
+            }
         }
     }
 
     @SuppressLint("SetTextI18n")
-    fun retrait() {
-        val sms = intents.getStringExtra("sms")
+    private fun retrait() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val sms = intents.getStringExtra("sms")
 
-        val chainesDeCaracteres = listOf(sms)
+            val chainesDeCaracteres = listOf(sms)
 
-        val positionDuMotNumero = 16
-        val positionDuMotMontant = 19
-        val positionDuMotId = 22
-        val positionDuMotSolde = 6
+            val positionDuMotNumero = 16
+            val positionDuMotMontant = 19
+            val positionDuMotId = 22
+            val positionDuMotSolde = 6
 
-        for (chaine in chainesDeCaracteres) {
-            val motNumero = obtenirMotALaPosition(chaine!!, positionDuMotNumero)
-            val motMontant = obtenirMotALaPosition(chaine, positionDuMotMontant)
-            val motId = obtenirMotALaPosition(chaine, positionDuMotId)
-            val motSolde = obtenirMotALaPosition(chaine, positionDuMotSolde)
+            for (chaine in chainesDeCaracteres) {
+                val motNumero = obtenirMotALaPosition(chaine!!, positionDuMotNumero)
+                val motMontant = obtenirMotALaPosition(chaine, positionDuMotMontant)
+                val motId = obtenirMotALaPosition(chaine, positionDuMotId)
+                val motSolde = obtenirMotALaPosition(chaine, positionDuMotSolde)
 
-            val caractereASupprimer = ','
-            idT = motId.toString().replace(caractereASupprimer.toString(),"")
+                val caractereASupprimer = ','
+                idT = motId.toString().replace(caractereASupprimer.toString(),"")
 
-            db.collection("operation")
-                .whereEqualTo("idTransac", idT)
-                .get()
-                .addOnSuccessListener { documents->
-                    if (!documents.isEmpty)
-                    {
-                        val builder = AlertDialog.Builder(this)
-                        builder.setMessage("Cette transaction a déjà été enregistrée !")
-                        builder.show()
-                        operation.text = "sms en attente..."
-                        numero.text = "sms en attente..."
-                        montant.text = "sms en attente..."
-                        idTransaction.text = "sms en attente..."
-                        newSolde.text = "sms en attente..."
-                        button.visibility = View.GONE
-                    }else{
-                        if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
-                        {
-                            operation.text = "sms en attente..."
-                            numero.text = "sms en attente..."
-                            montant.text = "sms en attente..."
-                            idTransaction.text = "sms en attente..."
-                            newSolde.text = "sms en attente..."
-                            button.visibility = View.GONE
-                        }else{
-                            val ret = "Retrait"
-                            val num: String = motNumero.toString()
-                            val mont: String = motMontant.toString()
-                            val mId: String = motId.toString()
-                            val sold: String = motSolde.toString()
+                withContext(Dispatchers.Main){
+                    db.collection("operation")
+                        .whereEqualTo("idTransac", idT)
+                        .get()
+                        .addOnSuccessListener { documents->
+                            if (!documents.isEmpty)
+                            {
+                                val builder = AlertDialog.Builder(this@OrangeSaveActivity)
+                                builder.setMessage("Cette transaction a déjà été enregistrée !")
+                                builder.show()
+                                operation.text = "sms en attente..."
+                                numero.text = "sms en attente..."
+                                montant.text = "sms en attente..."
+                                idTransaction.text = "sms en attente..."
+                                newSolde.text = "sms en attente..."
+                                button.visibility = View.GONE
+                            }else{
+                                if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
+                                {
+                                    operation.text = "sms en attente..."
+                                    numero.text = "sms en attente..."
+                                    montant.text = "sms en attente..."
+                                    idTransaction.text = "sms en attente..."
+                                    newSolde.text = "sms en attente..."
+                                    button.visibility = View.GONE
+                                }else{
+                                    val ret = "Retrait"
+                                    val num: String = motNumero.toString()
+                                    val mont: String = motMontant.toString()
+                                    val mId: String = motId.toString()
+                                    val sold: String = motSolde.toString()
 
-                            operation.text = ret
-                            numero.text = num
-                            montant.text =  mont
-                            montantDB = supprimerZerosApresPoint(mont)
-                            idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
-                            newSolde.text = sold
-                            button.visibility = View.VISIBLE
-                            if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
-                                numero.text = num
-                                montantDB = supprimerZerosApresPoint(mont)
+                                    operation.text = ret
+                                    numero.text = num
+                                    montant.text =  mont
+                                    montantDB = supprimerZerosApresPoint(mont)
+                                    idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
+                                    newSolde.text = sold
+                                    button.visibility = View.VISIBLE
+                                    if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
+                                        numero.text = num
+                                        montantDB = supprimerZerosApresPoint(mont)
+                                    }
+                                }
                             }
+                        }.addOnFailureListener {
+                            val builder = AlertDialog.Builder(this@OrangeSaveActivity)
+                            builder.setMessage(R.string.onFailureText)
+                            builder.show()
                         }
-                    }
-                }.addOnFailureListener {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setMessage(R.string.onFailureText)
-                    builder.show()
                 }
+            }
         }
     }
 
@@ -441,12 +453,6 @@ class OrangeSaveActivity : AppCompatActivity() {
         } else {
             null
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun register()
-    {
-
     }
 
     @Deprecated("Deprecated in Java")
