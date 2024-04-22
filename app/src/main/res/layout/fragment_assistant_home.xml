@@ -49,8 +49,8 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_margin="7dp"
                 android:src="@drawable/icone" />
         </androidx.cardview.widget.CardView>
@@ -101,7 +101,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/assistant_home_internationLink"
-                android:layout_width="87dp"
+                android:layout_width="80dp"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -135,7 +135,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/assistant_home_nationLink"
-                android:layout_width="87dp"
+                android:layout_width="80dp"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
@@ -169,7 +169,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/assistant_home_comptabiliteLink"
-                android:layout_width="87dp"
+                android:layout_width="80dp"
                 android:visibility="invisible"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"

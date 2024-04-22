@@ -48,13 +48,12 @@ import java.util.UUID
 class WaveFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var textTelephone: EditText
-    lateinit var textMontant: EditText
-    lateinit var typeOperation: Spinner
+    private lateinit var textTelephone: EditText
+    private lateinit var textMontant: EditText
+    private lateinit var typeOperation: Spinner
     lateinit var buttonRegister: AppCompatButton
     lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
-
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
@@ -81,7 +80,6 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
         textMontant = view.findViewById(R.id.montant_input_wave)
         typeOperation = view.findViewById(R.id.type_op_spinner_wave)
         stateInfo = view.findViewById(R.id.stateInfoWave)
-
         buttonUpload = view.findViewById(R.id.uploadPhotoWave)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_wave)
