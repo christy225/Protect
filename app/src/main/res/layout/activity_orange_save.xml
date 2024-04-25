@@ -274,6 +274,25 @@
                         android:visibility="invisible"
                         android:layout_height="5dp"/>
 
+                    <CheckBox
+                        android:id="@+id/origine_check_orange"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Origine des fonds"/>
+
+                    <EditText
+                        android:id="@+id/origine_fond_orange"
+                        android:hint="Ecrire..."
+                        android:inputType="textMultiLine"
+                        android:lines="8"
+                        android:maxLines="10"
+                        android:minLines="6"
+                        android:visibility="gone"
+                        android:scrollbars="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"/>
+
                     <Button
                         android:id="@+id/uploadPhotoOrange"
                         android:layout_width="wrap_content"

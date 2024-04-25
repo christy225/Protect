@@ -16,7 +16,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import com.money.protect.popup.AfficheIdentite
+import com.money.protect.popup.AfficheIdentite1
+import com.money.protect.popup.AfficheIdentite2
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
@@ -27,14 +28,17 @@ class MainDetailOperationActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private var database = Firebase.firestore
     private lateinit var intents: Intent
-    private lateinit var buttonAffiche: Button
+    private lateinit var origineX: TextView
+    private lateinit var buttonAffiche1: Button
+    private lateinit var buttonAffiche2: Button
     private lateinit var buttonCancel: Button
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         setContentView(R.layout.activity_main_detail_operation)
-        buttonAffiche = findViewById(R.id.afficher_image_details)
+        buttonAffiche1 = findViewById(R.id.afficher_image_details1)
+        buttonAffiche2 = findViewById(R.id.afficher_image_details2)
         auth = FirebaseAuth.getInstance()
         database = FirebaseFirestore.getInstance()
 
@@ -54,6 +58,7 @@ class MainDetailOperationActivity : AppCompatActivity() {
         val dateX = findViewById<TextView>(R.id.dateDetailTransactionVw)
         val heureX = findViewById<TextView>(R.id.heureDetailTransactionVw)
         val info = findViewById<TextView>(R.id.text_info_DetailTransactionVw)
+        origineX = findViewById(R.id.originFund)
 
         val infoCancel = findViewById<TextView>(R.id.ta)
 
@@ -69,8 +74,10 @@ class MainDetailOperationActivity : AppCompatActivity() {
         val montant = intents.getStringExtra("montant")
         val date = intents.getStringExtra("date")
         val heure = intents.getStringExtra("heure")
-        val url = intents.getStringExtra("url")
+        val url1 = intents.getStringExtra("url1")
+        val url2 = intents.getStringExtra("url2")
         val statut = intents.getStringExtra("statut")
+        val origine = intents.getStringExtra("origine")
 
         // Utilisation de la locale par défaut pour obtenir le séparateur de milliers correct
         val format = DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.getDefault()))
@@ -81,6 +88,7 @@ class MainDetailOperationActivity : AppCompatActivity() {
         montantX.text = format.format(montant?.toInt()).toString()
         dateX.text = date
         heureX.text = heure
+        origineX.text = origine
 
         // Empêcher le superviseur d'annuler une transaction
         database.collection("account")
@@ -102,13 +110,17 @@ class MainDetailOperationActivity : AppCompatActivity() {
                 }
             }
 
-        if (url == "null")
+        if (url1 == "null")
         {
             info.visibility = View.VISIBLE
         }else{
-            buttonAffiche.visibility = View.VISIBLE
-            buttonAffiche.setOnClickListener {
-                AfficheIdentite(this).show()
+            buttonAffiche1.visibility = View.VISIBLE
+            buttonAffiche1.setOnClickListener {
+                AfficheIdentite1(this).show()
+            }
+            buttonAffiche2.visibility = View.VISIBLE
+            buttonAffiche2.setOnClickListener {
+                AfficheIdentite2(this).show()
             }
         }
 
@@ -126,7 +138,8 @@ class MainDetailOperationActivity : AppCompatActivity() {
                         "montant" to montant,
                         "typeoperation" to type,
                         "statut" to false,
-                        "url" to url,
+                        "url1" to url1,
+                        "url2" to url2,
                         "idDoc" to idDoc
                     )
                     db.collection("operation")
@@ -152,8 +165,11 @@ class MainDetailOperationActivity : AppCompatActivity() {
 
     }
 
-    fun lienUrl(): String? {
-        return intent!!.getStringExtra("url")
+    fun lienUrl1(): String? {
+        return intent!!.getStringExtra("url1")
+    }
+    fun lienUrl2(): String? {
+        return intent!!.getStringExtra("url2")
     }
 
     override fun onStart() {

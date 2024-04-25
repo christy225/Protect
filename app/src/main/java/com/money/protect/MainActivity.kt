@@ -231,10 +231,9 @@ class MainActivity : AppCompatActivity() {
     private val installStateUpdatedListener = InstallStateUpdatedListener { state->
         if (state.installStatus() == InstallStatus.DOWNLOADED)
         {
-            Toast.makeText(applicationContext,
-                "Mise à jour réussie. L'application va redemarrer dans 5 secondes",
-                Toast.LENGTH_SHORT)
-                .show()
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Mise à jour réussie. L'application va rédemarrer dans 5 secondes")
+            builder.show()
             lifecycleScope.launch {
                 delay(5.seconds)
                 appUpdateManager.completeUpdate()
@@ -286,7 +285,9 @@ class MainActivity : AppCompatActivity() {
         {
             if (resultCode != RESULT_OK)
             {
-                Toast.makeText(this, "Une erreur s'est produite pendant la mise à jour", Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Une erreur s'est produite pendant la mise à jour")
+                builder.show()
             }
         }
     }

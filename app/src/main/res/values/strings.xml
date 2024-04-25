@@ -12,6 +12,9 @@
     <string name="search_date_phone_placeholder">Rechercher un numéro</string>
     <string name="search_date_phone_list_title">Liste Recherche</string>
 
+    <!-- Image upload instructions -->
+    <string name="warning_second_image">Veuillez prendre le recto de la carte</string>
+
     <!-- SETTINGS PAGE -->
     <string name="settings_page_title">Paramètres</string>
     <string name="settings_page_subtitle">Infos utilisateur</string>

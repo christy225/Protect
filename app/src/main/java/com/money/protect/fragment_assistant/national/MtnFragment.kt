@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -25,6 +26,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.money.protect.MainActivity
 import com.money.protect.R
@@ -52,12 +54,20 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
     private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
     private lateinit var stateInfo: TextView
+    private lateinit var origineFond: EditText
+    private lateinit var checkOrigine: CheckBox
+    var origine: String? = null
+    private lateinit var imagePreview1: ImageView
+    private lateinit var imagePreview2: ImageView
+    private lateinit var constraintImagePreview: ConstraintLayout
 
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
-    private var uri: Uri? = null
-    private var uploaded: Boolean = false
+    private var uri1: Uri? = null
+    private var uri2: Uri? = null
+    private var uploaded1: Boolean = false
+    private var uploaded2: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId", "SetTextI18n")
@@ -70,6 +80,8 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
+        imagePreview1 = view.findViewById(R.id.imagePreviewMtn1)
+        imagePreview2 = view.findViewById(R.id.imagePreviewMtn2)
 
         textTelephone = view.findViewById(R.id.tel_input_mtn)
         textMontant = view.findViewById(R.id.montant_input_mtn)
@@ -77,9 +89,27 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
         stateInfo = view.findViewById(R.id.stateInfoMtn)
         buttonUpload = view.findViewById(R.id.uploadPhotoMtn)
+        origineFond = view.findViewById(R.id.origine_fond_mtn)
+        checkOrigine = view.findViewById(R.id.origine_check_mtn)
 
+        constraintImagePreview = view.findViewById(R.id.constraintImagePreview)
         buttonRegister = view.findViewById(R.id.btn_register_input_mtn)
         progressBar = view.findViewById(R.id.progressBar_input_mtn)
+
+        checkOrigine.setOnClickListener {
+            if (checkOrigine.isChecked) {
+                origineFond.visibility = View.VISIBLE
+            }else{
+                origineFond.visibility = View.GONE
+            }
+        }
+
+        if (origineFond.text.isEmpty())
+        {
+            origine = "non défini"
+        }else{
+            origine = origineFond.text.toString()
+        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -218,8 +248,12 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
-            uploaded = false
+            uploaded1 = false
+            uploaded2 = false
             stateInfo.visibility = View.GONE
+            imagePreview1.setImageURI(null)
+            imagePreview2.setImageURI(null)
+            constraintImagePreview.visibility = View.GONE
             context.bottomNavUnlock()
         }
 
@@ -234,6 +268,11 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                 }else if(textTelephone.text.length < 10){
                     val builder = AlertDialog.Builder(context)
                     builder.setMessage("Ce numéro ne comporte pas les 10 chiffres requis")
+                    builder.show()
+                }else if(uploaded1 && !uploaded2 || !uploaded1 && uploaded2) {
+                    val builder = AlertDialog.Builder(context)
+                    builder.setTitle("Infos")
+                    builder.setMessage("Veuillez enregistrer le recto et le verso de la pièce d'identité")
                     builder.show()
                 }else{
                     // OUVRIR APPLICATION TIERS
@@ -273,146 +312,171 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             context.bottomNavBlocked(textTelephone.text.toString(), textMontant.text.toString())
                         }
                     }else if (buttonRegister.text === "enregistrer opération") {
+                            val builder = AlertDialog.Builder(context)
+                            builder.setMessage("Enregistrer la transaction ?")
+                            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                progressBar.visibility = View.VISIBLE
+                                buttonRegister.text = "effectuer la transaction"
+                                buttonRegister.isEnabled = false
+                                context.bottomNavUnlock()
 
-                        val builder = AlertDialog.Builder(context)
-                        builder.setMessage("Enregistrer la transaction ?")
-                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                            progressBar.visibility = View.VISIBLE
-                            buttonRegister.text = "effectuer la transaction"
-                            buttonRegister.isEnabled = false
-                            context.bottomNavUnlock()
+                                // Générer la date
+                                val current = LocalDateTime.now()
+                                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
+                                val dateFormatted = current.format(formatterDate)
 
-                            // Générer la date
-                            val current = LocalDateTime.now()
-                            val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-                            val dateFormatted = current.format(formatterDate)
+                                // Générer l'heure
+                                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
+                                val hourFormatted = current.format(formatterHour)
 
-                            // Générer l'heure
-                            val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
-                            val hourFormatted = current.format(formatterHour)
+                                val telInput = textTelephone.text
+                                val montantInput = textMontant.text
+                                val typeSpinner = typeOperation.selectedItem.toString()
 
-                            val telInput = textTelephone.text
-                            val montantInput = textMontant.text
-                            val typeSpinner = typeOperation.selectedItem.toString()
+                                // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
+                                if (checkForInternet(context)) {
+                                    if (uploaded1 && uploaded2)
+                                    {
+                                        storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                            .putFile(uri1!!)
+                                            .addOnSuccessListener { task->
+                                                task.metadata!!.reference!!.downloadUrl
+                                                    .addOnSuccessListener {it1->
 
-                            // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
-                            if (checkForInternet(context)) {
-                                if (uploaded)
-                                {
-                                    storageRef.getReference("earth").child(System.currentTimeMillis().toString())
-                                        .putFile(uri!!)
-                                        .addOnSuccessListener { task->
-                                            task.metadata!!.reference!!.downloadUrl
-                                                .addOnSuccessListener {it ->
-                                                    //formater le montant
-                                                    val theAmount = montantInput.toString()
-                                                    val caractere = ','
-                                                    val theNewAmount = theAmount.filter { it != caractere }
+                                                        storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                                            .putFile(uri2!!)
+                                                            .addOnSuccessListener {task1->
+                                                                task1.metadata!!.reference!!.downloadUrl
+                                                                    .addOnSuccessListener { it2->
+                                                                        //formater le montant
+                                                                        val theAmount = montantInput.toString()
+                                                                        val caractere = ','
+                                                                        val theNewAmount = theAmount.filter { it != caractere }
 
-                                                    val uid = UUID.randomUUID().toString()
-                                                    val operationMap = hashMapOf(
-                                                        "id" to auth.currentUser?.uid,
-                                                        "date" to dateFormatted,
-                                                        "heure" to hourFormatted,
-                                                        "operateur" to "mtn",
-                                                        "telephone" to telInput.toString(),
-                                                        "montant" to theNewAmount,
-                                                        "typeoperation" to typeSpinner,
-                                                        "statut" to true,
-                                                        "url" to it.toString(),
-                                                        "idDoc" to uid
-                                                    )
+                                                                        val uid = UUID.randomUUID().toString()
+                                                                        val operationMap = hashMapOf(
+                                                                            "id" to auth.currentUser?.uid,
+                                                                            "date" to dateFormatted,
+                                                                            "heure" to hourFormatted,
+                                                                            "operateur" to "mtn",
+                                                                            "telephone" to telInput.toString(),
+                                                                            "montant" to theNewAmount,
+                                                                            "typeoperation" to typeSpinner,
+                                                                            "statut" to true,
+                                                                            "url1" to it1.toString(),
+                                                                            "url2" to it2.toString(),
+                                                                            "idDoc" to uid,
+                                                                            "origine" to origine
+                                                                        )
 
-                                                    val tel = textTelephone.text
-                                                    val amount = textMontant.text
+                                                                        val tel = textTelephone.text
+                                                                        val amount = textMontant.text
 
-                                                    tel.clear()
-                                                    amount.clear()
-                                                    progressBar.visibility = View.GONE
-                                                    buttonRegister.isEnabled = true
-                                                    buttonRegister.text = "effectuer la transaction"
-                                                    typeOperation.setSelection(0)
-                                                    stateInfo.visibility = View.GONE
-                                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                                        tel.clear()
+                                                                        amount.clear()
+                                                                        origineFond.text.clear()
+                                                                        imagePreview1.setImageURI(null)
+                                                                        imagePreview2.setImageURI(null)
+                                                                        constraintImagePreview.visibility = View.GONE
 
-                                                    db.collection("operation")
-                                                        .document(uid)
-                                                        .set(operationMap)
-                                                        .addOnCompleteListener {
-                                                            // Ne rien faire ici
+                                                                        progressBar.visibility = View.GONE
+                                                                        buttonRegister.isEnabled = true
+                                                                        buttonRegister.text = "effectuer la transaction"
+                                                                        typeOperation.setSelection(0)
+                                                                        stateInfo.visibility = View.GONE
+                                                                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                                                        }.addOnFailureListener {
-                                                            val builder = AlertDialog.Builder(context)
-                                                            builder.setTitle("Alerte")
-                                                            builder.setMessage(R.string.onFailureText)
-                                                            builder.show()
-                                                        }
-                                                }.addOnFailureListener {
-                                                    val builer = AlertDialog.Builder(context)
-                                                    builer.setMessage(R.string.onFailureText)
-                                                    builer.show()
-                                                }
-                                        }.addOnFailureListener{
-                                            val builer = AlertDialog.Builder(context)
-                                            builer.setMessage("Erreur pendant le téléchargement de l'image.")
-                                            builer.show()
-                                        }
+                                                                        db.collection("operation")
+                                                                            .document(uid)
+                                                                            .set(operationMap)
+                                                                            .addOnCompleteListener {
+                                                                                // Ne rien faire ici
+
+                                                                            }.addOnFailureListener {
+                                                                                val builder = AlertDialog.Builder(context)
+                                                                                builder.setTitle("Alerte")
+                                                                                builder.setMessage(R.string.onFailureText)
+                                                                                builder.show()
+                                                                            }
+                                                                    }.addOnFailureListener {
+                                                                        val builer = AlertDialog.Builder(context)
+                                                                        builer.setMessage(R.string.onFailureText)
+                                                                        builer.show()
+                                                                    }
+                                                            }.addOnFailureListener {
+                                                                val builer = AlertDialog.Builder(context)
+                                                                builer.setMessage(R.string.onFailureText)
+                                                                builer.show()
+                                                            }
+                                                    }.addOnFailureListener {
+                                                        val builer = AlertDialog.Builder(context)
+                                                        builer.setMessage(R.string.onFailureText)
+                                                        builer.show()
+                                                    }
+                                            }.addOnFailureListener{
+                                                val builer = AlertDialog.Builder(context)
+                                                builer.setMessage("Erreur pendant le téléchargement de l'image.")
+                                                builer.show()
+                                            }
+                                    }else{
+
+                                        // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
+                                        //formater le montant
+                                        val theAmount = montantInput.toString()
+                                        val caractere = ','
+                                        val theNewAmount = theAmount.filter { it != caractere }
+
+                                        val uid = UUID.randomUUID().toString()
+                                        val operationMap = hashMapOf(
+                                            "id" to auth.currentUser?.uid,
+                                            "date" to dateFormatted,
+                                            "heure" to hourFormatted,
+                                            "operateur" to "mtn",
+                                            "telephone" to telInput.toString(),
+                                            "montant" to theNewAmount,
+                                            "typeoperation" to typeSpinner,
+                                            "statut" to true,
+                                            "url1" to "null",
+                                            "url2" to "null",
+                                            "idDoc" to uid,
+                                            "origine" to origine
+                                        )
+
+                                        val tel = textTelephone.text
+                                        val amount = textMontant.text
+
+                                        tel.clear()
+                                        amount.clear()
+                                        origineFond.text.clear()
+
+                                        buttonRegister.isEnabled = true
+                                        stateInfo.visibility = View.GONE
+                                        progressBar.visibility = View.INVISIBLE
+                                        buttonRegister.text = "effectuer la transaction"
+                                        typeOperation.setSelection(0)
+                                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+
+                                        db.collection("operation")
+                                            .document(uid)
+                                            .set(operationMap)
+                                            .addOnCompleteListener {
+                                                // Ne rien faire ici
+
+                                            }.addOnFailureListener {
+                                                val builder = AlertDialog.Builder(context)
+                                                builder.setTitle("Alerte")
+                                                builder.setMessage(R.string.onFailureText)
+                                                builder.show()
+                                            }
+                                    }
                                 }else{
-
-                                    // Dans le cas où l'utilisateur n'a pas enregistré d'image on met la valeur à NULL
-                                    //formater le montant
-                                    val theAmount = montantInput.toString()
-                                    val caractere = ','
-                                    val theNewAmount = theAmount.filter { it != caractere }
-
-                                    val uid = UUID.randomUUID().toString()
-                                    val operationMap = hashMapOf(
-                                        "id" to auth.currentUser?.uid,
-                                        "date" to dateFormatted,
-                                        "heure" to hourFormatted,
-                                        "operateur" to "mtn",
-                                        "telephone" to telInput.toString(),
-                                        "montant" to theNewAmount,
-                                        "typeoperation" to typeSpinner,
-                                        "statut" to true,
-                                        "url" to "null",
-                                        "idDoc" to uid
-                                    )
-
-                                    val tel = textTelephone.text
-                                    val amount = textMontant.text
-
-                                    tel.clear()
-                                    amount.clear()
-                                    buttonRegister.isEnabled = true
-                                    stateInfo.visibility = View.GONE
-                                    progressBar.visibility = View.INVISIBLE
-                                    buttonRegister.text = "effectuer la transaction"
-                                    typeOperation.setSelection(0)
-                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-
-                                    db.collection("operation")
-                                        .document(uid)
-                                        .set(operationMap)
-                                        .addOnCompleteListener {
-                                            // Ne rien faire ici
-
-                                        }.addOnFailureListener {
-                                            val builder = AlertDialog.Builder(context)
-                                            builder.setTitle("Alerte")
-                                            builder.setMessage(R.string.onFailureText)
-                                            builder.show()
-                                        }
+                                    Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                                 }
-                            }else{
-                                Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
                             }
-                        }
-                        builder.setNegativeButton(android.R.string.no){ dialog, which->
-                            // Ne rien faire
-                        }
-                        builder.show()
-
+                            builder.setNegativeButton(android.R.string.no){ dialog, which->
+                                // Ne rien faire
+                            }
+                            builder.show()
                     }
 
                 }
@@ -447,11 +511,26 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
         if (resultCode == Activity.RESULT_OK) {
             //Image Uri will not be null for RESULT_OK
-            var it: Uri = data?.data!!
+            var it1: Uri = data?.data!!
+            var it2: Uri = data?.data!!
+            constraintImagePreview.visibility = View.VISIBLE
             // Use Uri object instead of File to avoid storage permissions
-            stateInfo.visibility = View.VISIBLE
-            uri = it
-            uploaded = true
+            if (imagePreview1.drawable == null){
+                stateInfo.visibility = View.VISIBLE
+                uploaded1 = true
+                stateInfo.setText(R.string.warning_second_image)
+                uri1 = it1
+                it1?.let {uri->
+                    imagePreview1.setImageURI(uri)
+                }
+            }else{
+                stateInfo.visibility = View.GONE
+                uri2 = it2
+                uploaded2 = true
+                it2?.let {uri->
+                    imagePreview2.setImageURI(uri2)
+                }
+            }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
         } else {

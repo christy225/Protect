@@ -217,7 +217,7 @@
                             android:background="@color/white"
                             android:layout_marginHorizontal="20dp"
                             android:hint="Téléphone"
-                            android:inputType="number"
+                            android:inputType="phone"
                             android:paddingStart="30dp"
                             style="@style/inputFont"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -274,17 +274,23 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <CheckBox
+                        android:id="@+id/origine_check_moov"
                         android:layout_marginTop="5dp"
-                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Origine des fonds"/>
 
                     <EditText
-                        android:inputType="textLongMessage"
+                        android:id="@+id/origine_fond_moov"
+                        android:hint="Ecrire..."
+                        android:inputType="textMultiLine"
+                        android:lines="8"
+                        android:maxLines="10"
+                        android:minLines="6"
+                        android:visibility="gone"
+                        android:scrollbars="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Ecrire ici..."/>
+                        android:layout_height="100dp"/>
 
                     <Button
                         android:id="@+id/uploadPhotoMoov"

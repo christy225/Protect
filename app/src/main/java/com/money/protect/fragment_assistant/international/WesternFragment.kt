@@ -183,7 +183,7 @@ class WesternFragment(private val context: MainActivity) : Fragment() {
                         if (checkForInternet(context)) {
                             if (uploaded)
                             {
-                                storageRef.getReference("earth").child(System.currentTimeMillis().toString())
+                                storageRef.getReference("images").child(System.currentTimeMillis().toString())
                                     .putFile(uri!!)
                                     .addOnSuccessListener { task->
                                         task.metadata!!.reference!!.downloadUrl

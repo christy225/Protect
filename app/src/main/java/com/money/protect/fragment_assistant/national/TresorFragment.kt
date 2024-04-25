@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -54,6 +55,9 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
     lateinit var buttonRegister: AppCompatButton
     lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
+    private lateinit var origineFond: EditText
+    private lateinit var checkOrigine: CheckBox
+    var origine: String? = null
 
     private var textWatcher: TextWatcher? = null
 
@@ -79,6 +83,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
         textMontant = view.findViewById(R.id.montant_input_tresor)
         typeOperation = view.findViewById(R.id.type_op_spinner_tresor)
         stateInfo = view.findViewById(R.id.stateInfoTresor)
+        origineFond = view.findViewById(R.id.origine_fond_tresor)
+        checkOrigine = view.findViewById(R.id.origine_check_tresor)
 
         buttonUpload = view.findViewById(R.id.uploadPhotoTresor)
 
@@ -89,6 +95,20 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
 
         }
 
+        checkOrigine.setOnClickListener {
+            if (checkOrigine.isChecked) {
+                origineFond.visibility = View.VISIBLE
+            }else{
+                origineFond.visibility = View.GONE
+            }
+        }
+
+        if (origineFond.text.isEmpty())
+        {
+            origine = "non défini"
+        }else{
+            origine = origineFond.text.toString()
+        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -296,7 +316,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                             if (checkForInternet(context)) {
                                 if (uploaded)
                                 {
-                                    storageRef.getReference("earth").child(System.currentTimeMillis().toString())
+                                    storageRef.getReference("images").child(System.currentTimeMillis().toString())
                                         .putFile(uri!!)
                                         .addOnSuccessListener { task->
                                             task.metadata!!.reference!!.downloadUrl
@@ -317,7 +337,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                                         "typeoperation" to typeSpinner,
                                                         "statut" to true,
                                                         "url" to it.toString(),
-                                                        "idDoc" to uid
+                                                        "idDoc" to uid,
+                                                        "origine" to origine
                                                     )
 
                                                     val tel = textTelephone.text
@@ -331,6 +352,7 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                                                 buttonRegister.isEnabled = true
                                                                 tel.clear()
                                                                 amount.clear()
+                                                                origineFond.text.clear()
                                                                 stateInfo.visibility = View.GONE
                                                                 progressBar.visibility = View.INVISIBLE
                                                                 buttonRegister.text = "effectuer la transaction"
@@ -372,7 +394,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                         "typeoperation" to typeSpinner,
                                         "statut" to true,
                                         "url" to "null",
-                                        "idDoc" to uid
+                                        "idDoc" to uid,
+                                        "origine" to origine
                                     )
 
                                     val tel = textTelephone.text
@@ -386,6 +409,8 @@ class TresorFragment(private val context: MainActivity) : Fragment() {
                                                 buttonRegister.isEnabled = true
                                                 tel.clear()
                                                 amount.clear()
+                                                origineFond.text.clear()
+
                                                 stateInfo.visibility = View.GONE
                                                 progressBar.visibility = View.INVISIBLE
                                                 buttonRegister.text = "effectuer la transaction"

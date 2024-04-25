@@ -55,6 +55,9 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
     lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
     private var textWatcher: TextWatcher? = null
+    private lateinit var origineFond: EditText
+    private lateinit var checkOrigine: CheckBox
+    var origine: String? = null
 
     private var storageRef = Firebase.storage
     private var uri: Uri? = null
@@ -81,9 +84,26 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
         typeOperation = view.findViewById(R.id.type_op_spinner_wave)
         stateInfo = view.findViewById(R.id.stateInfoWave)
         buttonUpload = view.findViewById(R.id.uploadPhotoWave)
+        origineFond = view.findViewById(R.id.origine_fond_wave)
+        checkOrigine = view.findViewById(R.id.origine_check_wave)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_wave)
         progressBar = view.findViewById(R.id.progressBar_input_wave)
+
+        checkOrigine.setOnClickListener {
+            if (checkOrigine.isChecked) {
+                origineFond.visibility = View.VISIBLE
+            }else{
+                origineFond.visibility = View.GONE
+            }
+        }
+
+        if (origineFond.text.isEmpty())
+        {
+            origine = "non défini"
+        }else{
+            origine = origineFond.text.toString()
+        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -289,7 +309,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                             if (checkForInternet(context)) {
                                 if (uploaded)
                                 {
-                                    storageRef.getReference("earth").child(System.currentTimeMillis().toString())
+                                    storageRef.getReference("images").child(System.currentTimeMillis().toString())
                                         .putFile(uri!!)
                                         .addOnSuccessListener { task->
                                             task.metadata!!.reference!!.downloadUrl
@@ -318,7 +338,8 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                                         "typeoperation" to typeSpinner,
                                                         "statut" to true,
                                                         "url" to it.toString(),
-                                                        "idDoc" to uid
+                                                        "idDoc" to uid,
+                                                        "origine" to origine
                                                     )
 
                                                     val tel = textTelephone.text
@@ -331,6 +352,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                                             if (it.isSuccessful) {
                                                                 tel.clear()
                                                                 amount.clear()
+                                                                origineFond.text.clear()
                                                                 buttonRegister.isEnabled = true
                                                                 stateInfo.visibility = View.GONE
                                                                 progressBar.visibility = View.INVISIBLE
@@ -380,7 +402,8 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                         "typeoperation" to typeSpinner,
                                         "statut" to true,
                                         "url" to "null",
-                                        "idDoc" to uid
+                                        "idDoc" to uid,
+                                        "origine" to origine
                                     )
 
                                     val tel = textTelephone.text
@@ -394,6 +417,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                             if (it.isSuccessful) {
                                                 tel.clear()
                                                 amount.clear()
+                                                origineFond.text.clear()
                                                 buttonRegister.isEnabled = true
                                                 stateInfo.visibility = View.GONE
                                                 progressBar.visibility = View.INVISIBLE

@@ -13,6 +13,8 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -48,6 +50,9 @@ class OrangeSaveActivity : AppCompatActivity() {
     private lateinit var button: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var buttonCancel: TextView
+    private lateinit var origineFond: EditText
+    private lateinit var checkOrigine: CheckBox
+    var origine: String? = null
 
     private var storageRef = Firebase.storage
     private var uri: Uri? = null
@@ -75,6 +80,23 @@ class OrangeSaveActivity : AppCompatActivity() {
         stateInfo = findViewById(R.id.stateInfoOrange)
         buttonCancel = findViewById(R.id.btnCancelOperationOrangeMoney)
         progressBar = findViewById(R.id.progressBarOrange)
+        origineFond = findViewById(R.id.origine_fond_orange)
+        checkOrigine = findViewById(R.id.origine_check_orange)
+
+        checkOrigine.setOnClickListener {
+            if (checkOrigine.isChecked) {
+                origineFond.visibility = View.VISIBLE
+            }else{
+                origineFond.visibility = View.GONE
+            }
+        }
+
+        if (origineFond.text.isEmpty())
+        {
+            origine = "non défini"
+        }else{
+            origine = origineFond.text.toString()
+        }
 
         intents = intent
         val sms = intents.getStringExtra("sms")
@@ -174,7 +196,8 @@ class OrangeSaveActivity : AppCompatActivity() {
                                                 "statut" to true,
                                                 "url" to it.toString(),
                                                 "idDoc" to uid,
-                                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
+                                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),""),
+                                                "origine" to origine
                                             )
 
                                             db.collection("operation")
@@ -230,7 +253,8 @@ class OrangeSaveActivity : AppCompatActivity() {
                                 "statut" to true,
                                 "url" to "null",
                                 "idDoc" to uid,
-                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
+                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),""),
+                                "origine" to origine
                             )
                             db.collection("operation")
                                 .document(uid)

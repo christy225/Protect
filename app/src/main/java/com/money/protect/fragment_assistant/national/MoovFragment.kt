@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -54,6 +55,9 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
     private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
 
+    private lateinit var origineFond: EditText
+    private lateinit var checkOrigine: CheckBox
+    var origine: String? = null
     private var textWatcher: TextWatcher? = null
 
     private var storageRef = Firebase.storage
@@ -78,11 +82,28 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         textMontant = view.findViewById(R.id.montant_input_moov)
         typeOperation = view.findViewById(R.id.type_op_spinner_moov)
         stateInfo = view.findViewById(R.id.stateInfoMoov)
+        origineFond = view.findViewById(R.id.origine_fond_moov)
+        checkOrigine = view.findViewById(R.id.origine_check_moov)
 
         buttonUpload = view.findViewById(R.id.uploadPhotoMoov)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_moov)
         progressBar = view.findViewById(R.id.progressBar_input_moov)
+
+        checkOrigine.setOnClickListener {
+            if (checkOrigine.isChecked) {
+                origineFond.visibility = View.VISIBLE
+            }else{
+                origineFond.visibility = View.GONE
+            }
+        }
+
+        if (origineFond.text.isEmpty())
+        {
+            origine = "non défini"
+        }else{
+            origine = origineFond.text.toString()
+        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -363,11 +384,10 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
         val montantInput = textMontant.text
         val typeSpinner = typeOperation.selectedItem.toString()
 
-
         // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
         if (uploaded)
         {
-            storageRef.getReference("earth").child(System.currentTimeMillis().toString())
+            storageRef.getReference("images").child(System.currentTimeMillis().toString())
                 .putFile(uri!!)
                 .addOnSuccessListener { task->
                     task.metadata!!.reference!!.downloadUrl
@@ -388,7 +408,8 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                                 "typeoperation" to typeSpinner,
                                 "statut" to true,
                                 "url" to it.toString(),
-                                "idDoc" to uid
+                                "idDoc" to uid,
+                                "origine" to origine
                             )
 
                             db.collection("operation")
@@ -398,6 +419,8 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                                 if (it.isSuccessful) {
                                     telInput.clear()
                                     montantInput.clear()
+                                    origineFond.text.clear()
+
                                     buttonRegister.isEnabled = true
                                     progressBar.visibility = View.INVISIBLE
                                     buttonRegister.text = "effectuer la transaction"
@@ -440,7 +463,8 @@ class MoovFragment(private val context: MainActivity) : Fragment() {
                 "typeoperation" to typeSpinner,
                 "statut" to true,
                 "url" to "null",
-                "idDoc" to uid
+                "idDoc" to uid,
+                "origine" to origine
             )
 
             db.collection("operation")

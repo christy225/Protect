@@ -190,6 +190,25 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <CheckBox
+                        android:id="@+id/origine_check_wave"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Origine des fonds"/>
+
+                    <EditText
+                        android:id="@+id/origine_fond_wave"
+                        android:hint="Ecrire..."
+                        android:inputType="textMultiLine"
+                        android:lines="8"
+                        android:maxLines="10"
+                        android:minLines="6"
+                        android:visibility="gone"
+                        android:scrollbars="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"/>
+
+                    <CheckBox
                         android:id="@+id/checkboxAfficheNumeroEdt"
                         android:layout_marginTop="10dp"
                         android:layout_width="wrap_content"
