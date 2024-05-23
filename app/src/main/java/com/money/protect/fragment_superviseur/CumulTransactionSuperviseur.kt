@@ -1,6 +1,7 @@
 package com.money.protect.fragment_superviseur
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
@@ -11,7 +12,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FirebaseFirestore
@@ -74,6 +74,7 @@ class CumulTransactionSuperviseur(
         val identifiant = data?.getString("id")
         val nom = data?.getString("nom")
         val module = data?.getString("module")
+        val capital = data?.getString("capital")
 
         orange1 = view.findViewById(R.id.ma1)
         orange2 = view.findViewById(R.id.maa1)
@@ -113,6 +114,7 @@ class CumulTransactionSuperviseur(
 
                     db.collection("operation")
                         .whereEqualTo("id", identifiant)
+                        .whereEqualTo("date", datePicker.text.toString())
                         .get()
                         .addOnSuccessListener { documents->
                             loader.visibility = View.GONE
@@ -145,11 +147,10 @@ class CumulTransactionSuperviseur(
                                 {
                                     val operateur = donnee.data["operateur"].toString()
                                     val typeOperateur = donnee.data["typeoperation"].toString()
-                                    val date = donnee.data["date"].toString()
                                     val statut = donnee.data["statut"].toString().toBoolean()
 
                                     // Statut pour vérifier que la transaction n'est pas annulée
-                                    if (operateur == "orange" && date == datePicker.text.toString() && statut)
+                                    if (operateur == "orange" && statut)
                                     {
                                         if (typeOperateur == "Dépôt")
                                         {
@@ -166,7 +167,7 @@ class CumulTransactionSuperviseur(
                                             sumRet1 += 1
                                         }
                                     }
-                                    if (operateur == "mtn" && date == datePicker.text.toString() && statut)
+                                    if (operateur == "mtn" && statut)
                                     {
                                         if (typeOperateur == "Dépôt")
                                         {
@@ -183,7 +184,7 @@ class CumulTransactionSuperviseur(
                                             sumRet2 += 1
                                         }
                                     }
-                                    if (operateur == "moov" && date == datePicker.text.toString() && statut)
+                                    if (operateur == "moov" && statut)
                                     {
                                         if (typeOperateur == "Dépôt")
                                         {
@@ -200,7 +201,7 @@ class CumulTransactionSuperviseur(
                                             sumRet3 += 1
                                         }
                                     }
-                                    if (operateur == "wave" && date == datePicker.text.toString() && statut)
+                                    if (operateur == "wave" && statut)
                                     {
                                         if (typeOperateur == "Dépôt")
                                         {
@@ -217,7 +218,7 @@ class CumulTransactionSuperviseur(
                                             sumRet4 += 1
                                         }
                                     }
-                                    if (operateur == "tresor money" && date == datePicker.text.toString() && statut)
+                                    if (operateur == "tresor money" && statut)
                                     {
                                         if (typeOperateur == "Dépôt")
                                         {
@@ -236,7 +237,9 @@ class CumulTransactionSuperviseur(
                                     }
                                 }
                             }else{
-                                Toast.makeText(context, "Aucun résultat", Toast.LENGTH_SHORT).show()
+                                val builder = AlertDialog.Builder(context)
+                                builder.setMessage("Aucun résultat disponible à cette date")
+                                builder.show()
                             }
 
                             // Utilisation de la locale par défaut pour obtenir le séparateur de milliers correct
@@ -291,6 +294,7 @@ class CumulTransactionSuperviseur(
             bundle.putString("id", identifiant)
             bundle.putString("nom", nom)
             bundle.putString("module", module)
+            bundle.putString("capital", capital)
             menuFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, menuFragment)

@@ -5,8 +5,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Telephony
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.money.protect.adapter.SmsOrangeAdapter
@@ -20,6 +22,7 @@ class OrangeSmsListActivity : AppCompatActivity() {
     private lateinit var smsList: ArrayList<String>
     private lateinit var recyclerView: RecyclerView
     private lateinit var smsAdapter: SmsOrangeAdapter
+    private lateinit var progressBar: ProgressBar
     @SuppressLint("MissingInflatedId", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +32,7 @@ class OrangeSmsListActivity : AppCompatActivity() {
 
         smsList = arrayListOf()
         recyclerView = findViewById(R.id.recyclerViewListSmsOrange)
+        progressBar = findViewById(R.id.progressBarSmsList)
         smsAdapter = SmsOrangeAdapter(this, smsList)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = smsAdapter
@@ -41,12 +45,12 @@ class OrangeSmsListActivity : AppCompatActivity() {
         val btn = findViewById<Button>(R.id.buttonRefresh)
 
         btn.setOnClickListener {
-            smsList = arrayListOf()
-            recyclerView = findViewById(R.id.recyclerViewListSmsOrange)
-            smsAdapter = SmsOrangeAdapter(this, smsList)
-            recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = smsAdapter
-            retrieveSms()
+                smsList = arrayListOf()
+                recyclerView = findViewById(R.id.recyclerViewListSmsOrange)
+                smsAdapter = SmsOrangeAdapter(this, smsList)
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = smsAdapter
+                retrieveSms()
         }
 
         retrieveSms()
@@ -67,6 +71,7 @@ class OrangeSmsListActivity : AppCompatActivity() {
             withContext(Dispatchers.Main){
                 smsList.clear()
                 if (cursor != null) {
+                    progressBar.visibility = View.INVISIBLE
                     while (cursor.moveToNext()) {
                         val bodyIndex = cursor.getColumnIndex(Telephony.Sms.BODY)
                         val smsBody = cursor.getString(bodyIndex)

@@ -1,7 +1,6 @@
 package com.money.protect.fragment_assistant
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.MainActivity
@@ -28,7 +27,6 @@ import com.money.protect.adapter.OperationAdapter
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.money.protect.models.TransactionModel
 import java.util.Calendar
-import java.util.Locale
 
 class SearchAdvancedFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -41,6 +39,7 @@ class SearchAdvancedFragment(private val context: MainActivity) : Fragment() {
     lateinit var adapter: OperationAdapter
     lateinit var button: Button
     private lateinit var progressBar: ProgressBar
+    private lateinit var libellNoResult: TextView
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -60,30 +59,14 @@ class SearchAdvancedFragment(private val context: MainActivity) : Fragment() {
 
         db = FirebaseFirestore.getInstance()
 
-        transactionArrayList = arrayListOf()
-
         progressBar = view.findViewById(R.id.progressBarSearchAdvanced)
 
         datePicker = view.findViewById(R.id.datePickerAdvanced)
-        adapter = OperationAdapter(context, transactionArrayList)
         recyclerView = view.findViewById(R.id.recyclerViewSearchAdvanced)
         numero = view.findViewById(R.id.numberAdvanced)
         montant = view.findViewById(R.id.montantAdvanced)
         button = view.findViewById(R.id.btnSearchAdvanced)
-
-        // Initialiser le recyclerView
-        db.collection("operation")
-            .orderBy("heure", Query.Direction.DESCENDING)
-            .get().addOnSuccessListener { documents->
-                for (data in documents){
-                    val transaction = data.toObject(TransactionModel::class.java)
-                    if (transaction != null) {
-                        transactionArrayList.add(transaction)
-                    }
-                }
-            }.addOnFailureListener {
-                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-            }
+        libellNoResult = view.findViewById(R.id.searchAdvancedNoResult)
 
         // Récupérer la date entrée par l'utilistauer
         datePicker.setOnClickListener {
@@ -105,50 +88,41 @@ class SearchAdvancedFragment(private val context: MainActivity) : Fragment() {
             datePickerDialog.show()
         }
 
-
         button.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
             if (numero.text.isEmpty() || montant.text.isEmpty() || datePicker.text.isEmpty())
             {
                 Toast.makeText(context, "Veuillez saisir tous les champs", Toast.LENGTH_SHORT).show()
             }else{
-                progressBar.visibility = View.INVISIBLE
-                filterList(numero.text.toString(), montant.text.toString(), datePicker.text.toString())
-                recyclerView.adapter = adapter
-                recyclerView.layoutManager = LinearLayoutManager(context)
+                progressBar.visibility = View.VISIBLE
+                transactionArrayList = arrayListOf()
+                // Initialiser le recyclerView
+                db.collection("operation")
+                    .whereEqualTo("id", auth.currentUser?.uid)
+                    .whereEqualTo("telephone", numero.text.toString())
+                    .whereEqualTo("montant", montant.text.toString())
+                    .whereEqualTo("date", datePicker.text.toString())
+                    .get().addOnSuccessListener { documents->
+                        if (documents.isEmpty){
+                            libellNoResult.visibility = View.VISIBLE
+                            progressBar.visibility = View.INVISIBLE
+                        }else{
+                            for (data in documents){
+                                val transaction = data.toObject(TransactionModel::class.java)
+                                transactionArrayList.add(transaction)
+                                progressBar.visibility = View.INVISIBLE
+                                transactionArrayList.sortByDescending { it.heure }
+                                adapter = OperationAdapter(context, transactionArrayList)
+                                recyclerView.adapter = adapter
+                                recyclerView.layoutManager = LinearLayoutManager(context)
+                            }
+                        }
+                    }.addOnFailureListener {
+                        Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                    }
             }
         }
 
         return view
-    }
-
-    private fun filterList(num: String, mon: String, dat: String) {
-        if (num != null && mon != null && dat != null)
-        {
-            val filteredList = ArrayList<TransactionModel>()
-            progressBar.visibility = View.VISIBLE
-            val searchArrayList = transactionArrayList.filter { it.id == auth.currentUser?.uid }
-            for (i in searchArrayList)
-            {
-                if (i.telephone.lowercase(Locale.ROOT).contains(num) &&
-                    i.montant.lowercase(Locale.ROOT).contains(mon) &&
-                    i.date.lowercase(Locale.ROOT).contains(dat))
-                {
-                    progressBar.visibility = View.INVISIBLE
-                    filteredList.add(i)
-                }
-            }
-            if (filteredList.isNotEmpty())
-            {
-                adapter.setFilteredList(filteredList)
-            }else{
-                progressBar.visibility = View.INVISIBLE
-                adapter.setFilteredList(filteredList)
-                val builder = AlertDialog.Builder(context)
-                builder.setMessage("Aucun résultat pour cette date")
-                builder.show()
-            }
-        }
     }
 
 }

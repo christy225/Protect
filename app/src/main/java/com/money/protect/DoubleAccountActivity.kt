@@ -36,15 +36,30 @@ class DoubleAccountActivity : AppCompatActivity() {
         compte1 = findViewById(R.id.lienCompte1)
         compte2 = findViewById(R.id.lienCompte2)
 
+        val intent = intent
+
+        val nomcommercial = intent.getStringExtra("nomcommercial")
+        val creation = intent.getStringExtra("creation")
+        val module = intent.getStringExtra("module")
+        val duration = intent.getStringExtra("duration")
+
         compte1.setOnClickListener {
             val intent1 = Intent(this, MainActivity::class.java)
             intent1.putExtra("compte", "compte1")
+            intent1.putExtra("module", module)
+            intent1.putExtra("nomcommercial", nomcommercial)
+            intent1.putExtra("creation", creation)
+            intent1.putExtra("duration", duration)
             startActivity(intent1)
             finish()
         }
         compte2.setOnClickListener {
             val intent2 = Intent(this, MainActivity::class.java)
             intent2.putExtra("compte", "compte2")
+            intent2.putExtra("module", module)
+            intent2.putExtra("nomcommercial", nomcommercial)
+            intent2.putExtra("creation", creation)
+            intent2.putExtra("duration", duration)
             startActivity(intent2)
             finish()
         }

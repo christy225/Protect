@@ -1,7 +1,6 @@
 package com.money.protect.fragment_assistant
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
@@ -24,21 +24,20 @@ import com.money.protect.models.TransactionModel
 import com.money.protect.adapter.OperationAdapter
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.Calendar
-import java.util.Locale
 
 class SearchDateFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     private lateinit var auth : FirebaseAuth
     private lateinit var datePicker: EditText
-    lateinit var button: AppCompatImageButton
+    private lateinit var btnSearch: AppCompatImageButton
     private lateinit var transactionArrayList: ArrayList<TransactionModel>
     lateinit var adapter: OperationAdapter
     lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var libellNoResult: TextView
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -59,25 +58,10 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
 
         db = FirebaseFirestore.getInstance()
         datePicker = view.findViewById(R.id.datePicker)
-        button = view.findViewById(R.id.button_search_date)
-        transactionArrayList = arrayListOf()
+        btnSearch = view.findViewById(R.id.searchDateButton)
         recyclerView = view.findViewById(R.id.recyclerViewSearchDate)
         progressBar = view.findViewById(R.id.progressBarSearchdate)
-        adapter = OperationAdapter(context, transactionArrayList)
-
-        // Initialiser le recyclerView
-        db.collection("operation")
-            .orderBy("heure", Query.Direction.DESCENDING)
-            .get().addOnSuccessListener { documents->
-            for (data in documents){
-                val transaction = data.toObject(TransactionModel::class.java)
-                if (transaction != null) {
-                    transactionArrayList.add(transaction)
-                }
-            }
-        }.addOnFailureListener {
-            Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-        }
+        libellNoResult = view.findViewById(R.id.searchDateNoResult)
 
         // Récupérer la date entrée par l'utilistauer
         datePicker.setOnClickListener {
@@ -91,10 +75,7 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
                 context, { view, year, monthOfYear, dayOfMonth ->
                     val dat = (dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year)
                     datePicker.setText(dat)
-                    // On met à jour automatiquement le tableau de recherche
-                    filterList(datePicker.text.toString())
-                    recyclerView.adapter = adapter
-                    recyclerView.layoutManager = LinearLayoutManager(context)
+
                 },
                 year,
                 month,
@@ -103,34 +84,36 @@ class SearchDateFragment(private val context: MainActivity) : Fragment() {
             datePickerDialog.show()
         }
 
-        return view
-    }
-
-    private fun filterList(query: String) {
-        if (query != null)
-        {
-            val filteredList = ArrayList<TransactionModel>()
+        btnSearch.setOnClickListener {
             progressBar.visibility = View.VISIBLE
-            val searchArrayList = transactionArrayList.filter { it.id == auth.currentUser?.uid }
-            for (i in searchArrayList)
-            {
-                if (i.date.lowercase(Locale.ROOT).contains(query))
-                {
-                    progressBar.visibility = View.INVISIBLE
-                    filteredList.add(i)
+            transactionArrayList = arrayListOf()
+            // Initialiser le recyclerView
+            db.collection("operation")
+                .whereEqualTo("date", datePicker.text.toString())
+                .whereEqualTo("id", auth.currentUser?.uid)
+                .get().addOnSuccessListener { documents->
+                    if (documents.isEmpty) {
+                        libellNoResult.visibility = View.VISIBLE
+                        progressBar.visibility = View.INVISIBLE
+                    }else{
+                        for (data in documents){
+                            val transaction = data.toObject(TransactionModel::class.java)
+                            transactionArrayList.add(transaction)
+                            // On met à jour automatiquement le tableau de recherche
+                            transactionArrayList.sortByDescending { it.heure }
+                            progressBar.visibility = View.INVISIBLE
+                            adapter = OperationAdapter(context, transactionArrayList)
+                            recyclerView.adapter = adapter
+                            recyclerView.layoutManager = LinearLayoutManager(context)
+                        }
+                    }
+                }.addOnFailureListener {
+                    Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
                 }
-            }
-            if (filteredList.isNotEmpty())
-            {
-                adapter.setFilteredList(filteredList)
-            }else{
-                progressBar.visibility = View.INVISIBLE
-                adapter.setFilteredList(filteredList)
-                val builder = AlertDialog.Builder(context)
-                builder.setMessage("Aucun résultat pour cette date")
-                builder.show()
-            }
+
         }
+
+        return view
     }
 
 }

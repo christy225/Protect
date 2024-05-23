@@ -1,7 +1,6 @@
 package com.money.protect.fragment_assistant
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -25,26 +24,24 @@ import com.money.protect.models.PointModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 class PointFragment(private val context: MainActivity) : Fragment() {
     private var db = Firebase.firestore
     lateinit var auth: FirebaseAuth
-    lateinit var orange: EditText
-    lateinit var mtn: EditText
-    lateinit var moov: EditText
-    lateinit var wave: EditText
-    lateinit var tresor: EditText
+    private lateinit var orange: EditText
+    private lateinit var mtn: EditText
+    private lateinit var moov: EditText
+    private lateinit var wave: EditText
+    private lateinit var tresor: EditText
     private lateinit var retraitInter: EditText
     private lateinit var envoiInter: EditText
     private lateinit var especes: EditText
-    lateinit var divers: EditText
+    private lateinit var divers: EditText
     private lateinit var pointArrayList: ArrayList<PointModel>
-    lateinit var button: AppCompatButton
-    lateinit var progressBar: ProgressBar
+    private lateinit var button: AppCompatButton
+    private lateinit var progressBar: ProgressBar
     private lateinit var superviseurId: String
     private lateinit var warning: TextView
     private var moovTxt: Int = 0
@@ -150,69 +147,13 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                 {
                     superviseurId = data!!.data["superviseur"].toString()
                     module = data.data["module"].toString()
-
-                    // VERIFIER L'ETAT D'ABONNEMENT
-
-                    db.collection("abonnement")
-                        .whereEqualTo("id", superviseurId)
-                        .get()
-                        .addOnSuccessListener {document->
-                            for (data in document)
-                            {
-                                val dureeAutorisee = data!!.data["duration"].toString()
-                                val creation = data!!.data["creation"].toString()
-
-                                // On formate la date de création réçue de la BDD
-                                val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
-                                val date0 = LocalDate.parse(creation, formatter)
-
-                                // On récupère la date du jour
-                                val current = LocalDateTime.now()
-                                val dateFormatted = current.format(formatter)
-                                val date1 = LocalDate.parse(dateFormatted, formatter)
-
-                                val jourEcoules = ChronoUnit.DAYS.between(date0, date1)
-                                val duree = dureeAutorisee.toLong() - jourEcoules
-
-                                // SI ON A ATTEINT LA DUREE AUTORISEE LE COMPTE EST VEROUILLE
-                                if (duree < 0)
-                                {
-                                    // APPLIQUER EXPIRATION DE L'ABONNEMENT
-
-                                    val abonnementMap = hashMapOf(
-                                        "creation" to creation,
-                                        "duration" to "30",
-                                        "id" to superviseurId,
-                                        "statut" to false
-                                    )
-                                    db.collection("abonnement")
-                                        .document(superviseurId!!)
-                                        .set(abonnementMap)
-                                        .addOnSuccessListener {
-                                            auth.signOut()
-                                            val intent = Intent(context, com.money.protect.AbonnementActivity::class.java)
-                                            startActivity(intent)
-                                        }.addOnFailureListener {
-                                            val builder = AlertDialog.Builder(context)
-                                            builder.setTitle("Erreur")
-                                            builder.setMessage("Une erreur s'est produite.")
-                                            builder.show()
-                                        }
-
-                                    // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
-
-                                }
-                            }
-                        }.addOnFailureListener {
-                            Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
-                        }
-
-                    // VERIFIER L'ETAT D'ABONNEMENT DU SUPERVISEUR
                 }
             }
 
         // VERIFIER QUE L'UTILISATEUR N'A PAS DEJA ENVOYE UN POINT
         db.collection("point")
+            .whereEqualTo("id", auth.currentUser?.uid)
+            .whereEqualTo("superviseur", superviseurId)
             .whereEqualTo("date", dateFormatted)
             .get()
             .addOnSuccessListener {docs->
@@ -312,7 +253,9 @@ class PointFragment(private val context: MainActivity) : Fragment() {
                     "date" to dateFormatted,
                     "superviseur" to superviseurId
                 )
-                db.collection("point").add(pointMap).addOnSuccessListener {
+                db.collection("point")
+                    .add(pointMap)
+                    .addOnSuccessListener {
                     Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
                     progressBar.visibility = View.INVISIBLE
 

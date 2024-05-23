@@ -28,7 +28,6 @@ class MainDetailOperationActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private var database = Firebase.firestore
     private lateinit var intents: Intent
-    private lateinit var origineX: TextView
     private lateinit var buttonAffiche1: Button
     private lateinit var buttonAffiche2: Button
     private lateinit var buttonCancel: Button
@@ -58,7 +57,6 @@ class MainDetailOperationActivity : AppCompatActivity() {
         val dateX = findViewById<TextView>(R.id.dateDetailTransactionVw)
         val heureX = findViewById<TextView>(R.id.heureDetailTransactionVw)
         val info = findViewById<TextView>(R.id.text_info_DetailTransactionVw)
-        origineX = findViewById(R.id.originFund)
 
         val infoCancel = findViewById<TextView>(R.id.ta)
 
@@ -77,7 +75,6 @@ class MainDetailOperationActivity : AppCompatActivity() {
         val url1 = intents.getStringExtra("url1")
         val url2 = intents.getStringExtra("url2")
         val statut = intents.getStringExtra("statut")
-        val origine = intents.getStringExtra("origine")
 
         // Utilisation de la locale par défaut pour obtenir le séparateur de milliers correct
         val format = DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.getDefault()))
@@ -88,7 +85,6 @@ class MainDetailOperationActivity : AppCompatActivity() {
         montantX.text = format.format(montant?.toInt()).toString()
         dateX.text = date
         heureX.text = heure
-        origineX.text = origine
 
         // Empêcher le superviseur d'annuler une transaction
         database.collection("account")

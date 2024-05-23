@@ -267,25 +267,6 @@
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <CheckBox
-                        android:id="@+id/origine_check_mtn"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Origine des fonds"/>
-
-                    <EditText
-                        android:id="@+id/origine_fond_mtn"
-                        android:hint="Ecrire..."
-                        android:inputType="textMultiLine"
-                        android:lines="8"
-                        android:maxLines="10"
-                        android:minLines="6"
-                        android:visibility="gone"
-                        android:scrollbars="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
-
                     <Button
                         android:id="@+id/uploadPhotoMtn"
                         android:layout_width="wrap_content"
@@ -295,6 +276,7 @@
                         android:layout_marginTop="15dp"
                         android:textColor="#0084C1"
                         android:textStyle="bold"
+                        android:drawableLeft="@drawable/baseline_add_a_photo_24"
                         android:backgroundTint="#EAEAEA"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

@@ -12,5 +12,8 @@ data class AccountModel(
     val nomcommercial: String = "",
     val ville: String = "",
     val quartier: String = "",
-    val creation: String = ""
+    val creation: String = "",
+    val duration: String = "",
+    val abonnement: String = "",
+    val capital: String = ""
 )

@@ -3,7 +3,6 @@ package com.money.protect.fragment_superviseur
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,16 +30,13 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
 import java.text.DecimalFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import java.util.Calendar
-import java.util.Locale
 
 class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
-    lateinit var auth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth
     private lateinit var resultat: TextView
     private lateinit var button: Button
 
@@ -55,7 +51,8 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
     private lateinit var recyclerView: RecyclerView
     private lateinit var pointArrayList: ArrayList<PointModel>
 
-    lateinit var progressBar: ProgressBar
+    private lateinit var progressBar: ProgressBar
+    private lateinit var imageSuccess: ImageView
 
     private var verificationSoldeDefini: Boolean = false
     private var etatCapital: Boolean = false
@@ -80,6 +77,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         val id = data?.getString("id")
         val nom = data?.getString("nom")
         val assignation = data?.getString("module")
+        val capital = data?.getString("capital")
 
         val nomAssistant = view.findViewById<TextView>(R.id.nom_assistant)
         nomAssistant.text = nom
@@ -94,6 +92,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         datePicker = view.findViewById(R.id.superviseur_point_datePicker)
         buttonSearchDate = view.findViewById(R.id.superviseur_point_btn_search)
         progressBar = view.findViewById(R.id.superviseur_point_progressbar)
+        imageSuccess = view.findViewById(R.id.success_point)
 
         retrieveArrayList = arrayListOf()
         capitalArrayList = arrayListOf()
@@ -101,8 +100,6 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
         pointArrayList = arrayListOf()
 
         adapter = LePointAdapter(context, pointArrayList)
-
-        progressBar.visibility = View.VISIBLE
 
         val linkToHome = view.findViewById<ImageView>(R.id.backToHomeSuperviseur)
         linkToHome.setOnClickListener {
@@ -120,69 +117,13 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", assignation)
+            bundle.putString("capital", capital)
             menuFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, menuFragment)
                 .addToBackStack(null)
                 .commit()
         }
-
-
-        // VERIFIER L'ETAT D'ABONNEMENT
-
-        db.collection("abonnement")
-            .whereEqualTo("id", auth.currentUser?.uid)
-            .get()
-            .addOnSuccessListener {document->
-                for (data in document)
-                {
-                    val dureeAutorisee = data!!.data["duration"].toString()
-                    val creation = data!!.data["creation"].toString()
-
-                    // On formate la date de création réçue de la BDD
-                    val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
-                    val date0 = LocalDate.parse(creation, formatter)
-
-                    // On récupère la date du jour
-                    val current = LocalDateTime.now()
-                    val dateFormatted = current.format(formatter)
-                    val date1 = LocalDate.parse(dateFormatted, formatter)
-
-                    val jourEcoules = ChronoUnit.DAYS.between(date0, date1)
-                    val duree = dureeAutorisee.toLong() - jourEcoules
-
-                    // SI ON A ATTEINT LA DUREE AUTORISEE LE COMPTE EST VEROUILLE
-                    if(duree < 0){
-                        // APPLIQUER EXPIRATION DE L'ABONNEMENT
-
-                        val abonnementMap = hashMapOf(
-                            "creation" to creation,
-                            "duration" to "30",
-                            "id" to auth.currentUser?.uid,
-                            "statut" to false
-                        )
-                        db.collection("abonnement")
-                            .document(auth.currentUser?.uid!!)
-                            .set(abonnementMap)
-                            .addOnSuccessListener {
-                                auth.signOut()
-                                val intent = Intent(context, com.money.protect.AbonnementActivity::class.java)
-                                startActivity(intent)
-                            }.addOnFailureListener {
-                                val builder = AlertDialog.Builder(context)
-                                builder.setTitle("Erreur")
-                                builder.setMessage("Une erreur s'est produite.")
-                                builder.show()
-                            }
-
-                        // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
-                    }
-                }
-            }.addOnFailureListener {
-                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-            }
-
-        // VERIFIER L'ETAT D'ABONNEMENT DU SUPERVISEUR
 
         // Recupérer le point du jour
         
@@ -192,6 +133,8 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
 
         db.collection("point")
             .whereEqualTo("id", id)
+            .whereEqualTo("superviseur", auth.currentUser?.uid)
+            .whereEqualTo("date", dateFormatted)
             .get()
             .addOnSuccessListener { documents->
                     for (datas in documents){
@@ -214,36 +157,29 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
 
         // Récupérer le Capital
 
-        db.collection("capital")
-            .whereEqualTo("id", id)
-            .get().addOnSuccessListener { documents->
-                for (data in documents){
-                    val idAssistant = data.data["id"].toString()
-                    if (idAssistant == id)
-                    {
-                        etatCapital = true
-                        capitalArrayList.add(data!!.data["montant"].toString())
-                    }else{
-                        etatCapital = false
-                    }
-                }
-            }.addOnFailureListener {
-                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-            }
+        if (capital == "0")
+        {
+            etatCapital = false
+        }else{
+            etatCapital = true
+            capitalArrayList.add(capital.toString())
+        }
 
+        button.isEnabled = true
         button.setOnClickListener {
-            if (!verificationSoldeDefini)
+            if (!etatCapital)
             {
                 val builder = AlertDialog.Builder(context)
-                builder.setMessage("Le solde du jour n'a pas encore été défini par votre assistant.")
-                builder.show()
-            }else if (!etatCapital){
-                val builder = AlertDialog.Builder(context)
                 builder.setMessage("Vous n'avez pas encore défini le capital.")
+                builder.show()
+            }else if (!verificationSoldeDefini){
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("Le solde du jour n'a pas encore été défini par votre assistant.")
                 builder.show()
             }else{
                 currencyLib.textSize = 10f
                 main()
+                button.isEnabled = false
             }
         }
 
@@ -262,9 +198,25 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
                 context, { view, year, monthOfYear, dayOfMonth ->
                     val dat = (dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year)
                     datePicker.setText(dat)
-                    filterList(datePicker.text.toString())
-                    recyclerView.adapter = adapter
-                    recyclerView.layoutManager = LinearLayoutManager(context)
+
+                    progressBar.visibility = View.VISIBLE
+                    // Initialiser le recyclerView
+                    db.collection("point")
+                        .whereEqualTo("id", id)
+                        .whereEqualTo("superviseur", auth.currentUser?.uid)
+                        .whereEqualTo("date", datePicker.text.toString())
+                        .get().addOnSuccessListener { documents->
+                            progressBar.visibility = View.INVISIBLE
+                            for (dataz in documents){
+                                val donnee = dataz.toObject(PointModel::class.java)
+                                pointArrayList.add(donnee)
+                                pointArrayList.sortByDescending { it.date }
+                                recyclerView.adapter = adapter
+                                recyclerView.layoutManager = LinearLayoutManager(context)
+                            }
+                        }.addOnFailureListener {
+                            Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                        }
                 },
                 year,
                 month,
@@ -273,46 +225,7 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
             datePickerDialog.show()
         }
 
-        // Initialiser le recyclerView
-        db.collection("point")
-            .whereEqualTo("id", id)
-            .get().addOnSuccessListener { documents->
-                progressBar.visibility = View.INVISIBLE
-                for (data in documents){
-                    val donnee = data.toObject(PointModel::class.java)
-                    if (donnee != null)
-                    {
-                        pointArrayList.add(donnee)
-                        pointArrayList.sortByDescending { it.date }
-                    }
-                    recyclerView.adapter = adapter
-                    recyclerView.layoutManager = LinearLayoutManager(context)
-                }
-            }.addOnFailureListener {
-                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-            }
-
         return view
-    }
-
-    private fun filterList(query: String) {
-        if (query != null)
-        {
-            val filteredList = ArrayList<PointModel>()
-            for (i in pointArrayList)
-            {
-                if (i.date.lowercase(Locale.ROOT).contains(query))
-                {
-                    filteredList.add(i)
-                }
-            }
-            if (filteredList.isNotEmpty())
-            {
-                adapter.setFilteredList(filteredList)
-            }else{
-                Toast.makeText(context, "Aucun résultat", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,8 +258,10 @@ class HomeSuperviseurFragment(private val context: SuperviseurActivity) : Fragme
             resultat.text = DecimalFormat("#,###").format(res)
             verdict!!.text = "Surplus"
         }else{
-            resultat.text = DecimalFormat("#,###").format(totalCaisse)
-            verdict!!.text = "Compte OK"
+            resultat.visibility = View.INVISIBLE
+            imageSuccess.visibility = View.VISIBLE
+            currencyLib.visibility = View.INVISIBLE
+            verdict!!.text = "Point OK"
         }
     }
 }

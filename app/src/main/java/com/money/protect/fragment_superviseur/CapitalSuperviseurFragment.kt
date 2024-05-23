@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.fragment_assistant.checkInternet.checkForInternet
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -38,6 +39,21 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
     private lateinit var button: AppCompatButton
     private lateinit var progressBar: ProgressBar
     private var textWatcher: TextWatcher? = null
+
+
+    private var nomcomplet: String? = null
+    private var email: String? = null
+    private var telephone: String? = null
+    private var role: String? = null
+    private var statut: String? = null
+    private var nomcommercial: String? = null
+    private var ville: String? = null
+    private var quartier: String? = null
+    private var creation: String? = null
+    private var duration: String? = null
+    private var abonnement: String? = null
+
+    private var valeurCapitalDB: String? = null
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -53,6 +69,7 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
         val id = data?.getString("id")
         val nom = data?.getString("nom")
         val module = data?.getString("module")
+        val capital = data?.getString("capital")
 
         val nameX = view.findViewById<TextView>(R.id.nom_assistant_capital)
         nameX.text = nom
@@ -112,6 +129,7 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", module)
+            bundle.putString("capital", capital)
             menuFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, menuFragment)
@@ -121,18 +139,35 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
 
         // ON RECUPERE LA VALEUR ACTUELLE DU CAPITAL
 
-        database.collection("capital")
+        database.collection("account")
             .whereEqualTo("id", id)
+            .whereEqualTo("superviseur", auth.currentUser?.uid)
             .get()
             .addOnSuccessListener {document->
                 if (document.isEmpty)
                 {
                     valeurAcuelleCapital.text = capitalInit.toString()
+
+                    // on récupère les données qui nous permettront de faire la mise à jour du capital sans affecter les autres propriétés
                 }else{
-                    for (data in document)
+                    for (datas in document)
                     {
-                        capitalInit = data!!.data["montant"].toString().toInt()
-                        valeurAcuelleCapital.text = capitalInit.toString()
+                        capitalInit = datas!!.data["capital"].toString().toInt()
+                        valeurCapitalDB = capitalInit.toString()
+
+                        valeurAcuelleCapital.text = DecimalFormat("#,###").format(capitalInit)
+
+                        nomcomplet = datas.data["nomcomplet"].toString()
+                        email = datas.data["email"].toString()
+                        telephone = datas.data["telephone"].toString()
+                        role = datas.data["role"].toString()
+                        statut = datas.data["statut"].toString()
+                        nomcommercial = datas.data["nomcommercial"].toString()
+                        ville = datas.data["ville"].toString()
+                        quartier = datas.data["quartier"].toString()
+                        creation = datas.data["creation"].toString()
+                        duration = datas.data["duration"].toString()
+                        abonnement = datas.data["abonnement"].toString()
                     }
                 }
             }.addOnFailureListener {
@@ -149,47 +184,66 @@ class CapitalSuperviseurFragment(private val context: SuperviseurActivity) : Fra
                 builder.setMessage("Veuillez entrer le montant du capital SVP.")
                 builder.show()
             } else {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("Souhaitez-vous vraiment modifier votre capital ?")
+                builder.setPositiveButton(android.R.string.yes){dialog, which ->
+                    // ON RECUPERE LA NOUVELLE VALEUR DU CAPITAL AVANT L'ENVOI EN BASE DE DONNEES
+                    //formater le montant
+                    val theAmount = montant.text.toString()
+                    val caractere = ','
+                    val theNewAmount = theAmount.filter { it != caractere }
 
-                // ON RECUPERE LA NOUVELLE VALEUR DU CAPITAL AVANT L'ENVOI EN BASE DE DONNEES
-                //formater le montant
-                val theAmount = montant.text.toString()
-                val caractere = ','
-                val theNewAmount = theAmount.filter { it != caractere }
+                    val valeur1 = theNewAmount.toInt() + valeurCapitalDB!!.toInt()
+                    val valeur2 = valeurCapitalDB!!.toInt() - theNewAmount.toInt()
 
-                val valeur1 = theNewAmount.toInt() + valeurAcuelleCapital.text.toString().toInt()
-                val valeur2 = valeurAcuelleCapital.text.toString().toInt() - theNewAmount.toInt()
+                    var nouvelleValeurCapital: Int
 
-                var nouvelleValeurCapital: Int
-
-                if (checkBox.isChecked)
-                {
-                    nouvelleValeurCapital = valeur2
-                }else{
-                    nouvelleValeurCapital = valeur1
-                }
-
-                button.isEnabled = false
-                progressBar.visibility = View.VISIBLE
-                val capitalMap = hashMapOf(
-                    "id" to id,
-                    "montant" to nouvelleValeurCapital.toString()
-                )
-                db.collection("capital")
-                    .document(id!!)
-                    .set(capitalMap)
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                        montant.text.clear()
-                        progressBar.visibility = View.INVISIBLE
-                        button.isEnabled = true
-                    }.addOnFailureListener {
-                        val builder = AlertDialog.Builder(context)
-                        builder.setTitle("Alerte").setIcon(R.drawable.icone)
-                        builder.setMessage(R.string.onFailureText)
-                        builder.show()
-                        progressBar.visibility = View.INVISIBLE
-                        button.isEnabled = true
+                    if (checkBox.isChecked)
+                    {
+                        nouvelleValeurCapital = valeur2
+                    }else{
+                        nouvelleValeurCapital = valeur1
                     }
+
+                    button.isEnabled = false
+                    progressBar.visibility = View.VISIBLE
+                    val capitalMap = hashMapOf(
+                        "id" to  id,
+                        "nomcomplet" to  nomcomplet,
+                        "email" to  email,
+                        "superviseur" to  auth.currentUser?.uid,
+                        "telephone" to  telephone,
+                        "role" to  role,
+                        "statut" to  statut.toBoolean(),
+                        "module" to  module,
+                        "nomcommercial" to  nomcommercial,
+                        "ville" to  ville,
+                        "quartier" to  quartier,
+                        "creation" to  creation,
+                        "duration" to  duration,
+                        "abonnement" to  abonnement,
+                        "capital" to  nouvelleValeurCapital.toString()
+                    )
+                    db.collection("account")
+                        .document(id!!)
+                        .set(capitalMap)
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                            montant.text.clear()
+                            progressBar.visibility = View.INVISIBLE
+                            button.isEnabled = true
+                        }.addOnFailureListener {
+                            val build = AlertDialog.Builder(context)
+                            build.setMessage(R.string.onFailureText)
+                            build.show()
+                            progressBar.visibility = View.INVISIBLE
+                            button.isEnabled = true
+                        }
+                }
+                builder.setNegativeButton(android.R.string.no){dialog, which ->
+                    // ne rien faire
+                }
+                builder.show()
             }
         }else{
                 Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()

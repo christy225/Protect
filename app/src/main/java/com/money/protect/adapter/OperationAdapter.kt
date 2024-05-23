@@ -103,7 +103,6 @@ class OperationAdapter(
             intent.putExtra("url1", currentTransaction.url1)
             intent.putExtra("url2", currentTransaction.url2)
             intent.putExtra("statut", statut.toString())
-            intent.putExtra("origine", currentTransaction.origine)
             it.context.startActivity(intent)
         }
     }

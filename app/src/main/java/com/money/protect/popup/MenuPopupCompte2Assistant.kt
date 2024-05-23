@@ -39,6 +39,10 @@ class MenuPopupCompte2Assistant(
         val btn = findViewById<CardView>(R.id.linkTo_orange_popup_compte2)
         btn.setOnClickListener {
             val intent = Intent(context, OrangeRedirectionActivity::class.java)
+            intent.putExtra("nomcommercial", context.Nomcom())
+            intent.putExtra("creation", context.Creation())
+            intent.putExtra("module", context.Module())
+            intent.putExtra("duration", context.Duration())
             context.startActivity(intent)
             this.dismiss()
         }

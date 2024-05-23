@@ -8,56 +8,46 @@
     android:orientation="vertical"
     tools:context=".fragment_assistant.SearchAdvancedFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="15dp"
+    <EditText
+        android:id="@+id/numberAdvanced"
+        android:hint="Entrez numéro"
+        android:background="@drawable/background_circular"
+        android:inputType="phone"
+        android:paddingStart="10dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginHorizontal="15dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/numberAdvanced"
-            android:hint="Entrez numéro"
-            android:background="@drawable/background_circular"
-            android:inputType="phone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="60dp"/>
+    <EditText
+        android:id="@+id/datePickerAdvanced"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="7dp"
+        android:layout_height="60dp"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="Entrez date"
+        android:inputType="date"
+        android:paddingStart="10dp"
+        android:background="@drawable/background_circular"
+        tools:ignore="RtlSymmetry" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="10dp"
+    <EditText
+        android:id="@+id/montantAdvanced"
+        android:hint="Entrez montant"
+        android:background="@drawable/background_circular"
+        android:inputType="number"
+        android:layout_marginTop="7dp"
+        android:paddingStart="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/datePickerAdvanced"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:hint="Entrez date"
-            android:inputType="date"
-            android:background="@drawable/background_circular"
-            tools:ignore="RtlSymmetry" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/montantAdvanced"
-            android:hint="Entrez montant"
-            android:background="@drawable/background_circular"
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_marginHorizontal="15dp"
+        android:layout_height="60dp"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSearchAdvanced"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginHorizontal="15dp"
         android:layout_marginTop="15dp"
         android:background="@drawable/backgroundgradientbluebutton"
         android:text="rechercher"
@@ -81,6 +71,17 @@
             android:id="@+id/progressBarSearchAdvanced"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/recyclerViewSearchAdvanced"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/recyclerViewSearchAdvanced" />
+
+        <TextView
+            android:id="@+id/searchAdvancedNoResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aucun résultat"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/recyclerViewSearchAdvanced"
             app:layout_constraintEnd_toEndOf="parent"

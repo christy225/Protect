@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
@@ -21,15 +20,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class LoginActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
     private lateinit var email: EditText
     private lateinit var password: EditText
-    private var database = Firebase.firestore
     private lateinit var progressBar: ProgressBar
     private lateinit var button: Button
     @RequiresApi(Build.VERSION_CODES.M)
@@ -50,115 +50,128 @@ class LoginActivity : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
-
         db = FirebaseFirestore.getInstance()
-
         val query = db.collection("account")
+
         email = findViewById(R.id.emailCnx)
         password = findViewById(R.id.passwordCnx)
         button = findViewById<AppCompatButton>(R.id.button_login_user)
+        progressBar = findViewById(R.id.progressBarLogin)
 
         button.setOnClickListener {
+            val mail = email.text.toString()
+            val pass = password.text.toString()
             if (checkForInternet(this)) {
-                button.isEnabled = false
-                val mail = email.text.toString()
-                val pass = password.text.toString()
-
                 if (mail.isNotEmpty() && pass.isNotEmpty()){
                     button.setText(R.string.button_loading)
+                    button.isEnabled = false
                     // CONVERSION DU N° TELEPHONE EN MAIL
                     val emailTel = "ci-" + mail + "@mail.com"
-                    if (!checkForInternet(this)) {
-                        val builder = AlertDialog.Builder(this@LoginActivity)
-                        builder.setMessage("Aucune connexion internet")
-                        builder.show()
-                        button.isEnabled = true
-                        button.setText(R.string.login_button_default_text)
-                    }else{
-                        auth.signInWithEmailAndPassword(emailTel, pass).addOnSuccessListener {
-                            query.whereEqualTo("id", auth.currentUser!!.uid)
-                                .get().addOnSuccessListener { document->
-                                    for (data in document)
+
+                    auth.signInWithEmailAndPassword(emailTel, pass).addOnSuccessListener {
+                        query.whereEqualTo("id", auth.currentUser!!.uid)
+                            .get().addOnSuccessListener { document->
+                                for (data in document)
+                                {
+                                    val role = data.data["role"].toString()
+                                    val nomcommercial = data.data["nomcommercial"].toString()
+                                    val nomcomplet = data.data["nomcomplet"].toString()
+                                    val quartier = data.data["quartier"].toString()
+                                    val creation = data.data["creation"].toString()
+                                    val module = data.data["module"].toString()
+                                    val superviseur = data.data["superviseur"].toString()
+                                    val phone = data.data["telephone"].toString()
+                                    val ville = data.data["ville"].toString()
+                                    val abonnement = data.data["abonnement"].toString()
+                                    val duration = data.data["duration"].toString()
+                                    val capital = data.data["capital"].toString()
+
+                                    // On formate la date de création réçue de la BDD
+                                    val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
+                                    val date0 = LocalDate.parse(creation, formatter)
+
+                                    // On récupère la date du jour
+                                    val current = LocalDateTime.now()
+                                    val dateFormatted = current.format(formatter)
+                                    val date1 = LocalDate.parse(dateFormatted, formatter)
+
+                                    // On calcule la différence entre les 2 dates
+                                    val jourEcoules = ChronoUnit.DAYS.between(date0, date1)
+                                    val duree = duration.toLong() - jourEcoules
+
+                                    if (duree >= 0)
                                     {
-                                        val role = data.data["role"].toString()
-                                        val statut = data.data["statut"].toString().toBoolean()
-
                                         if (role == "superviseur") {
-                                            if (statut)
-                                            {
-                                                val intent = Intent(this, SuperviseurActivity::class.java)
-                                                startActivity(intent)
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }else{
-                                                val builder = AlertDialog.Builder(this)
-                                                builder.setMessage("Votre abonnement a expiré.")
-                                                builder.show()
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }
+                                            val intent = Intent(this, SuperviseurActivity::class.java)
+                                            startActivity(intent)
+                                            button.isEnabled = true
+                                            button.setText(R.string.login_button_default_text)
                                         } else if (role == "assistant") {
-                                            if (statut)
-                                            {
-                                                // Historique de connexion
+                                            val intent = Intent(this, DoubleAccountActivity::class.java)
+                                            intent.putExtra("module", module)
+                                            intent.putExtra("nomcommercial", nomcommercial)
+                                            intent.putExtra("creation", creation)
+                                            intent.putExtra("duration", duration)
 
-                                                // Générer la date
-                                                val current = LocalDateTime.now()
-                                                val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-                                                val dateFormatted = current.format(formatterDate)
-
-                                                // Générer l'heure
-                                                val formatterHour = DateTimeFormatter.ofPattern("HH:mm")
-                                                val hourFormatted = current.format(formatterHour)
-
-                                                val connexionMap = hashMapOf(
-                                                    "id" to auth.currentUser!!.uid,
-                                                    "statut" to "connexion",
-                                                    "date" to dateFormatted,
-                                                    "heure" to hourFormatted
-                                                )
-
-                                                database.collection("connexion")
-                                                    .add(connexionMap)
-                                                    .addOnCompleteListener {
-                                                        // Ne rien faire
-                                                    }
-
-                                                if (!checkForInternet(this)) {
-                                                    val builder = AlertDialog.Builder(this@LoginActivity)
-                                                    builder.setMessage("Aucune connexion internet")
-                                                    builder.show()
-                                                }
-
-                                                val intent = Intent(this, DoubleAccountActivity::class.java)
-                                                startActivity(intent)
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-
-                                            }else{
-                                                val builder = AlertDialog.Builder(this)
-                                                builder.setMessage("Votre compte a été désactivé par votre superviseur.")
-                                                builder.show()
-                                                button.isEnabled = true
-                                                button.setText(R.string.login_button_default_text)
-                                            }
+                                            intent.putExtra("email", emailTel)
+                                            intent.putExtra("nomcomplet", nomcomplet)
+                                            intent.putExtra("quartier", quartier)
+                                            intent.putExtra("superviseur", superviseur)
+                                            intent.putExtra("telephone", phone)
+                                            intent.putExtra("ville", ville)
+                                            intent.putExtra("abonnement", abonnement)
+                                            intent.putExtra("capital", capital)
+                                            startActivity(intent)
+                                            button.isEnabled = true
+                                            button.setText(R.string.login_button_default_text)
                                         }
+                                    }else{
+                                        val accountMap = hashMapOf(
+                                            "creation" to creation,
+                                            "email" to emailTel,
+                                            "id" to auth.currentUser!!.uid,
+                                            "nomcommercial" to nomcommercial,
+                                            "nomcomplet" to nomcomplet,
+                                            "quartier" to quartier,
+                                            "role" to role,
+                                            "statut" to false,
+                                            "module" to module,
+                                            "superviseur" to superviseur,
+                                            "telephone" to phone,
+                                            "duration" to "60",
+                                            "ville" to ville,
+                                            "abonnement" to abonnement,
+                                            "capital" to capital
+                                        )
+                                        db.collection("account")
+                                            .document(auth.currentUser!!.uid)
+                                            .set(accountMap)
+                                            .addOnSuccessListener {
+                                                auth.signOut()
+                                                val intent = Intent(this, AbonnementActivity::class.java)
+                                                startActivity(intent)
+                                            }.addOnFailureListener{
+                                                val builder = AlertDialog.Builder(this)
+                                                builder.setMessage(R.string.onFailureText)
+                                                builder.show()
+                                            }
                                     }
-                                }.addOnFailureListener {
-                                    val builder = AlertDialog.Builder(this)
-                                    builder.setMessage("Une erreur s'est produite")
-                                    builder.show()
-                                    button.isEnabled = true
-                                    button.setText(R.string.login_button_default_text)
+
                                 }
-                        }.addOnFailureListener {
+                            }.addOnFailureListener {
                                 val builder = AlertDialog.Builder(this)
-                                builder.setMessage("Identifiants incorrects")
+                                builder.setMessage("Une erreur s'est produite")
                                 builder.show()
                                 button.isEnabled = true
                                 button.setText(R.string.login_button_default_text)
                             }
-                    }
+                    }.addOnFailureListener {
+                            val builder = AlertDialog.Builder(this)
+                            builder.setMessage("Identifiants incorrects")
+                            builder.show()
+                            button.isEnabled = true
+                            button.setText(R.string.login_button_default_text)
+                        }
                 }else{
                     val builder = AlertDialog.Builder(this)
                     builder.setMessage("Veuillez saisir tous les champs SVP")
@@ -166,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
                     button.isEnabled = true
                 }
             }else{
-                val builder = AlertDialog.Builder(this@LoginActivity)
+                val builder = AlertDialog.Builder(this)
                 builder.setMessage("Aucune connexion internet")
                 builder.show()
             }
@@ -189,54 +202,111 @@ class LoginActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onStart() {
         super.onStart()
-        progressBar = findViewById(R.id.progressBarLogin)
 
         progressBar.visibility = View.VISIBLE
+
+        if (!checkForInternet(this@LoginActivity)) {
+            val builder = AlertDialog.Builder(this@LoginActivity)
+            builder.setMessage("Aucune connexion internet")
+            builder.show()
+            progressBar.visibility = View.INVISIBLE
+            button.isEnabled = true
+            button.setText(R.string.login_button_default_text)
+        }else{
             if (auth.currentUser != null)
             {
-                if (!checkForInternet(this@LoginActivity)) {
-                    val builder = AlertDialog.Builder(this@LoginActivity)
-                    builder.setMessage("Aucune connexion internet")
-                    builder.show()
-                    progressBar.visibility = View.INVISIBLE
-                    button.isEnabled = true
-                    button.setText(R.string.login_button_default_text)
-                }else{
-                    db.collection("account")
-                        .whereEqualTo("id", auth.currentUser!!.uid)
-                        .get()
-                        .addOnSuccessListener { document->
-                            for (donnee in document)
-                            {
-                                val role = donnee.data["role"].toString()
-                                if (role == "assistant")
-                                {
-                                    if (!checkForInternet(this@LoginActivity)) {
-                                        val builder = AlertDialog.Builder(this@LoginActivity)
-                                        builder.setMessage("Aucune connexion internet")
-                                        builder.show()
-                                    }
+                db.collection("account")
+                    .whereEqualTo("id", auth.currentUser!!.uid)
+                    .get()
+                    .addOnSuccessListener { document->
+                        for (data in document)
+                        {
+                            val role = data.data["role"].toString()
+                            val nomcommercial = data.data["nomcommercial"].toString()
+                            val nomcomplet = data.data["nomcomplet"].toString()
+                            val quartier = data.data["quartier"].toString()
+                            val creation = data.data["creation"].toString()
+                            val module = data.data["module"].toString()
+                            val superviseur = data.data["superviseur"].toString()
+                            val phone = data.data["telephone"].toString()
+                            val ville = data.data["ville"].toString()
+                            val abonnement = data.data["abonnement"].toString()
+                            val duration = data.data["duration"].toString()
+                            val capital = data.data["capital"].toString()
 
-                                    val intent = Intent(this@LoginActivity, DoubleAccountActivity::class.java)
+                            // On formate la date de création réçue de la BDD
+                            val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
+                            val date0 = LocalDate.parse(creation, formatter)
+
+                            // On récupère la date du jour
+                            val current = LocalDateTime.now()
+                            val dateFormatted = current.format(formatter)
+                            val date1 = LocalDate.parse(dateFormatted, formatter)
+
+                            // On calcule la différence entre les 2 dates
+                            val jourEcoules = ChronoUnit.DAYS.between(date0, date1)
+                            val duree = duration.toLong() - jourEcoules
+
+                            if (duree >= 0)
+                            {
+                                if (role == "superviseur") {
+                                    val intent = Intent(this, SuperviseurActivity::class.java)
                                     startActivity(intent)
                                     button.isEnabled = true
                                     button.setText(R.string.login_button_default_text)
-
-                                }else if (role == "superviseur"){
-                                    val intent2 = Intent(this@LoginActivity, SuperviseurActivity::class.java)
-                                    startActivity(intent2)
+                                } else if (role == "assistant") {
+                                    val intent = Intent(this, DoubleAccountActivity::class.java)
+                                    intent.putExtra("module", module)
+                                    intent.putExtra("nomcommercial", nomcommercial)
+                                    intent.putExtra("creation", creation)
+                                    intent.putExtra("duration", duration)
+                                    startActivity(intent)
+                                    button.isEnabled = true
+                                    button.setText(R.string.login_button_default_text)
                                 }
+                            }else{
+                                val accountMap = hashMapOf(
+                                    "creation" to creation,
+                                    "email" to email.text.toString(),
+                                    "id" to auth.currentUser!!.uid,
+                                    "nomcommercial" to nomcommercial,
+                                    "nomcomplet" to nomcomplet,
+                                    "quartier" to quartier,
+                                    "role" to role,
+                                    "statut" to false,
+                                    "module" to module,
+                                    "superviseur" to superviseur,
+                                    "telephone" to phone,
+                                    "duration" to "60",
+                                    "ville" to ville,
+                                    "abonnement" to abonnement,
+                                    "capital" to capital
+                                )
+                                db.collection("account")
+                                    .document(auth.currentUser!!.uid)
+                                    .set(accountMap)
+                                    .addOnSuccessListener {
+                                        auth.signOut()
+                                        val intent = Intent(this, AbonnementActivity::class.java)
+                                        startActivity(intent)
+                                    }.addOnFailureListener{
+                                        val builder = AlertDialog.Builder(this)
+                                        builder.setMessage(R.string.onFailureText)
+                                        builder.show()
+                                    }
                             }
                         }
-                        .addOnFailureListener {
-                            val builder = AlertDialog.Builder(this@LoginActivity)
-                            builder.setTitle("Erreur")
-                            builder.setMessage(R.string.onFailureText)
-                            builder.show()
-                        }
-                }
+                    }
+                    .addOnFailureListener {
+                        val builder = AlertDialog.Builder(this@LoginActivity)
+                        builder.setTitle("Erreur")
+                        builder.setMessage(R.string.onFailureText)
+                        builder.show()
+                    }
             }else{
                 progressBar.visibility = View.INVISIBLE
             }
+        }
+
     }
 }

@@ -273,25 +273,6 @@
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <CheckBox
-                        android:id="@+id/origine_check_moov"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Origine des fonds"/>
-
-                    <EditText
-                        android:id="@+id/origine_fond_moov"
-                        android:hint="Ecrire..."
-                        android:inputType="textMultiLine"
-                        android:lines="8"
-                        android:maxLines="10"
-                        android:minLines="6"
-                        android:visibility="gone"
-                        android:scrollbars="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
-
                     <Button
                         android:id="@+id/uploadPhotoMoov"
                         android:layout_width="wrap_content"
@@ -301,10 +282,40 @@
                         android:layout_marginTop="15dp"
                         android:textColor="#0084C1"
                         android:textStyle="bold"
-                        android:backgroundTint="#FFFFFF"
+                        android:drawableLeft="@drawable/baseline_add_a_photo_24"
+                        android:backgroundTint="#EAEAEA"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintImagePreviewMoov"
+                        android:padding="10dp"
+                        android:layout_marginTop="7dp"
+                        android:visibility="gone"
+                        android:background="@color/background_color"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/imagePreviewMoov1"
+                            android:layout_width="70dp"
+                            android:layout_height="80dp"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/imagePreviewMoov2"
+                            android:layout_width="70dp"
+                            android:layout_height="80dp"
+                            android:layout_marginStart="5dp"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imagePreviewMoov1"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:id="@+id/stateInfoMoov"
@@ -312,7 +323,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:visibility="gone"
-                        android:textColor="#02B715"
+                        android:textColor="#D10303"
                         android:text="Photo téléchargée avec succès !"/>
 
                     <androidx.appcompat.widget.AppCompatButton

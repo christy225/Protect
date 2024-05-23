@@ -6,11 +6,11 @@
 
     <!-- SEARCH DATE PAGE -->
     <string name="search_date_page_placeholder">Rechercher une date</string>
-    <string name="search_date_page_list_title">Liste Recherche</string>
+    <string name="search_date_page_list_title">Résultat de la recherche</string>
 
     <!-- SEARCH PHONE PAGE -->
     <string name="search_date_phone_placeholder">Rechercher un numéro</string>
-    <string name="search_date_phone_list_title">Liste Recherche</string>
+    <string name="search_date_phone_list_title">Résultat de la recherche</string>
 
     <!-- Image upload instructions -->
     <string name="warning_second_image">Veuillez prendre le recto de la carte</string>
@@ -19,7 +19,7 @@
     <string name="settings_page_title">Paramètres</string>
     <string name="settings_page_subtitle">Infos utilisateur</string>
     <string name="settings_page_name_title">Nom Complet</string>
-    <string name="settings_page_name_supervisor_title">Superviseur</string>
+    <string name="settings_page_name_location_title">Localité</string>
     <string name="settings_page_title_suscribe">Abonnement</string>
     <string name="settings_page_logout">Déconnexion</string>
 

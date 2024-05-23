@@ -3,22 +3,19 @@ package com.money.protect
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,13 +47,16 @@ class OrangeSaveActivity : AppCompatActivity() {
     private lateinit var button: Button
     private lateinit var progressBar: ProgressBar
     private lateinit var buttonCancel: TextView
-    private lateinit var origineFond: EditText
-    private lateinit var checkOrigine: CheckBox
-    var origine: String? = null
+
+    private lateinit var imagePreview1: ImageView
+    private lateinit var imagePreview2: ImageView
+    private lateinit var constraintImagePreview: ConstraintLayout
 
     private var storageRef = Firebase.storage
-    private var uri: Uri? = null
-    private var uploaded: Boolean = false
+    private var uri1: Uri? = null
+    private var uri2: Uri? = null
+    private var uploaded1: Boolean = false
+    private var uploaded2: Boolean = false
 
     private var typeOp: String? = null
     private var montantDB: String? = null
@@ -69,6 +69,9 @@ class OrangeSaveActivity : AppCompatActivity() {
         setContentView(R.layout.activity_orange_save)
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        imagePreview1 = findViewById(R.id.imagePreviewOrange1)
+        imagePreview2 = findViewById(R.id.imagePreviewOrange2)
+        constraintImagePreview = findViewById(R.id.constraintImagePreviewOrange)
 
         operation = findViewById(R.id.operationOrange)
         numero = findViewById(R.id.numeroOrange)
@@ -80,46 +83,29 @@ class OrangeSaveActivity : AppCompatActivity() {
         stateInfo = findViewById(R.id.stateInfoOrange)
         buttonCancel = findViewById(R.id.btnCancelOperationOrangeMoney)
         progressBar = findViewById(R.id.progressBarOrange)
-        origineFond = findViewById(R.id.origine_fond_orange)
-        checkOrigine = findViewById(R.id.origine_check_orange)
-
-        checkOrigine.setOnClickListener {
-            if (checkOrigine.isChecked) {
-                origineFond.visibility = View.VISIBLE
-            }else{
-                origineFond.visibility = View.GONE
-            }
-        }
-
-        if (origineFond.text.isEmpty())
-        {
-            origine = "non défini"
-        }else{
-            origine = origineFond.text.toString()
-        }
 
         intents = intent
         val sms = intents.getStringExtra("sms")
-        if (sms!!.contains("Depot")) {
+
+        if (sms!!.contains("Depot"))
+        {
             depot()
+            typeOp = "Dépôt"
         }else if (sms.contains("Retrait")){
             retrait()
+            typeOp = "Retrait"
         }
+
         val linkToPopup = findViewById<Button>(R.id.popupSMSOrange)
         linkToPopup.setOnClickListener {
             SmsOrange(this).show()
         }
 
-
         val btnCancel = findViewById<TextView>(R.id.btnCancelOperationOrangeMoney)
         btnCancel.setOnClickListener {
+            button.visibility = View.VISIBLE
+            constraintImagePreview.visibility = View.GONE
             val intent = Intent(this, OrangeSmsListActivity::class.java)
-            startActivity(intent)
-        }
-
-        val linkToOrangePopup = findViewById<Button>(R.id.openOrangePopup)
-        linkToOrangePopup.setOnClickListener {
-            val intent = Intent(this, OrangeMissingSmsConfirmActivity::class.java)
             startActivity(intent)
         }
 
@@ -136,17 +122,14 @@ class OrangeSaveActivity : AppCompatActivity() {
             if (operation.text.isEmpty() ||
                 numero.text.isEmpty() ||
                 montant.text.isEmpty() ||
-                idTransaction.text.toString() == "null" ||
-                montant.text.toString() == "null" ||
-                numero.text.toString() == "null" ||
-                montantDB.toString() == "null" ||
                 idTransaction.text.toString() == "sms en attente..." ||
                 numero.text.toString() == "sms en attente..." ||
                 montant.text.toString() == "sms en attente..." ||
                 idTransaction.text.toString() == "sms en attente...") {
-                Toast.makeText(this, "Aucune donnée à enregistrer", Toast.LENGTH_SHORT).show()
-            }else if (button.text == "enregistrer opération"){
-
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Aucune donnée à enregistrer")
+                builder.show()
+            }else{
                 // Enregistrement de la transaction
 
                 val builder = AlertDialog.Builder(this)
@@ -167,60 +150,69 @@ class OrangeSaveActivity : AppCompatActivity() {
 
                     // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
                     if (checkForInternet(this)) {
-                        if (uploaded)
+                        if (uploaded1 && uploaded2)
                         {
-                            storageRef.getReference("earth").child(System.currentTimeMillis().toString())
-                                .putFile(uri!!)
+                            storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                .putFile(uri1!!)
                                 .addOnSuccessListener { task->
                                     task.metadata!!.reference!!.downloadUrl
-                                        .addOnSuccessListener {
+                                        .addOnSuccessListener {it1->
+                                            storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                                .putFile(uri2!!)
+                                                .addOnSuccessListener {task1->
+                                                    task1.metadata!!.reference!!.downloadUrl
+                                                        .addOnSuccessListener { it2->
 
-                                            val sms = intents.getStringExtra("sms")
-                                            if (sms!!.contains("Depot"))
-                                            {
-                                                typeOp = "Dépôt"
-                                            }else if (sms.contains("Retrait")){
-                                                typeOp = "Retrait"
-                                            }
+                                                            val uid = UUID.randomUUID().toString()
+                                                            val caractereASupprimer = ','
+                                                            val operationMap = hashMapOf(
+                                                                "id" to auth.currentUser?.uid,
+                                                                "date" to dateFormatted,
+                                                                "heure" to hourFormatted,
+                                                                "operateur" to "orange",
+                                                                "telephone" to numero.text.toString(),
+                                                                "montant" to montantDB.toString(),
+                                                                "typeoperation" to typeOp,
+                                                                "statut" to true,
+                                                                "url1" to it1.toString(),
+                                                                "url2" to it2.toString(),
+                                                                "idDoc" to uid,
+                                                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
+                                                            )
 
-                                            val uid = UUID.randomUUID().toString()
-                                            val caractereASupprimer = ','
-                                            val operationMap = hashMapOf(
-                                                "id" to auth.currentUser?.uid,
-                                                "date" to dateFormatted,
-                                                "heure" to hourFormatted,
-                                                "operateur" to "orange",
-                                                "telephone" to numero.text.toString(),
-                                                "montant" to montantDB.toString(),
-                                                "typeoperation" to typeOp,
-                                                "statut" to true,
-                                                "url" to it.toString(),
-                                                "idDoc" to uid,
-                                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),""),
-                                                "origine" to origine
-                                            )
+                                                            db.collection("operation")
+                                                                .document(uid)
+                                                                .set(operationMap)
+                                                                .addOnCompleteListener {
+                                                                    if (it.isSuccessful)
+                                                                    {
+                                                                        progressBar.visibility = View.GONE
+                                                                        stateInfo.visibility = View.GONE
+                                                                        button.visibility = View.VISIBLE
+                                                                        button.isEnabled = true
+                                                                        constraintImagePreview.visibility = View.GONE
 
-                                            db.collection("operation")
-                                                .document(uid)
-                                                .set(operationMap)
-                                                .addOnCompleteListener {
-                                                    if (it.isSuccessful)
-                                                    {
-                                                        progressBar.visibility = View.GONE
-                                                        stateInfo.visibility = View.GONE
-                                                        button.visibility = View.VISIBLE
-                                                        button.isEnabled = true
+                                                                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
-                                                        Toast.makeText(this, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                                        val intent = Intent(this, OrangeRedirectionActivity::class.java)
+                                                                        startActivity(intent)
+                                                                    }
+                                                                }.addOnFailureListener {
+                                                                    val builder = AlertDialog.Builder(this)
+                                                                    builder.setTitle("Alerte")
+                                                                    builder.setMessage(R.string.onFailureText)
+                                                                    builder.show()
+                                                                }
 
-                                                        val intent = Intent(this, OrangeRedirectionActivity::class.java)
-                                                        startActivity(intent)
-                                                    }
-                                                }.addOnFailureListener {
-                                                    val builder = AlertDialog.Builder(this)
-                                                    builder.setTitle("Alerte")
-                                                    builder.setMessage(R.string.onFailureText)
-                                                    builder.show()
+                                                        }.addOnFailureListener {
+                                                            val builer = AlertDialog.Builder(this)
+                                                            builer.setMessage(R.string.onFailureText)
+                                                            builer.show()
+                                                        }
+                                                }.addOnFailureListener{
+                                                    val builer = AlertDialog.Builder(this)
+                                                    builer.setMessage(R.string.onFailureText)
+                                                    builer.show()
                                                 }
                                         }.addOnFailureListener {
                                             val builer = AlertDialog.Builder(this)
@@ -232,6 +224,9 @@ class OrangeSaveActivity : AppCompatActivity() {
                                     builer.setMessage("Erreur pendant le téléchargement de l'image.")
                                     builer.show()
                                 }
+                        }else if (uploaded2 == null){
+                            builder.setMessage("Veuillez enregistrer le recto de la pièce d'identité")
+                            builder.show()
                         }else{
                             val sms1 = intents.getStringExtra("sms")
                             if (sms1!!.contains("Depot"))
@@ -251,10 +246,10 @@ class OrangeSaveActivity : AppCompatActivity() {
                                 "montant" to montantDB.toString(),
                                 "typeoperation" to typeOp,
                                 "statut" to true,
-                                "url" to "null",
+                                "url1" to "null",
+                                "url2" to "null",
                                 "idDoc" to uid,
-                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),""),
-                                "origine" to origine
+                                "idTransac" to idT.toString().replace(caractereASupprimer.toString(),"")
                             )
                             db.collection("operation")
                                 .document(uid)
@@ -273,10 +268,10 @@ class OrangeSaveActivity : AppCompatActivity() {
                                         startActivity(intent)
                                     }
                                 }.addOnFailureListener {
-                                    val builder = AlertDialog.Builder(this)
-                                    builder.setTitle("Alerte")
-                                    builder.setMessage(R.string.onFailureText)
-                                    builder.show()
+                                    val build = AlertDialog.Builder(this)
+                                    build.setTitle("Alerte")
+                                    build.setMessage(R.string.onFailureText)
+                                    build.show()
                                 }
                         }
                     }else{
@@ -289,7 +284,6 @@ class OrangeSaveActivity : AppCompatActivity() {
                 }
 
                 builder.show()
-
             }
         }
     }
@@ -297,6 +291,7 @@ class OrangeSaveActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun depot() {
         CoroutineScope(Dispatchers.IO).launch {
+
             val sms = intents.getStringExtra("sms")
 
             val chainesDeCaracteres = listOf(sms)
@@ -316,55 +311,21 @@ class OrangeSaveActivity : AppCompatActivity() {
                 idT = motId.toString().replace(caractereASupprimer.toString(),"")
 
                 withContext(Dispatchers.Main) {
-                    db.collection("operation")
-                        .whereEqualTo("idTransac", idT)
-                        .get()
-                        .addOnSuccessListener { documents->
-                            if (!documents.isEmpty)
-                            {
-                                val builder = AlertDialog.Builder(this@OrangeSaveActivity)
-                                builder.setMessage("Cette transaction a déjà été enregistrée !")
-                                builder.show()
-                                operation.text = "sms en attente..."
-                                numero.text = "sms en attente..."
-                                montant.text = "sms en attente..."
-                                idTransaction.text = "sms en attente..."
-                                newSolde.text = "sms en attente..."
-                                button.visibility = View.GONE
-                            }else{
-                                if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
-                                {
-                                    operation.text = "sms en attente..."
-                                    numero.text = "sms en attente..."
-                                    montant.text = "sms en attente..."
-                                    idTransaction.text = "sms en attente..."
-                                    newSolde.text = "sms en attente..."
-                                    button.visibility = View.GONE
-                                }else{
-                                    val dep = "Dépôt"
-                                    val num: String = motNumero.toString()
-                                    val mont: String = motMontant.toString()
-                                    val mId: String = motId.toString()
-                                    val sold: String = motSolde.toString()
+                    val dep = "Dépôt"
+                    val num: String = motNumero.toString()
+                    val mont: String = motMontant.toString()
+                    val mId: String = motId.toString()
+                    val sold: String = motSolde.toString()
 
-                                    operation.text = dep
-                                    numero.text = num
-                                    montant.text =  mont
-                                    montantDB = supprimerZerosApresPoint(mont)
-                                    idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
-                                    newSolde.text = sold
-                                    button.visibility = View.VISIBLE
-                                    if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
-                                        numero.text = num
-                                        montantDB = supprimerZerosApresPoint(mont)
-                                    }
-                                }
-                            }
-                        }.addOnFailureListener {
-                            val builder = AlertDialog.Builder(this@OrangeSaveActivity)
-                            builder.setMessage(R.string.onFailureText)
-                            builder.show()
-                        }
+                    operation.text = dep
+                    numero.text = num
+                    montant.text =  mont
+                    montantDB = supprimerZerosApresPoint(mont)
+                    idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
+                    newSolde.text = sold
+                    button.visibility = View.VISIBLE
+                    numero.text = num
+                    montantDB = supprimerZerosApresPoint(mont)
                 }
             }
         }
@@ -392,55 +353,21 @@ class OrangeSaveActivity : AppCompatActivity() {
                 idT = motId.toString().replace(caractereASupprimer.toString(),"")
 
                 withContext(Dispatchers.Main){
-                    db.collection("operation")
-                        .whereEqualTo("idTransac", idT)
-                        .get()
-                        .addOnSuccessListener { documents->
-                            if (!documents.isEmpty)
-                            {
-                                val builder = AlertDialog.Builder(this@OrangeSaveActivity)
-                                builder.setMessage("Cette transaction a déjà été enregistrée !")
-                                builder.show()
-                                operation.text = "sms en attente..."
-                                numero.text = "sms en attente..."
-                                montant.text = "sms en attente..."
-                                idTransaction.text = "sms en attente..."
-                                newSolde.text = "sms en attente..."
-                                button.visibility = View.GONE
-                            }else{
-                                if (numero.text.toString() == "null" || montant.text.toString() == "null" || idTransaction.text.toString() == "null" || newSolde.text.toString() == "null")
-                                {
-                                    operation.text = "sms en attente..."
-                                    numero.text = "sms en attente..."
-                                    montant.text = "sms en attente..."
-                                    idTransaction.text = "sms en attente..."
-                                    newSolde.text = "sms en attente..."
-                                    button.visibility = View.GONE
-                                }else{
-                                    val ret = "Retrait"
-                                    val num: String = motNumero.toString()
-                                    val mont: String = motMontant.toString()
-                                    val mId: String = motId.toString()
-                                    val sold: String = motSolde.toString()
+                    val ret = "Retrait"
+                    val num: String = motNumero.toString()
+                    val mont: String = motMontant.toString()
+                    val mId: String = motId.toString()
+                    val sold: String = motSolde.toString()
 
-                                    operation.text = ret
-                                    numero.text = num
-                                    montant.text =  mont
-                                    montantDB = supprimerZerosApresPoint(mont)
-                                    idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
-                                    newSolde.text = sold
-                                    button.visibility = View.VISIBLE
-                                    if (numero.text.toString() == "sms en attente..." || montantDB.toString() == "null") {
-                                        numero.text = num
-                                        montantDB = supprimerZerosApresPoint(mont)
-                                    }
-                                }
-                            }
-                        }.addOnFailureListener {
-                            val builder = AlertDialog.Builder(this@OrangeSaveActivity)
-                            builder.setMessage(R.string.onFailureText)
-                            builder.show()
-                        }
+                    operation.text = ret
+                    numero.text = num
+                    montant.text =  mont
+                    montantDB = supprimerZerosApresPoint(mont)
+                    idTransaction.text = mId.replace(caractereASupprimer.toString(),"")
+                    newSolde.text = sold
+                    button.visibility = View.VISIBLE
+                    numero.text = num
+                    montantDB = supprimerZerosApresPoint(mont)
                 }
             }
         }
@@ -484,12 +411,28 @@ class OrangeSaveActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-            //Image Uri will not be null for RESULT_OK
-            var it: Uri = data?.data!!
+            var it1: Uri = data?.data!!
+            var it2: Uri = data?.data!!
+            constraintImagePreview.visibility = View.VISIBLE
             // Use Uri object instead of File to avoid storage permissions
-            stateInfo.visibility = View.VISIBLE
-            uri = it
-            uploaded = true
+            if (imagePreview1.drawable == null){
+                stateInfo.visibility = View.VISIBLE
+                uploaded1 = true
+                stateInfo.setText(R.string.warning_second_image)
+                uri1 = it1
+                it1?.let {uri->
+                    imagePreview1.setImageURI(uri)
+                    button.visibility = View.GONE
+                }
+            }else{
+                stateInfo.visibility = View.GONE
+                uri2 = it2
+                uploaded2 = true
+                it2?.let {uri->
+                    imagePreview2.setImageURI(uri2)
+                    button.visibility = View.VISIBLE
+                }
+            }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
         } else {

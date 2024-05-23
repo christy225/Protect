@@ -1,11 +1,13 @@
 package com.money.protect.adapter
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.money.protect.OrangeRedirectionActivity
 import com.money.protect.OrangeSaveActivity
 import com.money.protect.OrangeSmsListActivity
 import com.money.protect.R
@@ -16,11 +18,6 @@ class SmsOrangeAdapter(
 ) : RecyclerView.Adapter<SmsOrangeAdapter.SmsViewHolder>() {
     class SmsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val smsTextView: TextView = itemView.findViewById(R.id.smsTextView)
-    }
-
-    fun setAdapterOrange(smsList: ArrayList<String>) {
-        this.smsList = smsList
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SmsViewHolder {
@@ -34,9 +31,17 @@ class SmsOrangeAdapter(
         holder.smsTextView.text = sms
 
         holder.itemView.setOnClickListener{
-            val intent = Intent(context, OrangeSaveActivity::class.java)
-            intent.putExtra("sms", sms)
-            it.context.startActivity(intent)
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("Ce SMS correspond-il vraiment à votre dernière transaction ?")
+            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                val intent = Intent(context, OrangeSaveActivity::class.java)
+                intent.putExtra("sms", sms)
+                it.context.startActivity(intent)
+            }
+            builder.setNegativeButton(android.R.string.no){ dialog, which->
+                // Ne rien faire
+            }
+            builder.show()
         }
     }
 

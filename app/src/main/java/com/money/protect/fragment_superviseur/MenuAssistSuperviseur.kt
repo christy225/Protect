@@ -24,6 +24,7 @@ class MenuAssistSuperviseur(private val context: SuperviseurActivity, ) : Fragme
         val id = data?.getString("id")
         val nom = data?.getString("nom")
         val assignation = data?.getString("module")
+        val capital = data?.getString("capital")
 
         val buttonCumul = view.findViewById<Button>(R.id.popupCumul)
         val cumulFragment = CumulTransactionSuperviseur(context)
@@ -32,6 +33,7 @@ class MenuAssistSuperviseur(private val context: SuperviseurActivity, ) : Fragme
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", assignation)
+            bundle.putString("capital", capital)
             cumulFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, cumulFragment)
@@ -46,6 +48,7 @@ class MenuAssistSuperviseur(private val context: SuperviseurActivity, ) : Fragme
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", assignation)
+            bundle.putString("capital", capital)
             homeFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, homeFragment)
@@ -60,6 +63,7 @@ class MenuAssistSuperviseur(private val context: SuperviseurActivity, ) : Fragme
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", assignation)
+            bundle.putString("capital", capital)
             transacFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, transacFragment)
@@ -74,6 +78,7 @@ class MenuAssistSuperviseur(private val context: SuperviseurActivity, ) : Fragme
             bundle.putString("id", id)
             bundle.putString("nom", nom)
             bundle.putString("module", assignation)
+            bundle.putString("capital", capital)
             capitalFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, capitalFragment)

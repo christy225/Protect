@@ -29,8 +29,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
-    lateinit var auth: FirebaseAuth
-    lateinit var db : FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db : FirebaseFirestore
     private lateinit var assistantArrayList : ArrayList<AccountModel>
     private lateinit var progressBar: ProgressBar
     private lateinit var nomCom: TextView
@@ -61,65 +61,68 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
 
         libelleDelai.visibility = View.INVISIBLE
 
-        // VERIFIER L'ETAT D'ABONNEMENT
-
-        db.collection("abonnement")
+        db.collection("account")
             .whereEqualTo("id", auth.currentUser?.uid)
             .get()
-            .addOnSuccessListener {document->
-                for (data in document)
+            .addOnSuccessListener {documents->
+                for (datas in documents)
                 {
-                    val dureeAutorisee = data!!.data["duration"].toString()
-                    val creation = data!!.data["creation"].toString()
+                    nomCom.text = datas.data["nomcommercial"].toString()
+                    val creation = datas.data["creation"].toString()
+                    val duration = datas.data["duration"].toString()
+                    val email = datas.data["email"].toString()
+                    val nomcommercial = datas.data["nomcommercial"].toString()
+                    val nomcomplet = datas.data["nomcomplet"].toString()
+                    val quartier = datas.data["quartier"].toString()
+                    val phone = datas.data["telephone"].toString()
+                    val ville = datas.data["ville"].toString()
+                    val abonnement = datas.data["abonnement"].toString()
 
-                    // On formate la date de création réçue de la BDD
                     val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
-                    val date0 = LocalDate.parse(creation, formatter)
-
-                    // On récupère la date du jour
                     val current = LocalDateTime.now()
                     val dateFormatted = current.format(formatter)
+
+                    // On formate la date de création réçue de la BDD
                     val date1 = LocalDate.parse(dateFormatted, formatter)
-
+                    val date0 = LocalDate.parse(creation, formatter)
+                    // On calcule la différence entre les 2 dates
                     val jourEcoules = ChronoUnit.DAYS.between(date0, date1)
-                    val duree = dureeAutorisee.toLong() - jourEcoules
+                    val duree = duration.toLong() - jourEcoules
 
-                    // SI ON A ATTEINT LA DUREE AUTORISEE LE COMPTE EST VEROUILLE
-                    if (duree >= 0 && duree <= 3)
+                    if (duree < 0)
                     {
-                        libelleDelai.text = "Votre abonnement expire dans " + duree + " jour(s)"
-                        libelleDelai.visibility = View.VISIBLE
-                    }else if(duree < 0){
-                        // APPLIQUER EXPIRATION DE L'ABONNEMENT
-
-                        val abonnementMap = hashMapOf(
+                        val accountMap = hashMapOf(
                             "creation" to creation,
-                            "duration" to "30",
-                            "id" to auth.currentUser?.uid,
-                            "statut" to false
+                            "email" to email,
+                            "id" to auth.currentUser!!.uid,
+                            "nomcommercial" to nomcommercial,
+                            "nomcomplet" to nomcomplet,
+                            "quartier" to quartier,
+                            "role" to "superviseur",
+                            "statut" to false,
+                            "module" to "null",
+                            "superviseur" to "null",
+                            "telephone" to phone,
+                            "duration" to duration,
+                            "ville" to ville,
+                            "abonnement" to abonnement,
+                            "capital" to "0"
                         )
-                        db.collection("abonnement")
-                            .document(auth.currentUser?.uid!!)
-                            .set(abonnementMap)
+                        db.collection("account")
+                            .document(auth.currentUser!!.uid)
+                            .set(accountMap)
                             .addOnSuccessListener {
                                 auth.signOut()
-                                val intent = Intent(context, AbonnementActivity::class.java)
-                                startActivity(intent)
-                            }.addOnFailureListener {
+                                val intents = Intent(context, AbonnementActivity::class.java)
+                                startActivity(intents)
+                            }.addOnFailureListener{
                                 val builder = AlertDialog.Builder(context)
-                                builder.setTitle("Erreur")
-                                builder.setMessage("Une erreur s'est produite.")
+                                builder.setMessage(R.string.onFailureText)
                                 builder.show()
                             }
-
-                        // FIN APPLIQUER EXPIRATION DE L'ABONNEMENT
                     }
                 }
-            }.addOnFailureListener {
-                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
             }
-
-        // VERIFIER L'ETAT D'ABONNEMENT DU SUPERVISEUR
 
         // Recupérer la liste des assistants SUR LA PAGE D'ACCUEIL
         db.collection("account")
@@ -127,18 +130,13 @@ class ListAssistantHome(private val context: SuperviseurActivity) : Fragment() {
             .get().addOnSuccessListener{ documents->
                 for (datas in documents)
                 {
-                    nomCom.text = datas.data["nomcommercial"].toString()
                     val item = datas.toObject(AccountModel::class.java)
-                    if (item != null)
-                    {
-                        progressBar.visibility = View.INVISIBLE
-                        assistantArrayList.add(item)
-                    }
+                    progressBar.visibility = View.INVISIBLE
+                    assistantArrayList.add(item)
                     recyclerView.adapter = AssistantListAdapterHome(context, assistantArrayList)
                     recyclerView.layoutManager = LinearLayoutManager(context)
                 }
             }
-
         return view
     }
 }

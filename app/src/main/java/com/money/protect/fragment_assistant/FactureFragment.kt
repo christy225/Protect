@@ -8,11 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -20,15 +19,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.money.protect.MainActivity
 import com.money.protect.R
-import com.money.protect.TikeramaActivity
 
 class FactureFragment(private val context: MainActivity) : Fragment() {
     lateinit var auth: FirebaseAuth
     private var db = Firebase.firestore
-    private lateinit var titleFacture: TextView
-    private lateinit var mtn: CardView
-    private lateinit var moov: CardView
-    private lateinit var tikerama: CardView
+    private lateinit var libelle: TextView
+    private lateinit var btn: Button
 
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.M)
@@ -41,38 +37,37 @@ class FactureFragment(private val context: MainActivity) : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        titleFacture = view.findViewById(R.id.titleFacture)
-        mtn = view.findViewById(R.id.lienMTNFacture)
-        moov = view.findViewById(R.id.lienMoovFacture)
-        tikerama = view.findViewById(R.id.lienTikeramaFacture)
+        val bundle = arguments
+
+        val compte = bundle?.getString("compte")
+
+        btn = view.findViewById(R.id.btnFacture)
+        libelle = view.findViewById(R.id.libelleFacture)
+        //moov = view.findViewById(R.id.lienMoovFacture)
+        //tikerama = view.findViewById(R.id.lienTikeramaFacture)
 
         requireActivity().onBackPressedDispatcher.addCallback(context) {
 
         }
 
-        if (context.comptePourFacture() == "compte1") {
-            moov.visibility = View.GONE
-        }else if (context.comptePourFacture() == "compte2"){
-            mtn.visibility = View.GONE
-        }
-
-        mtn.setOnClickListener{
-            val syntaxe = "*188" + Uri.encode("#")
-            val callIntent = Intent(Intent.ACTION_CALL)
-            callIntent.data = Uri.parse("tel:$syntaxe")
-            startActivity(callIntent)
-        }
-
-        moov.setOnClickListener {
-            val syntaxe = "*155*4" + Uri.encode("#")
-            val callIntent = Intent(Intent.ACTION_CALL)
-            callIntent.data = Uri.parse("tel:$syntaxe")
-            startActivity(callIntent)
-        }
-
-        tikerama.setOnClickListener{
-            val intent = Intent(context, TikeramaActivity::class.java)
-            startActivity(intent)
+        if (compte == "compte1") {
+            libelle.text = "Payer avec Mtn Money"
+            btn.visibility = View.VISIBLE
+            btn.setOnClickListener{
+                val syntaxe = "*188" + Uri.encode("#")
+                val callIntent = Intent(Intent.ACTION_CALL)
+                callIntent.data = Uri.parse("tel:$syntaxe")
+                startActivity(callIntent)
+            }
+        }else if (compte == "compte2") {
+            libelle.text = "Payer avec Moov Money"
+            btn.visibility = View.VISIBLE
+            btn.setOnClickListener{
+                val syntaxe = "*156*4" + Uri.encode("#")
+                val callIntent = Intent(Intent.ACTION_CALL)
+                callIntent.data = Uri.parse("tel:$syntaxe")
+                startActivity(callIntent)
+            }
         }
 
         return view

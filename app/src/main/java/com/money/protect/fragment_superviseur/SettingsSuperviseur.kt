@@ -33,10 +33,10 @@ class SettingsSuperviseur(private val context: SuperviseurActivity) : Fragment()
     private lateinit var auth : FirebaseAuth
     private lateinit var nomCommercial: TextView
     private lateinit var nomComplet: TextView
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
     private var assistantArrayList = ArrayList<AccountModel>()
-    lateinit var progressBar: ProgressBar
-    lateinit var logout: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var logout: Button
     @SuppressLint("MissingInflatedId", "UseSwitchCompatOrMaterialCode")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -85,8 +85,8 @@ class SettingsSuperviseur(private val context: SuperviseurActivity) : Fragment()
                 for (dat in doc)
                 {
                     nomCommercial.text = dat!!.data["nomcommercial"].toString()
-                    nomComplet.text = dat!!.data["nomcomplet"].toString()
-                    identifiant.text = dat!!.data["telephone"].toString()
+                    nomComplet.text = dat.data["nomcomplet"].toString()
+                    identifiant.text = dat.data["telephone"].toString()
                 }
             }.addOnFailureListener {
                 Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
@@ -101,10 +101,7 @@ class SettingsSuperviseur(private val context: SuperviseurActivity) : Fragment()
                 progressBar.visibility = View.INVISIBLE
                 for (datas in documents){
                     val item = datas.toObject(AccountModel::class.java)
-                    if (item != null)
-                    {
-                        assistantArrayList.add(item)
-                    }
+                    assistantArrayList.add(item)
                     recyclerView.adapter = SettingsAdapterSuperviseur(context, assistantArrayList)
                     recyclerView.layoutManager = LinearLayoutManager(context)
                 }

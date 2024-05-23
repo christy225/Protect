@@ -51,7 +51,6 @@ class LePointAdapter(
 
             if (currentPoint.module == "National")
             {
-                intent2.putExtra("id", currentPoint.id)
                 intent2.putExtra("orange", currentPoint.orange)
                 intent2.putExtra("mtn", currentPoint.mtn)
                 intent2.putExtra("moov", currentPoint.moov)
@@ -62,7 +61,6 @@ class LePointAdapter(
                 intent2.putExtra("date", currentPoint.date)
                 it.context.startActivity(intent2)
             }else if (currentPoint.module == "International"){
-                intent3.putExtra("id", currentPoint.id)
                 intent3.putExtra("retrait", currentPoint.retrait)
                 intent3.putExtra("envoi", currentPoint.envoi)
                 intent3.putExtra("especes", currentPoint.especes)
@@ -71,7 +69,6 @@ class LePointAdapter(
                 it.context.startActivity(intent3)
             }else if (currentPoint.module == "National-International")
             {
-                intent1.putExtra("id", currentPoint.id)
                 intent1.putExtra("orange", currentPoint.orange)
                 intent1.putExtra("mtn", currentPoint.mtn)
                 intent1.putExtra("moov", currentPoint.moov)

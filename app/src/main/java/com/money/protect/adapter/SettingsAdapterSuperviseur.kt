@@ -58,7 +58,7 @@ class SettingsAdapterSuperviseur(
             }else{
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Désactivation")
-                    .setMessage("Vous êtes sur le point de désactiver le compte de cet Assistant.\nVoulez-vous continuer ?")
+                    .setMessage("Vous êtes sur le point de désactiver le compte de votre gérant.\nVoulez-vous continuer ?")
                     .setPositiveButton("Oui"){ dialog, id->
                         currentAssistant.statut = !currentAssistant.statut
                         repo.updateStatut(currentAssistant)

@@ -51,17 +51,21 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
     private lateinit var textTelephone: EditText
     private lateinit var textMontant: EditText
     private lateinit var typeOperation: Spinner
-    lateinit var buttonRegister: AppCompatButton
-    lateinit var buttonUpload: Button
-    lateinit var progressBar: ProgressBar
+    private lateinit var buttonRegister: AppCompatButton
+    private lateinit var buttonUpload: Button
+    private lateinit var progressBar: ProgressBar
     private var textWatcher: TextWatcher? = null
-    private lateinit var origineFond: EditText
-    private lateinit var checkOrigine: CheckBox
-    var origine: String? = null
+
+    private lateinit var imagePreview1: ImageView
+    private lateinit var imagePreview2: ImageView
+    private lateinit var constraintImagePreview: ConstraintLayout
 
     private var storageRef = Firebase.storage
-    private var uri: Uri? = null
-    var uploaded: Boolean = false
+    private var uri1: Uri? = null
+    private var uri2: Uri? = null
+    private var uploaded1: Boolean = false
+    private var uploaded2: Boolean = false
+
     private lateinit var stateInfo: TextView
     private var phoneVal: String ? = null
 
@@ -78,32 +82,18 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         storageRef = FirebaseStorage.getInstance()
+        imagePreview1 = view.findViewById(R.id.imagePreviewWave1)
+        imagePreview2 = view.findViewById(R.id.imagePreviewWave2)
+        constraintImagePreview = view.findViewById(R.id.constraintImagePreviewWave)
 
         textTelephone = view.findViewById(R.id.tel_input_wave)
         textMontant = view.findViewById(R.id.montant_input_wave)
         typeOperation = view.findViewById(R.id.type_op_spinner_wave)
         stateInfo = view.findViewById(R.id.stateInfoWave)
         buttonUpload = view.findViewById(R.id.uploadPhotoWave)
-        origineFond = view.findViewById(R.id.origine_fond_wave)
-        checkOrigine = view.findViewById(R.id.origine_check_wave)
 
         buttonRegister = view.findViewById(R.id.btn_register_input_wave)
         progressBar = view.findViewById(R.id.progressBar_input_wave)
-
-        checkOrigine.setOnClickListener {
-            if (checkOrigine.isChecked) {
-                origineFond.visibility = View.VISIBLE
-            }else{
-                origineFond.visibility = View.GONE
-            }
-        }
-
-        if (origineFond.text.isEmpty())
-        {
-            origine = "non défini"
-        }else{
-            origine = origineFond.text.toString()
-        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -125,7 +115,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
         val link1 = view.findViewById<ImageView>(R.id.assistant_link1_wave)
 
         link1.setOnClickListener {
-            if (textTelephone.text.isNotEmpty() && textMontant.text.isNotEmpty())
+            if (typeOperation.selectedItem.toString() !== "Sélectionner" && textMontant.text.isNotEmpty())
             {
                 Toast.makeText(context, "Vous n'avez pas enregistré la transaction", Toast.LENGTH_SHORT).show()
             }else{
@@ -182,7 +172,7 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
         })
 
         // Empêcher le retour en arrière si les champs ne sont pas vide
-        context.blockBackNavigation(buttonRegister)
+        context.blockBackNavigation(buttonRegister, this)
 
         progressBar.visibility = View.INVISIBLE
 
@@ -242,9 +232,14 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
             textTelephone.text.clear()
             textMontant.text.clear()
             buttonRegister.text = "effectuer la transaction"
-            uploaded = false
+            uploaded1 = false
+            uploaded2 = false
+            imagePreview1.setImageURI(null)
+            imagePreview2.setImageURI(null)
+            constraintImagePreview.visibility = View.GONE
             stateInfo.visibility = View.GONE
             context.bottomNavUnlock()
+            buttonRegister.visibility = View.VISIBLE
         }
 
         buttonRegister.setOnClickListener {
@@ -307,65 +302,84 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
 
                             // On upload l'image avant d'enregistrer les données au cas où l'utilisateur a enregistré une image
                             if (checkForInternet(context)) {
-                                if (uploaded)
+                                if (uploaded1 && uploaded2)
                                 {
                                     storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                                        .putFile(uri!!)
+                                        .putFile(uri1!!)
                                         .addOnSuccessListener { task->
                                             task.metadata!!.reference!!.downloadUrl
-                                                .addOnSuccessListener {it->
-                                                    //formater le montant
-                                                    val theAmount = montantInput.toString()
-                                                    val caractere = ','
-                                                    val theNewAmount = theAmount.filter { it != caractere }
+                                                .addOnSuccessListener {it1->
+                                                    storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                                        .putFile(uri2!!)
+                                                        .addOnSuccessListener {task1->
+                                                            task1.metadata!!.reference!!.downloadUrl
+                                                                .addOnSuccessListener { it2->
+                                                                    //formater le montant
+                                                                    val theAmount = montantInput.toString()
+                                                                    val caractere = ','
+                                                                    val theNewAmount = theAmount.filter { it != caractere }
 
-                                                    val uid = UUID.randomUUID().toString()
+                                                                    val uid = UUID.randomUUID().toString()
 
 
-                                                    if (checkbox.isChecked) {
-                                                        phoneVal = telInput.toString()
-                                                    }else{
-                                                        phoneVal = "Non défini"
-                                                    }
+                                                                    if (checkbox.isChecked) {
+                                                                        phoneVal = telInput.toString()
+                                                                    }else{
+                                                                        phoneVal = "Non défini"
+                                                                    }
 
-                                                    val operationMap = hashMapOf(
-                                                        "id" to auth.currentUser?.uid,
-                                                        "date" to dateFormatted,
-                                                        "heure" to hourFormatted,
-                                                        "operateur" to "wave",
-                                                        "telephone" to phoneVal.toString(),
-                                                        "montant" to theNewAmount,
-                                                        "typeoperation" to typeSpinner,
-                                                        "statut" to true,
-                                                        "url" to it.toString(),
-                                                        "idDoc" to uid,
-                                                        "origine" to origine
-                                                    )
+                                                                    val operationMap = hashMapOf(
+                                                                        "id" to auth.currentUser?.uid,
+                                                                        "date" to dateFormatted,
+                                                                        "heure" to hourFormatted,
+                                                                        "operateur" to "wave",
+                                                                        "telephone" to phoneVal.toString(),
+                                                                        "montant" to theNewAmount,
+                                                                        "typeoperation" to typeSpinner,
+                                                                        "statut" to true,
+                                                                        "url1" to it1.toString(),
+                                                                        "url2" to it2.toString(),
+                                                                        "idDoc" to uid
+                                                                    )
 
-                                                    val tel = textTelephone.text
-                                                    val amount = textMontant.text
+                                                                    val tel = textTelephone.text
+                                                                    val amount = textMontant.text
 
-                                                    db.collection("operation")
-                                                        .document(uid)
-                                                        .set(operationMap)
-                                                        .addOnCompleteListener {
-                                                            if (it.isSuccessful) {
-                                                                tel.clear()
-                                                                amount.clear()
-                                                                origineFond.text.clear()
-                                                                buttonRegister.isEnabled = true
-                                                                stateInfo.visibility = View.GONE
-                                                                progressBar.visibility = View.INVISIBLE
-                                                                buttonRegister.text = "effectuer la transaction"
-                                                                typeOperation.setSelection(0)
-                                                                Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
-                                                            }
+                                                                    db.collection("operation")
+                                                                        .document(uid)
+                                                                        .set(operationMap)
+                                                                        .addOnCompleteListener {
+                                                                            if (it.isSuccessful) {
+                                                                                tel.clear()
+                                                                                amount.clear()
+                                                                                imagePreview1.setImageURI(null)
+                                                                                imagePreview2.setImageURI(null)
+                                                                                constraintImagePreview.visibility = View.GONE
+                                                                                buttonRegister.isEnabled = true
+                                                                                stateInfo.visibility = View.GONE
+                                                                                progressBar.visibility = View.INVISIBLE
+                                                                                buttonRegister.text = "effectuer la transaction"
+                                                                                typeOperation.setSelection(0)
+                                                                                constraintImagePreview.visibility = View.GONE
+                                                                                Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                                            }
 
-                                                        }.addOnFailureListener {
-                                                            val builder = AlertDialog.Builder(context)
-                                                            builder.setTitle("Alerte")
-                                                            builder.setMessage(R.string.onFailureText)
-                                                            builder.show()
+                                                                        }.addOnFailureListener {
+                                                                            val builder = AlertDialog.Builder(context)
+                                                                            builder.setTitle("Alerte")
+                                                                            builder.setMessage(R.string.onFailureText)
+                                                                            builder.show()
+                                                                        }
+
+                                                                }.addOnFailureListener {
+                                                                    val builer = AlertDialog.Builder(context)
+                                                                    builer.setMessage(R.string.onFailureText)
+                                                                    builer.show()
+                                                                }
+                                                        }.addOnFailureListener{
+                                                            val builer = AlertDialog.Builder(context)
+                                                            builer.setMessage(R.string.onFailureText)
+                                                            builer.show()
                                                         }
                                                 }.addOnFailureListener {
                                                     val builer = AlertDialog.Builder(context)
@@ -401,9 +415,9 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                         "montant" to theNewAmount,
                                         "typeoperation" to typeSpinner,
                                         "statut" to true,
-                                        "url" to "null",
-                                        "idDoc" to uid,
-                                        "origine" to origine
+                                        "url1" to "null",
+                                        "url2" to "null",
+                                        "idDoc" to uid
                                     )
 
                                     val tel = textTelephone.text
@@ -417,7 +431,6 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
                                             if (it.isSuccessful) {
                                                 tel.clear()
                                                 amount.clear()
-                                                origineFond.text.clear()
                                                 buttonRegister.isEnabled = true
                                                 stateInfo.visibility = View.GONE
                                                 progressBar.visibility = View.INVISIBLE
@@ -448,10 +461,6 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
-        if (textTelephone.text.isNotEmpty()){
-            context.blockBackButton(this)
-        }
-
         return view
     }
 
@@ -479,11 +488,28 @@ class WaveFragment(private val context: MainActivity) : Fragment() {
 
         if (resultCode == Activity.RESULT_OK) {
             //Image Uri will not be null for RESULT_OK
-            val it: Uri = data?.data!!
+            var it1: Uri = data?.data!!
+            var it2: Uri = data?.data!!
+            constraintImagePreview.visibility = View.VISIBLE
             // Use Uri object instead of File to avoid storage permissions
-            stateInfo.visibility = View.VISIBLE
-            uri = it
-            uploaded = true
+            if (imagePreview1.drawable == null){
+                stateInfo.visibility = View.VISIBLE
+                uploaded1 = true
+                stateInfo.setText(R.string.warning_second_image)
+                uri1 = it1
+                it1?.let {uri->
+                    imagePreview1.setImageURI(uri)
+                    buttonRegister.visibility = View.GONE
+                }
+            }else{
+                stateInfo.visibility = View.GONE
+                uri2 = it2
+                uploaded2 = true
+                it2?.let {uri->
+                    imagePreview2.setImageURI(uri2)
+                    buttonRegister.visibility = View.VISIBLE
+                }
+            }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
         } else {

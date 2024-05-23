@@ -55,8 +55,6 @@ class SuperviseurDetailPointInterActivity : AppCompatActivity() {
         val especes = intent.getStringExtra("especes")
         val divers = intent.getStringExtra("divers")
 
-        val id = intent.getStringExtra("id")
-
         dateX.text = date
         retraitX.text = DecimalFormat("#,###").format(retrait!!.toInt())
         envoiX.text = DecimalFormat("#,###").format(envoi!!.toInt())
@@ -69,13 +67,13 @@ class SuperviseurDetailPointInterActivity : AppCompatActivity() {
 
         // ON RECUPERE LE CAPITAL POUR LA COMPARAISON
 
-        db.collection("capital")
-            .whereEqualTo("id", id)
+        db.collection("account")
+            .whereEqualTo("id", auth.currentUser?.uid)
             .get()
             .addOnSuccessListener { document->
                 for (data in document)
                 {
-                    val capital = data!!.data["montant"].toString().toInt()
+                    val capital = data!!.data["capital"].toString().toInt()
                     val res = capital - pointValeur
                     if (res < 0) {
                         progressBar.visibility = View.INVISIBLE

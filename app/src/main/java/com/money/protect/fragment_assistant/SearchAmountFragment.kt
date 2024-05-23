@@ -12,14 +12,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.MainActivity
@@ -35,9 +36,11 @@ class SearchAmountFragment(private val context: MainActivity) : Fragment() {
     private lateinit var searchAmount: EditText
     private lateinit var adapter: OperationAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var resultArrayList: ArrayList<TransactionModel>
+    private lateinit var transactionArrayList: ArrayList<TransactionModel>
     private var textWatcher: TextWatcher? = null
     private lateinit var progressBar: ProgressBar
+    private lateinit var btnSearch: AppCompatImageButton
+    private lateinit var libellNoResult: TextView
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -59,22 +62,8 @@ class SearchAmountFragment(private val context: MainActivity) : Fragment() {
         searchAmount = view.findViewById(R.id.searchAmount)
         recyclerView = view.findViewById(R.id.recyclerSearchMontant)
         progressBar = view.findViewById(R.id.progressBarSearchAmount)
-        resultArrayList = arrayListOf()
-        adapter = OperationAdapter(context, resultArrayList)
-
-        db.collection("operation")
-            .orderBy("date", Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { documents->
-                for (data in documents){
-                    val transaction = data.toObject(TransactionModel::class.java)
-                    if (transaction != null) {
-                        resultArrayList.add(transaction)
-                    }
-                }
-            }.addOnFailureListener {
-                Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
-            }
+        btnSearch = view.findViewById(R.id.searchAmountButton)
+        libellNoResult = view.findViewById(R.id.searchAmountNoResult)
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher {
@@ -84,12 +73,6 @@ class SearchAmountFragment(private val context: MainActivity) : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 //
-                if (searchAmount.text.isNotEmpty())
-                {
-                    filterList(searchAmount.text.toString())
-                    recyclerView.adapter = adapter
-                    recyclerView.layoutManager = LinearLayoutManager(context)
-                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -99,33 +82,40 @@ class SearchAmountFragment(private val context: MainActivity) : Fragment() {
         }
         searchAmount.addTextChangedListener(textWatcher)
 
-        return view
-    }
-
-    private fun filterList(query: String?) {
-        if (query != null)
-        {
-            val filteredList = ArrayList<TransactionModel>()
-            progressBar.visibility = View.VISIBLE
-            val searchArrayList = resultArrayList.filter { it.id == auth.currentUser?.uid }
-            for (i in searchArrayList)
+        btnSearch.setOnClickListener{
+            if (searchAmount.text.length >= 3)
             {
-                if (i.montant.startsWith(query))
-                {
-                    progressBar.visibility = View.INVISIBLE
-                    filteredList.add(i)
-                }
-            }
-            if (filteredList.isNotEmpty())
-            {
-                adapter.setFilteredList(filteredList)
+                progressBar.visibility = View.VISIBLE
+                transactionArrayList = arrayListOf()
+                db.collection("operation")
+                    .whereEqualTo("id", auth.currentUser?.uid)
+                    .whereEqualTo("montant", searchAmount.text.toString())
+                    .get()
+                    .addOnSuccessListener { documents->
+                        if (documents.isEmpty){
+                            libellNoResult.visibility = View.VISIBLE
+                            progressBar.visibility = View.INVISIBLE
+                        }else{
+                            for (data in documents){
+                                val transaction = data.toObject(TransactionModel::class.java)
+                                transactionArrayList.add(transaction)
+                                progressBar.visibility = View.INVISIBLE
+                                transactionArrayList.sortByDescending { it.date }
+                                adapter = OperationAdapter(context, transactionArrayList)
+                                recyclerView.adapter = adapter
+                                recyclerView.layoutManager = LinearLayoutManager(context)
+                            }
+                        }
+                    }.addOnFailureListener {
+                        Toast.makeText(context, R.string.onFailureText, Toast.LENGTH_SHORT).show()
+                    }
             }else{
-                progressBar.visibility = View.INVISIBLE
-                adapter.setFilteredList(filteredList)
                 val builder = AlertDialog.Builder(context)
-                builder.setMessage("Aucun résultat")
+                builder.setMessage("Veuillez saisir un montant valide")
                 builder.show()
             }
         }
+
+        return view
     }
 }

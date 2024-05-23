@@ -17,17 +17,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.money.protect.R
 import com.money.protect.SuperviseurActivity
 import com.money.protect.adapter.OperationAdapterSuperviseur
 import com.money.protect.models.TransactionModel
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Locale
 
 class TransactionAssistantFragment(private val context: SuperviseurActivity) : Fragment() {
     private var db = Firebase.firestore
@@ -37,6 +33,8 @@ class TransactionAssistantFragment(private val context: SuperviseurActivity) : F
     private lateinit var datePicker: EditText
     private lateinit var linkToHomeListPoint: ImageView
     private lateinit var progressBar: ProgressBar
+    private lateinit var identifiant: String
+    private lateinit var info: TextView
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -47,49 +45,20 @@ class TransactionAssistantFragment(private val context: SuperviseurActivity) : F
         val view = inflater.inflate(R.layout.fragment_superviseur_transation_assistant, container, false)
         db = FirebaseFirestore.getInstance()
         recyclerView = view.findViewById(R.id.recyclerViewSuperviseurTransaction)
-        operationArrayList = arrayListOf()
+        info = view.findViewById(R.id.progressBarMsgSuperviseurTransac)
+
+        info.visibility = View.GONE
 
         val data = arguments
 
-        val id = data?.getString("id")
+        identifiant = data?.getString("id").toString()
         val nom = data?.getString("nom")
         val module = data?.getString("module")
+        val capital = data?.getString("capital")
 
         datePicker = view.findViewById(R.id.superviseur_transac_datePicker)
         linkToHomeListPoint = view.findViewById(R.id.backToListHomeSuperviseur11)
         progressBar = view.findViewById(R.id.progressBarTransacSuperviseur)
-
-        progressBar.visibility = View.VISIBLE
-
-        adapter = OperationAdapterSuperviseur(context, operationArrayList)
-
-        val info = view.findViewById<TextView>(R.id.progressBarMsgSuperviseurTransac)
-
-        // Recupérer le point du jour
-
-        val current = LocalDateTime.now()
-        val formatterDate = DateTimeFormatter.ofPattern("d-M-yyyy")
-        val dateFormatted = current.format(formatterDate)
-
-        db.collection("operation")
-            .orderBy("heure", Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { documents->
-                progressBar.visibility = View.INVISIBLE
-                for (data in documents) {
-                    val transaction = data.toObject(TransactionModel::class.java)
-                    if (transaction != null) {
-                        operationArrayList.add(transaction)
-                    }else{
-                        info.text = "Aucun enregistrement"
-                    }
-                    val arrayList = operationArrayList.filter { it.date == dateFormatted && it.id == id} as ArrayList<TransactionModel>
-                    recyclerView.adapter = OperationAdapterSuperviseur(context, arrayList)
-                    recyclerView.layoutManager = LinearLayoutManager(context)
-                }
-            }.addOnFailureListener {
-                Toast.makeText(context, "Une erreur s'est produite", Toast.LENGTH_SHORT).show()
-            }
 
         // RECHERCHER UN POINT A UNE DATE PRECISE
 
@@ -104,9 +73,32 @@ class TransactionAssistantFragment(private val context: SuperviseurActivity) : F
                 context, { view, year, monthOfYear, dayOfMonth ->
                     val dat = (dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year)
                     datePicker.setText(dat)
-                    filterList(datePicker.text.toString())
-                    recyclerView.adapter = adapter
-                    recyclerView.layoutManager = LinearLayoutManager(context)
+                    info.visibility = View.INVISIBLE
+                    progressBar.visibility = View.VISIBLE
+                    operationArrayList = arrayListOf()
+                    db.collection("operation")
+                        .whereEqualTo("id", identifiant)
+                        .whereEqualTo("date", datePicker.text.toString())
+                        .get()
+                        .addOnSuccessListener { documents->
+                            if (documents.isEmpty){
+                                info.visibility = View.VISIBLE
+                                progressBar.visibility = View.INVISIBLE
+                            }else{
+                                progressBar.visibility = View.INVISIBLE
+                                info.visibility = View.INVISIBLE
+                                for (datas in documents) {
+                                    val transaction = datas.toObject(TransactionModel::class.java)
+                                    operationArrayList.add(transaction)
+                                    operationArrayList.sortByDescending { it.heure }
+                                    adapter = OperationAdapterSuperviseur(context, operationArrayList)
+                                    recyclerView.adapter = OperationAdapterSuperviseur(context, operationArrayList)
+                                    recyclerView.layoutManager = LinearLayoutManager(context)
+                                }
+                            }
+                        }.addOnFailureListener {
+                            Toast.makeText(context, "Une erreur s'est produite", Toast.LENGTH_SHORT).show()
+                        }
                 },
                 year,
                 month,
@@ -118,9 +110,10 @@ class TransactionAssistantFragment(private val context: SuperviseurActivity) : F
         val menuFragment = MenuAssistSuperviseur(context)
         linkToHomeListPoint.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString("id", id)
+            bundle.putString("id", identifiant)
             bundle.putString("nom", nom)
             bundle.putString("module", module)
+            bundle.putString("capital", capital)
             menuFragment.arguments = bundle
             context.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_superviseur, menuFragment)
@@ -129,26 +122,6 @@ class TransactionAssistantFragment(private val context: SuperviseurActivity) : F
         }
 
         return view
-    }
-
-    private fun filterList(query: String) {
-        if (query != null)
-        {
-            val filteredList = ArrayList<TransactionModel>()
-            for (i in operationArrayList)
-            {
-                if (i.date.lowercase(Locale.ROOT).contains(query))
-                {
-                    filteredList.add(i)
-                }
-            }
-            if (filteredList.isNotEmpty())
-            {
-                adapter.setFilterList(filteredList)
-            }else{
-                Toast.makeText(context, "Aucun résultat", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
 }

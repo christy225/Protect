@@ -17,7 +17,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -54,9 +53,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
     private lateinit var buttonUpload: Button
     lateinit var progressBar: ProgressBar
     private lateinit var stateInfo: TextView
-    private lateinit var origineFond: EditText
-    private lateinit var checkOrigine: CheckBox
-    var origine: String? = null
     private lateinit var imagePreview1: ImageView
     private lateinit var imagePreview2: ImageView
     private lateinit var constraintImagePreview: ConstraintLayout
@@ -89,27 +85,10 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
         stateInfo = view.findViewById(R.id.stateInfoMtn)
         buttonUpload = view.findViewById(R.id.uploadPhotoMtn)
-        origineFond = view.findViewById(R.id.origine_fond_mtn)
-        checkOrigine = view.findViewById(R.id.origine_check_mtn)
 
         constraintImagePreview = view.findViewById(R.id.constraintImagePreview)
         buttonRegister = view.findViewById(R.id.btn_register_input_mtn)
         progressBar = view.findViewById(R.id.progressBar_input_mtn)
-
-        checkOrigine.setOnClickListener {
-            if (checkOrigine.isChecked) {
-                origineFond.visibility = View.VISIBLE
-            }else{
-                origineFond.visibility = View.GONE
-            }
-        }
-
-        if (origineFond.text.isEmpty())
-        {
-            origine = "non défini"
-        }else{
-            origine = origineFond.text.toString()
-        }
 
         // PERMET DE FORMATTER LA SAISIE DU MONTANT EN MILLIER
         textWatcher = object : TextWatcher{
@@ -187,9 +166,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
         })
 
-        // Empêcher le retour en arrière si les champs ne sont pas vide
-        context.blockBackNavigation(buttonRegister)
-
         val btnHistory = view.findViewById<Button>(R.id.historiqueMtn)
         btnHistory.setOnClickListener {
             val syntaxe = "*133" + Uri.encode("#")
@@ -243,6 +219,9 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             }
         }
 
+        // Empêcher le retour en arrière si les champs ne sont pas vide
+        context.blockBackNavigation(buttonRegister, this)
+
         val btnCancel = view.findViewById<TextView>(R.id.btnCancelOperationMtn)
         btnCancel.setOnClickListener {
             textTelephone.text.clear()
@@ -254,6 +233,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
             imagePreview1.setImageURI(null)
             imagePreview2.setImageURI(null)
             constraintImagePreview.visibility = View.GONE
+            buttonRegister.visibility = View.VISIBLE
             context.bottomNavUnlock()
         }
 
@@ -365,32 +345,31 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                                                             "statut" to true,
                                                                             "url1" to it1.toString(),
                                                                             "url2" to it2.toString(),
-                                                                            "idDoc" to uid,
-                                                                            "origine" to origine
+                                                                            "idDoc" to uid
                                                                         )
-
-                                                                        val tel = textTelephone.text
-                                                                        val amount = textMontant.text
-
-                                                                        tel.clear()
-                                                                        amount.clear()
-                                                                        origineFond.text.clear()
-                                                                        imagePreview1.setImageURI(null)
-                                                                        imagePreview2.setImageURI(null)
-                                                                        constraintImagePreview.visibility = View.GONE
-
-                                                                        progressBar.visibility = View.GONE
-                                                                        buttonRegister.isEnabled = true
-                                                                        buttonRegister.text = "effectuer la transaction"
-                                                                        typeOperation.setSelection(0)
-                                                                        stateInfo.visibility = View.GONE
-                                                                        Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
 
                                                                         db.collection("operation")
                                                                             .document(uid)
                                                                             .set(operationMap)
                                                                             .addOnCompleteListener {
-                                                                                // Ne rien faire ici
+                                                                                if (it.isSuccessful){
+                                                                                    val tel = textTelephone.text
+                                                                                    val amount = textMontant.text
+
+                                                                                    tel.clear()
+                                                                                    amount.clear()
+                                                                                    imagePreview1.setImageURI(null)
+                                                                                    imagePreview2.setImageURI(null)
+                                                                                    constraintImagePreview.visibility = View.GONE
+
+                                                                                    progressBar.visibility = View.GONE
+                                                                                    buttonRegister.isEnabled = true
+                                                                                    buttonRegister.text = "effectuer la transaction"
+                                                                                    typeOperation.setSelection(0)
+                                                                                    stateInfo.visibility = View.GONE
+                                                                                    constraintImagePreview.visibility = View.GONE
+                                                                                    Toast.makeText(context, "Enregistré avec succès", Toast.LENGTH_SHORT).show()
+                                                                                }
 
                                                                             }.addOnFailureListener {
                                                                                 val builder = AlertDialog.Builder(context)
@@ -438,8 +417,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                                             "statut" to true,
                                             "url1" to "null",
                                             "url2" to "null",
-                                            "idDoc" to uid,
-                                            "origine" to origine
+                                            "idDoc" to uid
                                         )
 
                                         val tel = textTelephone.text
@@ -447,7 +425,6 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
 
                                         tel.clear()
                                         amount.clear()
-                                        origineFond.text.clear()
 
                                         buttonRegister.isEnabled = true
                                         stateInfo.visibility = View.GONE
@@ -478,12 +455,12 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                             }
                             builder.show()
                     }
-
                 }
             }else{
                 Toast.makeText(context, "Aucune connexion internet", Toast.LENGTH_SHORT).show()
             }
         }
+
         return view
     }
 
@@ -522,6 +499,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                 uri1 = it1
                 it1?.let {uri->
                     imagePreview1.setImageURI(uri)
+                    buttonRegister.visibility = View.GONE
                 }
             }else{
                 stateInfo.visibility = View.GONE
@@ -529,6 +507,7 @@ class MtnFragment(private val context: MainActivity) : Fragment() {
                 uploaded2 = true
                 it2?.let {uri->
                     imagePreview2.setImageURI(uri2)
+                    buttonRegister.visibility = View.VISIBLE
                 }
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {

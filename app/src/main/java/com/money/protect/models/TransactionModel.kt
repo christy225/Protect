@@ -12,6 +12,5 @@ data class TransactionModel(
     val url1: String = "",
     val url2: String = "",
     val idDoc: String = "",
-    val idTransac: String = "",
-    val origine: String = ""
+    val idTransac: String = ""
 )

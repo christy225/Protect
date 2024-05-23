@@ -274,25 +274,6 @@
                         android:visibility="invisible"
                         android:layout_height="5dp"/>
 
-                    <CheckBox
-                        android:id="@+id/origine_check_orange"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Origine des fonds"/>
-
-                    <EditText
-                        android:id="@+id/origine_fond_orange"
-                        android:hint="Ecrire..."
-                        android:inputType="textMultiLine"
-                        android:lines="8"
-                        android:maxLines="10"
-                        android:minLines="6"
-                        android:visibility="gone"
-                        android:scrollbars="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
-
                     <Button
                         android:id="@+id/uploadPhotoOrange"
                         android:layout_width="wrap_content"
@@ -302,10 +283,40 @@
                         android:layout_marginTop="10dp"
                         android:textColor="#0084C1"
                         android:textStyle="bold"
-                        android:backgroundTint="#FFFFFF"
+                        android:drawableLeft="@drawable/baseline_add_a_photo_24"
+                        android:backgroundTint="#EAEAEA"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintImagePreviewOrange"
+                        android:padding="10dp"
+                        android:layout_marginTop="7dp"
+                        android:visibility="gone"
+                        android:background="@color/background_color"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/imagePreviewOrange1"
+                            android:layout_width="70dp"
+                            android:layout_height="80dp"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/imagePreviewOrange2"
+                            android:layout_width="70dp"
+                            android:layout_height="80dp"
+                            android:layout_marginStart="5dp"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imagePreviewOrange1"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:id="@+id/stateInfoOrange"
@@ -314,7 +325,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="10dp"
                         android:visibility="gone"
-                        android:textColor="#02B715"
+                        android:textColor="#D10303"
                         android:text="Photo téléchargée avec succès !"/>
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -337,47 +348,6 @@
                         android:visibility="gone"
                         android:layout_gravity="center"/>
 
-                    <androidx.cardview.widget.CardView
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="0dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/background_color">
-
-                            <TextView
-                                android:id="@+id/messageSmsOrange"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
-                                android:paddingHorizontal="10dp"
-                                android:textAlignment="center"
-                                android:text="Si vous ne récevez pas de message (SMS de confirmation dépôt/retrait) de l'opération que vous venez d'effectuer, veuillez enregistrer manuellement la transaction"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <Button
-                                android:id="@+id/openOrangePopup"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:backgroundTint="#F1F1F1"
-                                android:text="Cliquez ici"
-                                android:textColor="#0091FF"
-                                android:textStyle="bold"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginBottom="10dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/messageSmsOrange" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </androidx.cardview.widget.CardView>
 
                     <ProgressBar
                         android:id="@+id/progressBar_input_orange_compte2"

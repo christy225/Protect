@@ -66,7 +66,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Assignation: " />
+                    android:text="Type de compte: " />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -103,13 +103,13 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginEnd="15dp"
-                        android:backgroundTint="#FFF"
+                        android:backgroundTint="#ECECEC"
                         android:paddingHorizontal="15dp"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:text="AFFICHER POINT"
+                        android:text="AFFICHER"
                         android:textAllCaps="false"
-                        android:textColor="#FF9800"
+                        android:textColor="#FF7700"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="10dp"
-                        android:text="Résultat"
+                        android:text="Point du jour"
                         android:textStyle="bold"
                         android:textSize="17sp"
                         app:layout_constraintBottom_toTopOf="@+id/currencyLib"
@@ -150,11 +150,20 @@
                         android:layout_height="wrap_content"
                         android:text="FCFA"
                         android:textColor="#FF9800"
-                        android:textSize="27sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/superviseur_point_resultat_Vw"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/success_point"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/success"
+                        android:visibility="invisible"
+                        app:layout_constraintStart_toStartOf="@+id/superviseur_point_verdict"
+                        app:layout_constraintTop_toBottomOf="@+id/superviseur_point_verdict" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -221,6 +230,7 @@
                 android:id="@+id/superviseur_point_progressbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/superviseur_point_recyclerView"
                 app:layout_constraintStart_toStartOf="@+id/superviseur_point_recyclerView"
